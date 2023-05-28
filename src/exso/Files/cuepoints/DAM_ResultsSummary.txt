@@ -1,0 +1,15 @@
+$Sell
+Sell_Trades: ('Total SELL Trades', 'Greece Mainland']
+MCP: ('Market Clearing Price', 'Greece Mainland']
+Sellers: ('PRODUCTION TECHNOLOGY / MTU', 'PRODUCTION']
+Sell_Orders: ('SELL TRADES Price Type /  MTU', 'SELL')
+Imports: ('BORDER IMPORTS', ' IMPORTS']
+Imports_Implicit: ('BORDER IMPORTS (IMPLICIT)', ' IMPORTS (IMPLICIT)']
+$Buy
+Buy_Trades: ('Total BUY Trades', 'Greece Mainland']
+MCP: ('Market Clearing Price', 'Greece Mainland']
+Buyers: ('DEMAND / MTU', 'DEMAND']
+Buy_Orders: ('BUY TRADES Price Type /  MTU', 'BUY')
+Exports: ('BORDER EXPORTS', 'EXPORTS']
+Exports_Implicit: ('BORDER EXPORTS (IMPLICIT)', 'EXPORTS (IMPLICIT)']
+;

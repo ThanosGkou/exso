@@ -1,0 +1,9 @@
+# ignore stuff
+tests/
+scripts/
+Analytics/
+__pycache__/
+main.py
+logs/
+tree.txt
+.idea/

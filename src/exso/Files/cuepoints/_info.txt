@@ -1,0 +1,8 @@
+DAM_Summary has some strange things:
+1. The "/MTU" thing, when it appears in the "SELL--and BUY-- TRADES Price Type /  MTU" it has two white spaces. everywhere else it has one space
+2. After 'BORDER IMPORTS', the end-que is "IMPORTS". This is actually " IMPORTS", (white space leading)
+--> The same with the (IMPLICIT) border imports. But: The respective exports, are ok, no white spaces
+
+If no cue file is provided, it assumes that there is a single sheet ("field") in every file, 
+and a single subfield in each field. Thus, if a report is named: "Report", this will be created:
+{Report: {Report : {start: {cue: None, inclusive = True}, end: {cue:None, inclusive:True}}}}

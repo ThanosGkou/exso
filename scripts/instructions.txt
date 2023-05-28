@@ -1,0 +1,19 @@
+python --version
+py -0 # lists all available versions, and has a * in fornt of the active python PATH version
+py -0p # as above, but also shows the paths to respective pythn.exe
+
+python venv desired\path\to\venv (if only one version of Python)
+
+# To check: If i have python 3.8 and 3.11, how to choose to build venv from python 3.11 and not e.g. 3.8
+--> py -3.10 -m venv desired\path\to\venv\with\specific\version
+
+
+desired\path\to\venv\Scripts\activate.bat
+pip install exso
+
+#launch python IDLE from the same venv
+# in command line, after pip install exso
+python -m idlelib.idle
+
+import exso, etc.
+(fucking idle messes the visual output... I need to do a command-line interface, only for just updateAll())

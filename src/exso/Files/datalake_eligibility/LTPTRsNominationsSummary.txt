@@ -1,0 +1,1 @@
+{'start_filter':'[0-9]', 'end_filter':'*', 'extension_filter': 'xls*', 'expost_contains':'LTPTRsNominationsSummary'}

@@ -1,0 +1,26 @@
+$DayAheadSchedule
+Load: ['LoadDecl_and_Losses', 'SMP')
+System: ['SMP', 'UNIT / HOUR')
+Thermal: ('UNIT / HOUR', '')
+Hydro: ['KREMASTA', 'THESAVROS3_PUMP']
+Summary: ['PRODUCTION - PUMPING', 'NET BORDER SCHEDULES')
+NetBorderSchedules: ('NET BORDER SCHEDULES', 'BORDER IMPORTS')
+BorderImports: ('BORDER IMPORTS', 'BORDER EXPORTS')
+BorderExports: ('BORDER EXPORTS', 'CORRIDOR LIMIT')
+TransmissionLimits: ('CORRIDOR LIMIT', 'CORRIDOR FLOW')
+
+$PrimaryReserve
+PrimaryReserve: ['Requirement', 'Price']
+Thermal: ['AG_DIMITRIOS1', 'Total']
+
+$SecondaryReserve
+SecondaryReserve: ('Secondary Reserve', 'Range Price')
+Thermal: ('Thermal Unit / Hour', 'Thermal Units Total')
+Hydro: ('Hydro Unit / Hour', 'Hydro Units Total')
+
+$TertiaryReserve
+TertiaryReserve: ('Tertiary Reserve','Thermal Unit / Hour')
+Thermal: ('Thermal Unit / Hour', 'Thermal Units Total')
+Hydro: ('Hydro Unit / Hour', 'Hydro Units Total')
+SpinningFlag: ['Total Spinning', 'Total Non-Spinning']
+;

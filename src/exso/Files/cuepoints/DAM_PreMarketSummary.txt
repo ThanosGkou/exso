@@ -1,0 +1,8 @@
+$PreMarketSummary
+Buy_Nominations: ('Total BUY Nominations', 'Greece Mainland']
+Sell_Nominations: ('Total SELL Nominations', 'Greece Mainland']
+Sellers: ('PRODUCTION TECHNOLOGY / MTU', 'PRODUCTION']
+Buyers: ('DEMAND / MTU', 'DEMAND']
+Imports: ('BORDER IMPORTS', 'TOTAL IMPORTS']
+Exports: ('BORDER EXPORTS', 'TOTAL EXPORTS']
+;

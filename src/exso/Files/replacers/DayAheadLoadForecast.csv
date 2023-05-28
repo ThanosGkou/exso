@@ -1,0 +1,6 @@
+raw,conformed,comment
+Load Forecast,Unnamed,e.g. 2016-1-11. Change of indicator column names
+Existing (Meter Point),System Total,
+Existing (Market Point Total),Market Total,
+Existing (Market Point SOUTH),Market SOUTH-Zone,
+Existing (Market Point NORTH),Market NORTH-Zone,

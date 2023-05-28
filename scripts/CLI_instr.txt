@@ -1,0 +1,15 @@
+exso.cmd_launcher -update --root_lake "Path/to/root/lake" --root_base "Path/to/root/base"
+
+Instructions for command line
+
+#Open cmd
+navigate/to/venv/Scripts/activate.bat
+#on the command line
+python -m exso.cmd_launcher -m [--mode] update -rl [--root_lake] "root/lake/path" -rb [--root_base] "root/base/path" --which all
+
+
+python -m exso.cmd_launcher -m update -rl "C:\Users\thano\Desktop\through_pycharm_311\lake" -rb "C:\Users\thano\Desktop\through_pycharm_311\base" --which AdhocISPResults
+
+
+
+		  

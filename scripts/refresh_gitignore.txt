@@ -1,0 +1,12 @@
+git:
+
+refresh .gitignore in existing git project
+
+git rm -r --cached path/to/file
+or 
+git rm -r --cached
+
+
+## dont't commit now, else it will delete the files
+git add .
+

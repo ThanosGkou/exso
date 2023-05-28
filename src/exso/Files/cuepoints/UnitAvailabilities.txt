@@ -1,0 +1,4 @@
+$UnitAvailabilities
+Thermal:[None, 'KREMASTA')
+Hydro:['KREMASTA',None]
+;

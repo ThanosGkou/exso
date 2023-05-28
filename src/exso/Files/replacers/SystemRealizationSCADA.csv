@@ -1,0 +1,127 @@
+﻿raw,conformed
+ΣΥΝΟΛΙΚΟ ΦΟΡΤΙΟ,TOTAL_LOAD
+ΑΝΤΛΗΣΗ,PUMPING
+ΣΥΝΟΛΙΚΗ ΑΝΤΛΗΣΗ,PUMPING
+TOTAL PUMPING,PUMPING
+ΚΑΤΑΝΑΛΩΤΕΣ 150kV,HV_CONSUMERS
+ΚΑΤΑΝΑΛΩΤΕΣ 150,HV_CONSUMERS
+ΚΑΤΑΝΑΛΩΤΕΣ 150KV,HV_CONSUMERS
+ΚΑΘΑΡΟ ΦΟΡΤΙΟ,NET_LOAD
+ΦΟΡΤΙΟ ΑΤΤΙΚΗΣ,ATTIKI_LOAD
+ΛΟΙΠΑ + ΑΠΩΛΕΙΕΣ,RESID_AND_LOSSES
+NET LOAD,NET_LOAD
+ΔΙΑΣΥΝΔΕΣΗ,INTERCONNECTIONS
+ΑΙΟΛΙΚΑ ΠΑΡΚΑ,RES_UNITS
+TOTAL IMPORTS,TOTAL_IMPORTS
+TOTAL EXPORTS,TOTAL_EXPORTS
+ΣΥΝΟΛΟ ΕΙΣΑΓΩΓΩΝ,TOTAL_IMPORTS
+ΣΥΝΟΛΟ ΕΞΑΓΩΓΩΝ,TOTAL_EXPORTS
+ΚΑΘΑΡΟ ΔΙΑΣΥΝΔΕΣΕΩΝ,NET_BALANCE
+EXPORTS-IMPORTS,NET_BALANCE
+ΛΙΓΝΙΤΙΚΕΣ ΜΟΝΑΔΕΣ,LIGNITE_UNITS
+ΣΥΝΟΛΟ ΛΙΓΝΙΤΙΚΩΝ,TOTAL_LIGNITE
+ΠΕΤΡΕΛΑΙΚΕΣ ΜΟΝΑΔΕΣ,OIL_UNITS
+ΣΥΝΟΛΟ ΠΕΤΡΕΛΑΙΚΩΝ,TOTAL_OIL
+ΜΟΝΑΔΕΣ Φ. ΑΕΡΙΟΥ,GAS_UNITS
+ΣΥΝΟΛΟ Φ. ΑΕΡΙΟΥ,TOTAL_GAS
+ΥΔΡΟΗΛΕΚΤΡΙΚΕΣ ΜΟΝΑΔΕΣ,HYDRO_UNITS
+ΣΥΝΟΛΟ ΥΔΡΟΗΛΕΚΤΡΙΚΩΝ,TOTAL_HYDRO
+ΑΝΑΝΕΩΣΙΜΑ,RES_UNITS
+ΣΥΝΟΛΟ ΑΙΟΛΙΚΩΝ,TOTAL_RES
+TOTAL LIGNITE,TOTAL_LIGNITE
+TOTAL GAS,TOTAL_GAS
+TOTAL HYDRO,TOTAL_HYDRO
+TOTAL OIL,TOTAL_OIL
+TOTAL RES,TOTAL_RES
+ΓΙΟΥΓΚΟΣΛΑΒΙΑ,FYROM
+FYROM_EXP,FYROM
+FYROM_IMP,FYROM
+ΑΛΒΑΝΙΑ_IMP,ALBANIA
+ΒΟΥΛΓΑΡΙΑ_IMP,BULGARIA
+ΙΤΑΛΙΑ_IMP,ITALY
+ΤΟΥΡΚΙΑ_IMP,TURKEY
+ΑΛΒΑΝΙΑ_EXP,ALBANIA
+ΒΟΥΛΓΑΡΙΑ_EXP,BULGARIA
+ΙΤΑΛΙΑ_EXP,ITALY
+ΤΟΥΡΚΙΑ_EXP,TURKEY
+ΑΛΒΑΝΙΑ,ALBANIA
+ΒΟΥΛΓΑΡΙΑ,BULGARIA
+ΙΤΑΛΙΑ,ITALY
+ΤΟΥΡΚΙΑ,TURKEY
+ΑΛΟΥΜΙΝΙΟ (GT1),ALOUMINIO_GT1
+ΑΛΟΥΜΙΝΙΟ (GT2),ALOUMINIO_GT2
+ΑΛΟΥΜΙΝΙΟ (ST),ALOUMINIO_ST
+ΑΗΣΑΓ 8,KERATSINI8
+ΑΗΣΑΓ 9,KERATSINI9
+ΛΑΥΡΙΟ 1,LAVRIO1
+ΛΑΥΡΙΟ 2,LAVRIO2
+ΛΑΥΡΙΟ 3 (ΜΣΚ),LAVRIO3
+ΛΑΥΡΙΟ 4 (GT1),LAVRIO4_GT1
+ΛΑΥΡΙΟ 4 (GT2),LAVRIO4_GT2
+ΛΑΥΡΙΟ 4 (GT3),LAVRIO4_GT3
+ΛΑΥΡΙΟ 4 (ST),LAVRIO4_ST
+ΛΑΥΡΙΟ 5,LAVRIO5
+ΑΛΙΒΕΡΙ 1,ALIVERI1
+ΑΛΙΒΕΡΙ 2,ALIVERI2
+ΑΛΙΒΕΡΙ 3,ALIVERI3
+ΑΛΙΒΕΡΙ 4,ALIVERI4
+ΑΛΙΒΕΡΙ 5,ALIVERI5
+ΑΓ. ΔΗΜΗΤΡΙΟΣ 1,AG_DIMITRIOS1
+ΑΓ. ΔΗΜΗΤΡΙΟΣ 2,AG_DIMITRIOS2
+ΑΓ. ΔΗΜΗΤΡΙΟΣ 3,AG_DIMITRIOS3
+ΑΓ. ΔΗΜΗΤΡΙΟΣ 4,AG_DIMITRIOS4
+ΑΓ. ΔΗΜΗΤΡΙΟΣ 5,AG_DIMITRIOS5
+ΑΜΥΝΤΑΙΟ 1,AMYNDEO1
+ΑΜΥΝΤΑΙΟ 2,AMYNDEO2
+ΚΑΡΔΙΑ 1,KARDIA1
+ΚΑΡΔΙΑ 2,KARDIA2
+ΚΑΡΔΙΑ 3,KARDIA3
+ΚΑΡΔΙΑ 4,KARDIA4
+ΛΙΠΤΟΛ,LIPTOL
+ΜΕΓΑΛΟΠΟΛΗ 1,MEGALOPOLI1
+ΜΕΓΑΛΟΠΟΛΗ 2,MEGALOPOLI2
+ΜΕΓΑΛΟΠΟΛΗ 3,MEGALOPOLI3
+ΜΕΓΑΛΟΠΟΛΗ 4,MEGALOPOLI4
+ΜΕΓΑΛΟΠΟΛΗ 5 (GT1),MEGALOPOLI_V_GT1
+ΜΕΓΑΛΟΠΟΛΗ 5 (GT2),MEGALOPOLI_V_GT2
+ΜΕΓΑΛΟΠΟΛΗ 5 (ST),MEGALOPOLI_V_ST
+ΝΤΙΖΕΛ ΜΕΓΑΛΟΠΟΛΗΣ,MEGALOPOLI_DIESEL
+ΜΕΛΙΤΗ,MELITI
+ΠΤΟΛΕΜΑΙΔΑ 1,PTOLEMAIDA1
+ΠΤΟΛΕΜΑΙΔΑ 2,PTOLEMAIDA2
+ΠΤΟΛΕΜΑΙΔΑ 3,PTOLEMAIDA3
+ΠΤΟΛΕΜΑΙΔΑ 4,PTOLEMAIDA4
+ΠΤΟΛΕΜΑΙΔΑ 5,PTOLEMAIDA5
+ΗΡΩΝ 1,HERON1
+ΗΡΩΝ 2,HERON2
+ΗΡΩΝ 3,HERON3
+ΘΗΣ ΗΡΩΝ,HERON_CC
+ΗΡΩΝ,HERON_invalid
+ΕΝΘΕΣ,ELPEDISON_THESS
+ΚΟΜΟΤΗΝΗ (GT1),KOMOTINI_GT1
+ΚΟΜΟΤΗΝΗ (GT2),KOMOTINI_GT2
+ΚΟΜΟΤΗΝΗ (ST),KOMOTINI_ST
+ΚΡΕΜΑΣΤΑ,KREMASTA
+ΣΤΡΑΤΟΣ 1,STRATOS1
+ΣΤΡΑΤΟΣ 2,STRATOS2
+ΙΛΑΡΙΩΝ,ILARIONAS
+ΚΑΣΤΡΑΚΙ,KASTRAKI
+ΠΟΛΥΦΥΤΟ,POLYFYTO
+ΣΦΗΚΙΑ,SFIKIA
+ΑΣΩΜΑΤΑ,ASOMATA
+ΜΑΚΡΟΧΩΡΙ,MAKROCHORI
+ΑΩΟΣ,P_AOOU
+ΠΟΥΡΝΑΡΙ,POURNARI1
+ΠΟΥΡΝΑΡΙ 2,POURNARI2
+ΘΗΣΑΥΡΟΣ,THESAVROS1
+ΠΛΑΤΑΝΟΒΡΥΣΗ,PLATANOVRYSI
+ΛΑΔΩΝΑΣ,LADONAS
+ΠΛΑΣΤΗΡΑΣ,PLASTIRAS
+ΕΔΕΣΣΑΙΟΣ,EDESSAIOS
+ΑΓΡΑΣ,AGRAS
+ΛΟΥΡΟΣ,LOUROS
+ΓΚΙΩΝΑ,GKIONA
+ELPEDISON_THISVI (ST),ELPEDISON_THISVI_ST
+MOTOR OIL,MOTOR_OIL
+ΘΗΣ ΘΙΣΒΗ (GT1),ELPEDISON_THISVI_GT1
+ΘΗΣ ΘΙΣΒΗ (ST),ELPEDISON_THISVI_ST

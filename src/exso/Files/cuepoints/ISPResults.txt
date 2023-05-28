@@ -1,0 +1,45 @@
+$ISP_Schedule
+Load: ('Non Dispatchable Load', 'System Overview')
+Overview: ('System Overview', 'Energy Marginal Prices')
+ISPEnergyPrices: ('Energy Marginal Prices', 'Cleared Energy')
+ISPEnergyVolumes: ('Cleared Energy', 'Thermal Units')
+Thermal: ('Thermal Units', 'Total Thermal Production']
+Hydro: ('Hydro Units', 'Total Hydro Production']
+DispatchableLoad: ('Dispatchable Load', 'Total Dispatchable Load']
+NetBorderSchedules: ('Net Border Schedules', 'Total Net Schedules']
+NetBorderMarketSchedules: ('Net Border Market Schedules', 'Total Net Border Schedules']
+ReserveRequirements: ('Reserve Requirements', 'Corridor Limit')
+
+$ISP_Activations
+Thermal: ('Thermal Units', 'Total Thermal activation']
+Hydro: ('Hydro Units', 'Total Hydro activation']
+DispatchableLoad: ('Dispatchable Load', 'Total Dispatchable Load']
+
+$CCGT_Schedule
+CCGT_Schedule: ('CCGT', 'last']
+
+$FCR
+FCR: ('FCR', 'Thermal Unit')
+Thermal: ('Thermal Unit', 'Hydro Unit')
+Hydro: ('Hydro Unit', 'Hydro Units DOWN Total']
+DispatchableLoad: ('Dispatchable Load Unit', 'Dispatchable Load Units DOWN Total']
+DemandResponse: ('Demand Response Unit','Demand Response Units Total']
+
+
+$aFRR
+aFRR: ('aFRR', 'Thermal Unit')
+Thermal: ('Thermal Unit', 'Hydro Unit')
+Hydro: ('Hydro Unit', 'Hydro Units DOWN Total']
+DispatchableLoad: ('Dispatchable Load Unit', 'Dispatchable Load Units DOWN Total']
+DemandResponse: ('Demand Response Unit','Demand Response Units Total']
+
+$mFRR
+mFRR: ('mFRR', 'Thermal Unit')
+Thermal: ('Thermal Unit', 'Hydro Unit')
+Hydro: ('Hydro Unit', 'Hydro Units DOWN Total']
+DispatchableLoad: ('Dispatchable Load Unit', 'Dispatchable Load Units DOWN Total']
+DemandResponse: ('Demand Response Unit','Demand Response Units Total']
+
+$RR
+RR: ('RR', 'Thermal Unit')
+;

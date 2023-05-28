@@ -1,0 +1,4 @@
+$RESForecast
+SystemRES: ('(MWh)', 'Total System']
+NetworkRES: ('(MWh)', 'Total (MV)'] 
+;
