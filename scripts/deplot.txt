@@ -1,5 +1,2 @@
 PycharmProjects\deploy_exso\Scripts\activate.bat
 python -m exso update -rl Desktop\deployed_root\datalake -rb Desktop\deployed_root\database
-
-Γκέλυ Χατζηευθυμίου
-6936 676775
