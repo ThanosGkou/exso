@@ -426,8 +426,13 @@ class LogSplitter:
         facts = {}
         [facts.update(self.events_cleaner(fact)) for fact in facts_raw]
 
+        _warnings = re.findall('WARNING.*', report_log)
+        if _warnings:
+            print('\t\t*There were some warnings activated during the update process. Chances are that they are completely harmless, but if you were expecting something specific, have a look at the log files, at the very bottom. (C:/Users/yourusername/AppData/Local/Temp/exso/logs/latest_logs/{}.log)'.format(report_name))
+
         self.report_logs[report_name] = {'facts': facts,
-                                        'log': report_log}
+                                        'log': report_log,
+                                         'warnings':_warnings}
 
 
     # *******  *******   *******   *******   *******   *******   *******
@@ -452,7 +457,14 @@ class LogSplitter:
         with open(output_path, 'w', encoding='utf-8') as f:
             for k, v in self.report_logs[report_name].items():
                 if k != 'log':
-                    f.write(k + ' --> \n\t' + json.dumps(v) + '\n\n\n')
+                    if isinstance(v, list):
+                        f.write('\n\n'+k + '\n')
+                        count = 1
+                        for single_warning in v:
+                            f.write(f'\t{count} '+ single_warning + '\n')
+                            count += 1
+                    else:
+                        f.write(k + ' --> \n\t' + json.dumps(v) + '\n\n\n')
                 else:
                     f.write(k)
                     f.writelines(v)
