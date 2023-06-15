@@ -8,6 +8,8 @@ Hydro: ('Hydro Units', 'Total Hydro Production']
 DispatchableLoad: ('Dispatchable Load', 'Total Dispatchable Load']
 NetBorderSchedules: ('Net Border Schedules', 'Total Net Schedules']
 NetBorderMarketSchedules: ('Net Border Market Schedules', 'Total Net Border Schedules']
+AuctionCBS: ('Auction CBS (DAM+CRIDAs)', 'Total Market CBS (+XBID)')
+TotalMarketCBS: ['Total Market CBS (+XBID)', 'Total Market Schedules']
 ReserveRequirements: ('Reserve Requirements', 'Corridor Limit')
 
 $ISP_Activations
