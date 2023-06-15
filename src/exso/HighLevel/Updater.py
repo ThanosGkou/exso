@@ -28,7 +28,7 @@ from haggis import string_util as hag
 class Updater:
     """ The main API-class of the exso project to update datasets.
         Check out the __init__.__doc__ for more information """
-    def __init__(self, root_lake:str|Path, root_base:str|Path, reports_pool:Report.Pool|None = None, all:bool=True, groups:None|list = None, some:str|list = None):
+    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, all:bool=True, groups:None|list = None, some:str|list = None):
         """
         Constructor parameters for the Updater class:
 
