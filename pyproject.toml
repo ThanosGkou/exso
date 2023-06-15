@@ -20,6 +20,7 @@ dependencies = [
   "beautifulsoup4>=4.11.2",
   "bs4>=0.0.1",
   "colorama>=0.4.6",
+  "emoji>=2.5.0",
   "fuzzywuzzy>=0.18.0",
   "haggis>=0.8.0",
   "matplotlib>=3.7.1",
