@@ -28,7 +28,7 @@ from haggis import string_util as hag
 class Updater:
     """ The main API-class of the exso project to update datasets.
         Check out the __init__.__doc__ for more information """
-    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, all:bool=True, groups:None|list = None, some:str|list = None):
+    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, all:bool=True, groups:None|list = None, which:str|list = None):
         """
         Constructor parameters for the Updater class:
 
@@ -37,7 +37,7 @@ class Updater:
         :param reports_pool (optional): [Report.Pool] If you have instantiated a Report.Pool object, you can pass it to avoid re-instantiation
         :param all (optional): [bool] If True, will update all reports that currently have an implemented pipeline
         :param groups (optional): [list|None] if not None, will override the "all", regardless if it was True. Give the list of groups that you want to update
-        :param some (optional): [list|None] If not None, it will override both "all" and "groups". Give a list with the specific report-names that you want to update.
+        :param which (optional): [list|None] If not None, it will override both "all" and "groups". Give a list with the specific report-names that you want to update.
 
         *By default, the updater has "all=True".
 
@@ -59,7 +59,7 @@ class Updater:
         self.rp = self.get_pool(reports_pool)
         self.keep_steps = False
         self.mode = None
-        self.report_names = self.derive_reports(self.rp, all, groups, some)
+        self.report_names = self.derive_reports(self.rp, all, groups, which)
 
 
         self.refresh_requirements_file = Files.files_dir / 'refresh_requirements.txt'
@@ -130,8 +130,8 @@ class Updater:
 
         if reqs['all'] == True:
             requirements.update({rn:True for rn in all_reports})
-        elif reqs['some']:
-            requirements.update({rn:True for rn in reqs['some']})
+        elif reqs['which']:
+            requirements.update({rn:True for rn in reqs['which']})
         elif reqs['all_except']:
             requirements.update({rn:True for rn in all_reports})
             requirements.update({rn:False for rn in reqs['all_except']})
@@ -336,11 +336,11 @@ class Updater:
         self.r = r
 
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
-    def derive_reports(self, rp, all:bool, groups:str|list|None, some:str|list|None):
+    def derive_reports(self, rp, all:bool, groups:str|list|None, which:str|list|None):
 
         report_names = None
         self.logger.info("Assessing what kind of update was requested.")
-        self.logger.info(f"Provided arguments: {all = }, {groups = }, {some = }")
+        self.logger.info(f"Provided arguments: {all = }, {groups = }, {which = }")
 
         selected = None
         if all:
@@ -355,12 +355,12 @@ class Updater:
             implemented = rp.get_available()
             report_names = implemented[implemented.group.isin(groups)]['report_name'].values
 
-        if not isinstance(some, type(None)):
-            selected = "some"
-            if isinstance(some, str):
-                report_names  = [some]
+        if not isinstance(which, type(None)):
+            selected = "which"
+            if isinstance(which, str):
+                report_names  = [which]
             else:
-                report_names = some
+                report_names = which
 
 
         self.logger.info("Will update datasets based on argument '{}'".format(selected))
