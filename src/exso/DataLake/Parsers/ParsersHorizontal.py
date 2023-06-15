@@ -113,6 +113,7 @@ def logging_sampler(func):
 ###############################################################################################
 ###############################################################################################
 class ArchetypeHorizontal(Archetype):
+    logger = logging.getLogger()
 
     # *********************************************
     def param_setter(self):
@@ -124,7 +125,6 @@ class ArchetypeHorizontal(Archetype):
     # *********************************************
     @logging_sampler
     def pre_proc(self, df):
-
 
         df = self.baptize_indicator_column(df, indicator_col_index = self.indicator_col_index, field = self.field)
 
@@ -184,8 +184,16 @@ class ArchetypeHorizontal(Archetype):
             # print(f'{id_end = }')
 
 
-
             if isinstance(id_start, type(None)) or isinstance(id_end, type(None)):
+                if isinstance(id_start, type(None)):
+                    self.logger.warning("Could not locate start-cue '{}', while extracting subfield: '{}' from field '{}', for report: '{}', for date: '{}'".format(start_cue, subfield, self.field, self.report_name, self.period_dates[0]))
+                if isinstance(id_end, type(None)):
+                    self.logger.warning("Could not locate end-cue '{}', while extracting subfield: '{}' from field '{}', for report: '{}', for date: '{}'".format(end_cue, subfield, self.field, self.report_name, self.period_dates[0]))
+                print()
+                print(self.report_name)
+                print(self.period_dates)
+                input('stop')
+
                 subfields_dfs[subfield] = pd.DataFrame()
                 continue
 
