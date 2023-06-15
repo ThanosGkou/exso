@@ -331,10 +331,10 @@ metadata = rp.get_available(only_names = False)
 ```sh
 # Now, if you conclude that you want e.g. 3 specific reports (at least for now), you can:
 interesting_reports = ['reportname1', 'reportname2', 'reportname3']
-upd = Updater(root_lake, root_base, reports_pool = rp,  some = interesting_reports) # given that you have already instantiated a Report.Pool object
+upd = Updater(root_lake, root_base, reports_pool = rp,  which = interesting_reports) # given that you have already instantiated a Report.Pool object
 
 # or, for future use
-upd = Updater(root_lake, root_base, some = interesting_reports) # with no need of instantiating a Report.Pool object
+upd = Updater(root_lake, root_base, which = interesting_reports) # with no need of instantiating a Report.Pool object
 
 # Very often, a specific datalake-file (excel file) for a given date, may have multiple versions. (e.g. YYYYMMDD_report_01.xlsx, YYYYMMDD_report_02.xlsx)
 # The use_lake_version argument allows to select which version to use.
