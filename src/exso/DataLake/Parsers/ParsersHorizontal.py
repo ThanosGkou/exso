@@ -189,10 +189,6 @@ class ArchetypeHorizontal(Archetype):
                     self.logger.warning("Could not locate start-cue '{}', while extracting subfield: '{}' from field '{}', for report: '{}', for date: '{}'".format(start_cue, subfield, self.field, self.report_name, self.period_dates[0]))
                 if isinstance(id_end, type(None)):
                     self.logger.warning("Could not locate end-cue '{}', while extracting subfield: '{}' from field '{}', for report: '{}', for date: '{}'".format(end_cue, subfield, self.field, self.report_name, self.period_dates[0]))
-                print()
-                print(self.report_name)
-                print(self.period_dates)
-                input('stop')
 
                 subfields_dfs[subfield] = pd.DataFrame()
                 continue
