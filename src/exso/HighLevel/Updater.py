@@ -28,18 +28,18 @@ from haggis import string_util as hag
 class Updater:
     """ The main API-class of the exso project to update datasets.
         Check out the __init__.__doc__ for more information """
-    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, all:bool=True, groups:None|list = None, which:str|list = None):
+    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, which:str|list = 'all', groups:None|list = None, only_ongoing:bool = False):
         """
         Constructor parameters for the Updater class:
 
         :param root_lake: [str|Path] The desired path to use as the datalake directory
         :param root_base: [str|Path] the desired path to use as the database directory
         :param reports_pool (optional): [Report.Pool] If you have instantiated a Report.Pool object, you can pass it to avoid re-instantiation
-        :param all (optional): [bool] If True, will update all reports that currently have an implemented pipeline
-        :param groups (optional): [list|None] if not None, will override the "all", regardless if it was True. Give the list of groups that you want to update
-        :param which (optional): [list|None] If not None, it will override both "all" and "groups". Give a list with the specific report-names that you want to update.
+        :param which (optional): [list|None] If None, will update everything (unless otherwise specified through "groups" or "only_ongoing"). If not None, give a list or a str, with the specific report-names that you want to update.
+        :param groups (optional): [list|None] Give a list of groups that you want to update
+        :param only_ongoing (optional): [bool|False] if True, will only update reports that are still actively updated.
 
-        *By default, the updater has "all=True".
+        *Default settings dictate update of all reports..
 
         Usage: - Instantiate an Updater object.
                - call the .run() method
@@ -59,7 +59,7 @@ class Updater:
         self.rp = self.get_pool(reports_pool)
         self.keep_steps = False
         self.mode = None
-        self.report_names = self.derive_reports(self.rp, all, groups, which)
+        self.report_names = self.derive_reports(self.rp, which, groups, only_ongoing)
 
 
         self.refresh_requirements_file = Files.files_dir / 'refresh_requirements.txt'
@@ -122,15 +122,15 @@ class Updater:
 
         reqs = self.read_textfile(self.refresh_requirements_file)
 
-        reqs['all'] = eval(reqs['all'])
+        # reqs['all'] = eval(reqs['all'])
         reqs['already_done'] = eval(reqs['already_done'])
 
         all_reports = self.rp.get_available()['report_name'].values
         requirements = {report_name: False for report_name in all_reports}
 
-        if reqs['all'] == True:
-            requirements.update({rn:True for rn in all_reports})
-        elif reqs['which']:
+        # if reqs['all'] == True:
+        #     requirements.update({rn:True for rn in all_reports})
+        if reqs['which']:
             requirements.update({rn:True for rn in reqs['which']})
         elif reqs['all_except']:
             requirements.update({rn:True for rn in all_reports})
@@ -303,6 +303,7 @@ class Updater:
         r = Report.Report(self.rp, report_name, self.root_lake, self.root_base, api_allowed=True)
         if self.refresh_requirements[report_name]:
             self.logger.info("Refresh requirement = True. Deleting the existing database: {}".format(r.database_path))
+            print('\t\tIt seems like you upgraded to the latest exso version, which brought some changes to the specific report ({}). This report\'s data, just for this time, will be fully refreshed instead of just updated.'.format(report_name))
             shutil.rmtree(r.database_path, ignore_errors=True)
 
         lake = DataLake.DataLake(r, use_lake_version=use_lake_version, retroactive_update = retroactive_update)
@@ -336,32 +337,36 @@ class Updater:
         self.r = r
 
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
-    def derive_reports(self, rp, all:bool, groups:str|list|None, which:str|list|None):
+    def derive_reports(self, rp, which:str|list|None, groups:str|list|None, only_ongoing:bool):
 
         report_names = None
         self.logger.info("Assessing what kind of update was requested.")
-        self.logger.info(f"Provided arguments: {all = }, {groups = }, {which = }")
+        self.logger.info(f"Provided arguments: {which = }, {groups = }, {only_ongoing = }")
 
         selected = None
-        if all:
-            report_names = rp.get_available().report_name.values
-            selected = "all"
+        implemented = rp.get_available()
 
-        if groups:
-            if isinstance(groups, str):
-                groups = [groups]
+        if not which:
+            which = []
 
-            selected = "groups"
-            implemented = rp.get_available()
-            report_names = implemented[implemented.group.isin(groups)]['report_name'].values
-
-        if not isinstance(which, type(None)):
-            selected = "which"
-            if isinstance(which, str):
-                report_names  = [which]
+        elif isinstance(which, str):
+            if which == 'all':
+                which = implemented.report_name.values
             else:
-                report_names = which
+                which = [which]
 
+        if not groups:
+            groups = implemented['group'].to_list()
+        elif isinstance(groups, str):
+            groups = [groups]
+
+        intersect = implemented[((implemented.report_name.isin(which))&
+                                 (implemented.group.isin(groups)))]
+
+        if only_ongoing:
+            intersect = intersect[intersect.available_until.isna() == True].copy()
+
+        report_names = intersect['report_name'].to_list()
 
         self.logger.info("Will update datasets based on argument '{}'".format(selected))
         self.logger.info("To-update datasets: {}".format(report_names))
@@ -428,7 +433,7 @@ class LogSplitter:
 
         _warnings = re.findall('WARNING.*', report_log)
         if _warnings:
-            print('\t\t*There were some warnings activated during the update process. Chances are that they are completely harmless, but if you were expecting something specific, have a look at the log files, at the very bottom. (C:/Users/yourusername/AppData/Local/Temp/exso/logs/latest_logs/{}.log)'.format(report_name))
+            print('\t\t*There were some warnings activated during the update process. Chances are that they are completely harmless, but if you were expecting something specific, have a look at the log files, at the very bottom. (C:/Users/yourusername/AppData/Local/Temp/exso/logs/latest_logs/{}.log)\n\n'.format(report_name))
 
         self.report_logs[report_name] = {'facts': facts,
                                         'log': report_log,
