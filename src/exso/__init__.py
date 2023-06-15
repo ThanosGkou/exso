@@ -45,7 +45,7 @@ _pbar_settings = {'bar_format': "%s{desc:<30} {percentage:4.1f}symbol| %s{bar:30
                  'smoothing':1}
 _pbar_settings['bar_format'] = re.sub('symbol', '%', _pbar_settings['bar_format'])
 
-def _modify_system_formats(decimal_sep='.', list_sep=','):
+def _set_system_formats(decimal_sep='.', list_sep=','):
     system_formats_file = files_dir / 'system_formats.txt'
     with open(system_formats_file, 'w') as f:
         formats = {'decimal_sep':decimal_sep,

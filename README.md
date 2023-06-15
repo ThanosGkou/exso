@@ -121,7 +121,6 @@ pip install exso
 # ***exso*** API
  ***exso*** can be used either through the **command line interface** ("CLI-based" for short), intended for only the core usage, **or** as an importable **python package** through any IDE ("IDE-based" for short), intended and allowing more advanced usage.
 - At the moment, the CLI-based API has some namespace inconsistencies compared to the IDE-based API
-  - e.g. set_system_formats instead of _modify_system_formats(...), a.o.
 - They can only become annoying if frequently switching from CLI-based to IDE-based usage, which is not really probable, but they will nonetheless be conformed by the next ***exso*** version.
 
 ### For non-programmers
@@ -708,7 +707,7 @@ If your default/desired system formats do not comply with ***exso***'s defaults,
   
   import exso
   # modify persistently
-  exso._modify_system_formats(decimal_sep = "your decimal separator", list_sep = "your list separator")
+  exso._set_system_formats(decimal_sep = "your decimal separator", list_sep = "your list separator")
   
   # modify just once
   exso._list_sep = "your list separator"
