@@ -86,7 +86,7 @@ class Updater:
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
     def ensure_intention(self, root_lake, root_base):
         if root_lake.exists() == False and root_base.exists() == False:
-            print('\n\n----->>>> Provided DataLake and DataBase directories don\'t exist. Are you sure you provided the correct paths to database/datalake? (if it\'s a first-time run, just hit enter)')
+            print('\n\n----->>>> Confirm that you provided the intended paths for database/datalake? (if correct, just hit enter)')
             print('\t\tRoot lake:', root_lake.absolute())
             print('\t\tRoot base:', root_base.absolute())
 
