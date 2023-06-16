@@ -159,6 +159,7 @@ class ParsingSettings:
         else:
             attempt_filepath = search_in_dir / mapping
             if attempt_filepath.is_file():
+                # dont use exso._list_sep: these files are provided by exso, and use list_sep = ',' regardless of the user system's formats
                 df = pd.read_csv(attempt_filepath, header=0, index_col=None)
                 mapping = dict(zip(df.iloc[:, 0].values, df.iloc[:, 1].values))
             else:
