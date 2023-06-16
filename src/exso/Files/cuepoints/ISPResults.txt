@@ -6,8 +6,8 @@ ISPEnergyVolumes: ('Cleared Energy', 'Thermal Units')
 Thermal: ('Thermal Units', 'Total Thermal Production']
 Hydro: ('Hydro Units', 'Total Hydro Production']
 DispatchableLoad: ('Dispatchable Load', 'Total Dispatchable Load']
-NetBorderSchedules: ('Net Border Schedules', 'Total Net Schedules']
-NetBorderMarketSchedules: ('Net Border Market Schedules', 'Total Net Border Schedules']
+MarketCBS: ('Net Border Schedules', 'Total Net Schedules']
+TotalMarketCBS: ('Net Border Market Schedules', 'Total Net Border Schedules']
 ReserveRequirements: ('Reserve Requirements', 'Corridor Limit')
 
 $ISP_Activations
