@@ -77,7 +77,7 @@ class IO:
             encoding = 'utf-16'
         else:
             encoding = 'utf-8'
-        frame.to_csv(filepath, mode=mode, header=header, encoding=encoding, sep= exso._list_sep, decimal=exso._decimal_sep)
+        frame.to_csv(filepath, mode=mode, header=header, encoding=encoding, sep= exso._list_sep, decimal=exso._decimal_sep, date_format=exso._dt_format)
 
         #make it read-only
         # os.chmod(str(filepath), mode=stat.S_IROTH)
