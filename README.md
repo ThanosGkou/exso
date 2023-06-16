@@ -76,6 +76,9 @@ An analytical framework for the Greek Power&Gas System Operation ("SO") and Mark
 Required Python Version >=3.10
 ```sh
 pip install exso
+
+# Upgrade to most recent version:
+pip install --upgrade exso
 ```
 
 - Note: If you are connected through your company's access point, and your company has restrictions against [PyPI](https://pypi.org/) and/or [GitHub](https://github.com/), you may be unable to install, not just ***exso*** but any open-source python package.
@@ -117,6 +120,9 @@ pip install exso
   pip install exso
   ```
 
+### Things to consider when upgrading
+- Make sure, that you re-inform ***exso*** on your [system's data format settings](#system-formats)
+- 
 -----
 # ***exso*** API
  ***exso*** can be used either through the **command line interface** ("CLI-based" for short), intended for only the core usage, **or** as an importable **python package** through any IDE ("IDE-based" for short), intended and allowing more advanced usage.
