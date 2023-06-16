@@ -793,7 +793,9 @@ The current setup is oriented around *reports*. An Analytics API currently under
 - Advanced analytics methods (e.g. Unit Unavailabilities statistics, comparisons, correlations)
 
 ### Support for more Reports
-The next version, will contain some improvements on existing reports, and the addition of Water declaration and NTC reports.
+One of the following version, will contain some improvements on existing reports, and the addition of Water declaration and NTC reports.
+
+Also, **ENTSO-E** will be added to the **supported publishers**, for across-europe data collection, integrated in the same local database.
 
 ### Support for Linux
 Support for Linux-based systems is not foreseen at the moment, but feel free to submit a request if needed.
@@ -801,12 +803,14 @@ Support for Linux-based systems is not foreseen at the moment, but feel free to 
 ----
 ## Tests
 - ***ExSO*** is fairly tested for the envisaged usage, but since the project is not (at least yet) intended for collaborative development, tests are not published.
+
 - The design philosophy is not to catch all errors imagineable, but rather that basic users will stick to basic/documented usage, and that advanced users know what they're doing
-  - e.g. attempting to plot a file beyond its available datetime range, will not
 - From the user's perspective, the [Validation module](#data-validation) is available to assist in validating/trusting that the database accurately reflects the raw datalaek files. 
 ----
 ## Issues
 - Feel free to submit any issues [here](https://github.com/ThanosGkou/exso/issues) or via e-mail
+- Use of ***ExSO*** (update mode) with conda environments, was reported to present encoding issues during printing coloured text in the console, and despite otherwise being functional, the print statement after each report's success causes an encoding error. Try to use pip environments instead.
+
 
 
 ----
@@ -831,11 +835,11 @@ Briefly (without this description being a substitute for the full license or any
 
 ----
 ## Citation
-If **exso** assists you in making the "publicly available" data, actually valuable and accessible, consider citing:
+If ***ExSO*** assists you in making the "publicly available" data, actually valuable and accessible, consider citing:
 
 #### APA
 
-  - Natsikas, T. (2023). ExSO: market Exchange and Sytem Operation analytical framework (Version 0.0.0) [Computer software]. https://github.com/ThanosGkou/exso
+  - Natsikas, T. (2023). ExSO: market Exchange and Sytem Operation analytical framework (Version 0.0.1) [Computer software]. https://github.com/ThanosGkou/exso
 
 #### BibTeX
 - @software{Natsikas_ExSO_market_Exchange_2023,
@@ -843,7 +847,7 @@ author = {Natsikas, Thanos},
 month = apr,
 title = {{ExSO: market Exchange and Sytem Operation analytical framework}},
 url = {https://github.com/ThanosGkou/exso},
-version = {0.0.0},
+version = {0.0.1},
 year = {2023}
 }
 
