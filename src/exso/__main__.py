@@ -118,16 +118,11 @@ def main():
                         end_date = arguments.query_until)
 
         if arguments.query_plot:
-            plot_savepath = None
-            if save_dir:
-                save_dir.mkdir(exist_ok=True)
-                plot_savepath = (save_dir/ arguments.query_locator).with_suffix('.html')
-
             node.plot(tz_pipe=tz_pipe,
-                      start_date = arguments.query_from,
-                      end_date = arguments.query_until,
-                      save_path = plot_savepath,
-                      area = arguments.plot_stacked)
+                      start_date=arguments.query_from,
+                      end_date=arguments.query_until,
+                      save_path=save_dir,
+                      area=arguments.plot_stacked)
 
 
     elif arguments.mode == 'validate':
