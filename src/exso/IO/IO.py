@@ -68,6 +68,8 @@ class IO:
             if include_timezone == False:
                 frame = frame.tz_localize(None)
 
+            frame.index = pd.to_datetime(frame.index, format=exso._dt_format)
+
         if mode == 'a':
             header = False
         else:
@@ -77,6 +79,7 @@ class IO:
             encoding = 'utf-16'
         else:
             encoding = 'utf-8'
+
         frame.to_csv(filepath, mode=mode, header=header, encoding=encoding, sep= exso._list_sep, decimal=exso._decimal_sep, date_format=exso._dt_format)
 
         #make it read-only
