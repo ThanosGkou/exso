@@ -52,7 +52,7 @@ class TreeAccessors:
             return DNA(absolute_dna)
     # ********   *********   *********   *********   *********   *********   *********   *********
     def get_nodes_whose(self, attribute, equals, collapse_if_single = False):
-        
+
         if attribute == 'path':
             equals = str(Path(equals).absolute())
             target_nodes = [n for n in self.nodes if str(getattr(n, attribute).absolute())==equals]
