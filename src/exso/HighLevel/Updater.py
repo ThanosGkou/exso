@@ -429,7 +429,7 @@ class LogSplitter:
 
         _warnings = re.findall('WARNING.*', report_log)
         if _warnings:
-            print('\t\t*There were some warnings activated during the update process. \n\t\t Chances are that they are completely harmless, and not of any interest for a user, but if you know what are you looking for, have a look at the log files, at the very bottom. (C:/Users/yourusername/AppData/Local/Temp/exso/logs/latest_logs/{}.log)\n\t\t Even a lot of warnings can be part of the plan.\n\n'.format(report_name))
+            print('*')
 
         self.report_logs[report_name] = {'facts': facts,
                                         'log': report_log,
