@@ -14,31 +14,31 @@ $ISP_Activations
 Thermal: ('Thermal Units', 'Total Thermal activation']
 Hydro: ('Hydro Units', 'Total Hydro activation']
 DispatchableLoad: ('Dispatchable Load', 'Total Dispatchable Load']
-DemandResponse: ('Demand Response', 'Total Demand Response']
+DemandResponse: ('Demand Response', last]
 
 $CCGT_Schedule
-CCGT_Schedule: ('CCGT', 'last']
+CCGT_Schedule: ('CCGT', last]
 
 $FCR
 FCR: ('FCR', 'Thermal Unit')
 Thermal: ('Thermal Unit', 'Hydro Unit')
 Hydro: ('Hydro Unit', 'Hydro Units DOWN Total']
 DispatchableLoad: ('Dispatchable Load Unit', 'Dispatchable Load Units DOWN Total']
-DemandResponse: ('Demand Response Unit','Demand Response Units Total']
+DemandResponse: ('Demand Response Unit', last]
 
 $aFRR
 aFRR: ('aFRR', 'Thermal Unit')
 Thermal: ('Thermal Unit', 'Hydro Unit')
 Hydro: ('Hydro Unit', 'Hydro Units DOWN Total']
 DispatchableLoad: ('Dispatchable Load Unit', 'Dispatchable Load Units DOWN Total']
-DemandResponse: ('Demand Response Unit','Demand Response Units Total']
+DemandResponse: ('Demand Response Unit', last]
 
 $mFRR
 mFRR: ('mFRR', 'Thermal Unit')
 Thermal: ('Thermal Unit', 'Hydro Unit')
 Hydro: ('Hydro Unit', 'Hydro Units DOWN Total']
 DispatchableLoad: ('Dispatchable Load Unit', 'Dispatchable Load Units DOWN Total']
-DemandResponse: ('Demand Response Unit','Demand Response Units DOWN Total']
+DemandResponse: ('Demand Response Unit', last]
 
 $RR
 RR: ('RR', 'Thermal Unit')
