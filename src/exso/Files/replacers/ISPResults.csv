@@ -2,3 +2,5 @@ raw,conformed,comment
 MEPSO,NORTH MACEDONIA,
 Auction CBS (DAM+CRIDAs),Net Border Schedules,"after Apr-23, XBID was introduced. But still, market outcome = market outcome, regardless of what market that is"
 Total Market CBS (+XBID),Net Border Market Schedules,"after Apr-23, XBID was introduced. But still, market outcome = market outcome, regardless of what market that is"
+Aggregated Auction Schedules,Total Net Schedules,
+Total Market Schedules,Total Net Border Schedules,
