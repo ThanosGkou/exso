@@ -14,6 +14,21 @@ def main():
 
     p.add_argument('--which', nargs='+', default="all",
                    help="--which argument can be either 'all' (default), or a list of valid report-names (space-separated)")
+    p.add_argument('--groups', nargs='+', default=None, choices=['ISPResults',
+                                                                 'ISPForecasts',
+                                                                 'ISPRequirements',
+                                                                 'Forecasts',
+                                                                 'UnitAvailabilities',
+                                                                 'Transmission',
+                                                                 'Balancing',
+                                                                 'DAS',
+                                                                 'Hydro',
+                                                                 'SCADA',
+                                                                 'DAM',
+                                                                 'IntraDayMarket',
+                                                                 'DemandSupplyBids',
+                                                                 'Gas'
+                                                                 ])
 
     p.add_argument('--val_report', help='report name you wish to validate.')
     p.add_argument('--val_dates', nargs='+', help="space separated date(s) to validate. format: YYYY-M-D")
@@ -51,13 +66,6 @@ def main():
         if getattr(arguments, attr):
             setattr(arguments,attr, Path(getattr(arguments,attr)))
 
-    # if arguments.which == "all":
-    #     all = True
-    #     some = None
-    # else:
-    #     all = False
-    #     some = arguments.which
-
 
     if arguments.mode == 'info':
         rp = exso.Report.Pool()
@@ -77,7 +85,8 @@ def main():
     if arguments.mode == 'update':
         upd = exso.Updater(root_lake=arguments.root_lake,
                            root_base=arguments.root_base,
-                           which = arguments.which
+                           which = arguments.which,
+                           groups = arguments.groups
                            )
         upd.run()
 
