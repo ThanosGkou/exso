@@ -544,17 +544,26 @@ Data can be accessed, visualized, manipulated and extracted through Node operati
 - **Any timezone, or time-slicing operations, only affect the returned data.**
 - The node's data remain intact and always in UTC timezone
 
-Optional arguments (**kwargs) are common for all three operations, and they can modify the returned time-range (from/to), and the returned timezone.
-- tz_pipe: None or list
+#### Optional arguments (**kwargs) 
+They are common accross all node-access operations, and they can modify the returned time-range (from/to), and the returned timezone.
+
+- #####  tz_pipe 
+  - string, list, or None
+  - If a string is provided, the database data will first be localized as UTC, and then returned, converted to the specified timezone.
   - If a list is provided: [database_timezone, target_timezone, (None)]
-  - The databases timezone is UTC and shall be set to UTC
-  - The target_timezone can be any pytz compatible timezone: Try to stick to wider zones (EET, CET, UTC, GMT) and not country-wide timezones (e.g. Europe/Athens, etc.)
-  - Last argument: 
-    - If is None, this means, after tz-conversion, truncate the timezone information (e.g. 2022-1-1 00:00 +02:00 will become --> 2022-1-1 00:00)
-    - If it doesn't exist (e.g. the list is [database_tz, target_Tz], the returned data will contain the tz-information) 
+  - The first argument specified the database-timezone, and **must always be UTC**
+  - The second argument be any pytz compatible timezone: Try to stick to wider zones (EET, CET, UTC, GMT) and not country-wide timezones (e.g. Europe/Athens, etc.)
+  - The third argument
+    - **IF provided, must be None**. This means, to truncate the trailing timezone information (e.g. **2022-1-1 00:00+02:00 --> 2022-1-1 00:00**)
+    - **IF not provided** (so, list is of length 2), the returned data will contain the tz-information.
 
-- start_date / end_date: it can accept pandas Timestamps and datetime.datetime objects, but also strings formatted as YYYY-MM-DD HH:MM
 
+- #####  start_date,  end_date 
+  - string, pd.Timestamp, datetime-like, None
+  - start_date = None means to start from the beginning of the file until end_date
+  - end_date = None means to span from start_date  until the end of the file
+  - string-format must be: YYYY-MM-DD HH:MM, as in all ***exso*** datetime occasions.
+  
 
 
 
@@ -565,9 +574,15 @@ Retrieve a node's data:
   ```sh
   node_data = node() # data is actually read from the database files
       
-  # retrieve data only for January '22, converted to EET timezone:
+  # retrieve data only for January '22, converted to EET timezone, and truncate the tz-information:
   # data is retrieved from memory
   node_data_range = node(tz_pipe = ['utc', 'eet', None], start_date = '2022-1-1', end_date = '2022-1-31')
+  
+  # the same, but this time, keep the tz-information
+  node_data_range = node(tz_pipe = ['utc', 'eet'], start_date = '2022-1-1', end_date = '2022-1-31')
+  # or, equivalently
+  node_data_range = node(tz_pipe = 'eet', start_date = '2022-1-1', end_date = '2022-1-31')
+  
 
   # retrieve all the node's data, in utc (data is retrieved from memory)
   node_data = node() # node's internal data not affected by an intermediate timezone/timeslicing operation.
@@ -591,7 +606,7 @@ Plot a node's data (node must be of file- or property-kind):
       
   # example: stacked-area plot, in EET timezone, only for the period after 1st-Jan 2023. Also save the plot somewhere specified.
 
-  node.plot(tz_pipe = ['utc', 'eet', None], start_date = '2023-1-1', show = True, save_path = "C:/Users/Desktop/my_plot.html", area = True)
+  node.plot(tz_pipe = 'eet', start_date = '2023-1-1', show = True, save_path = "C:/Users/Desktop/my_plot.html", area = True)
   ```
     
 
@@ -654,22 +669,13 @@ isp1 = tree['root.admie.isp1ispresults'] # dot separated, case INsensitive
 
 # export the whole data in utc timezone
 isp1.export(to_path = "where/to/export/full_data_utc")
-# export custom range in custom timezone
+# export custom range in custom timezone, but first truncate the timezone attribute (+03:00 etc.)
 isp1.export(to_path = "where/to/export/sliced_data_eet", tz_pipe = ['utc', 'eet', None], start_date = '2022-1-1 00:00', end_date = '2022-12-31 23:30')
 
 # Note: the start_date:end_date filter is applied AFTER the timezone conversion (if given) 
 
 
-# tz_pipe: a list of timezone operations
-
-#The first argument must ALWAYS be UTC (that's the timezone that the csv files are initially on)
-##e.g. 01/01/2021 00:00 will become 01/01/2021 00:00+00:00
-
-#The second argument (optional) is a timezone to convert the data to. (e.g. EET)
-##e.g. 01/01/2021 00:00+00:00 will become: 2021-01-01 02:00+02:00
-
-#The third argument (optional) can only be None, if provided. It means, truncate the timezone information from the converted data 
-##e.g. 2021-01-01 02:00+02:00 will become: 2021-01-01 02:00
+# tz_pipe: timezone operations (see Data Access section)
 
 
 ## IMPORTANT:
@@ -689,7 +695,9 @@ Graphs can be zoomed in/out, rescaled, columns can be toggled-on/off in real tim
 
 ```sh
 isp1_thermal_gen = t['root.admie.isp1ispresults.isp_schedule.thermal']
-fig = isp1_thermal_gen.plot(area = True, start_date = '2022-1-1', end_date = '2022-1-10', tz_pipe = ['UTC', 'EET', None], show = True, save_path = None)
+fig = isp1_thermal_gen.plot(area = True, start_date = '2022-1-1', end_date = '2022-1-10', tz_pipe = 'EET', show = True, save_path = None)
+
+# by default:  tz_pipe = 'EET', start_date = None, end_date = None,  area = False, show = True, save_path = Non
 
 # the returned figure is of type "plotly.graph_objs._figure.Figure", meaning, you can set "show"=False, and update the layout with normal plotly usage before displaying it.
 # Some very basic modification-options (title, x&y labels) will be supported directly through the exso.Node object
