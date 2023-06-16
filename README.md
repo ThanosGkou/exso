@@ -270,7 +270,7 @@ root_base = r"path\to\desired\database\directory" # e.g. r"C:\Users\your_usernam
 
 
 # root_lake and root_base can also be pathlib.Path objects
-upd = Updater(root_lake, root_base, all=True)
+upd = Updater(root_lake, root_base)
 upd.run()
 
 ```
@@ -328,13 +328,30 @@ metadata = rp.get_available(only_names = False)
 
 -----
 ## Custom Update
-```sh
-# Now, if you conclude that you want e.g. 3 specific reports (at least for now), you can:
-interesting_reports = ['reportname1', 'reportname2', 'reportname3']
-upd = Updater(root_lake, root_base, reports_pool = rp,  which = interesting_reports) # given that you have already instantiated a Report.Pool object
 
-# or, for future use
-upd = Updater(root_lake, root_base, which = interesting_reports) # with no need of instantiating a Report.Pool object
+There are filtering options available, in order to narrow-down the set of reports to be updated.
+```sh
+
+# Now, if you conclude that you want e.g. 3 specific reports (at least for now), you can:
+
+interesting_reports = ['reportname1', 'reportname2', 'reportname3']
+upd = Updater(root_lake, root_base, which = interesting_reports)
+
+
+# Or, that you want a specific group of reports (you can review the available groupings by Reports.Pool().list_groups()
+
+interesting_groups = ['ISPForecasts', 'ISPResults']
+upd = Updater(root_lake, root_base, groups = interesting_groups)
+
+
+# Or, that you want only reports that are active (not obsolete)
+upd = Updater(root_lake, root_base, only_ongoing = True)
+
+
+# Or the intersection of any combination of those:
+upd = Updater(root_lake, root_base, which = interesting_reports, groups = interesting_groups, only_ongoing=True)
+
+
 
 # Very often, a specific datalake-file (excel file) for a given date, may have multiple versions. (e.g. YYYYMMDD_report_01.xlsx, YYYYMMDD_report_02.xlsx)
 # The use_lake_version argument allows to select which version to use.
@@ -346,6 +363,7 @@ upd.run(use_lake_version = 'latest')
 # The integer lake version is interpreted as: "Use this version, or the most recent version available prior to it"
 upd.run(use_lake_version = 4)
 ```
+
 -----
 # Datalake
 The datalake consists of raw excel (.xls, or .xlsx, or .zip of .xls*) reports, as published by the publishing parties. 
