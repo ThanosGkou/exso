@@ -169,7 +169,6 @@ class ArchetypeHorizontal(Archetype):
 
             id_start, id_end = self._get_start_end_indices(df, start_cue, end_cue, field = self.field, subfield = subfield)
 
-
             # print('Base df:')
             # print(df)
             # print()
@@ -182,7 +181,6 @@ class ArchetypeHorizontal(Archetype):
             # print(f'{end_operator = }')
             # print(f'{id_start = }')
             # print(f'{id_end = }')
-
 
             if isinstance(id_start, type(None)) or isinstance(id_end, type(None)):
                 if isinstance(id_start, type(None)):
