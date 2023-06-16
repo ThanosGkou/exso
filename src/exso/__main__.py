@@ -97,31 +97,31 @@ def main():
             print("The mode was 'query' but you didn't provide a query locator.")
             sys.exit()
 
-        save_dir = arguments.query_output_dir
 
         if arguments.query_tz:
             tz_pipe = ['UTC', arguments.query_tz, None]
         else:
             tz_pipe = None
 
+        save_dir = arguments.query_output_dir
         node = tree[arguments.query_locator]
+
         if arguments.query_extract:
-            if arguments.root_base in arguments.query_output_dir.parents:
+            if arguments.root_base in save_dir.parents:
                 print()
                 print('You must not distract the database (or the datalake) directories. Store somewhere else.')
                 sys.exit()
 
-            node.export(to_path = arguments.query_output_dir,
+            node.export(to_path = save_dir,
                         tz_pipe = tz_pipe,
                         start_date = arguments.query_from,
                         end_date = arguments.query_until)
 
         if arguments.query_plot:
             plot_savepath = None
-            if arguments.query_plot:
-                if save_dir:
-                    save_dir.mkdir(exist_ok=True)
-                    plot_savepath = (save_dir/ arguments.query_locator).with_suffix('.html')
+            if save_dir:
+                save_dir.mkdir(exist_ok=True)
+                plot_savepath = (save_dir/ arguments.query_locator).with_suffix('.html')
 
             node.plot(tz_pipe=tz_pipe,
                       start_date = arguments.query_from,
