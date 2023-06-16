@@ -16,7 +16,7 @@ pd.options.display.max_columns= None
 
 
 
-__version__ = '0.0.0'
+__version__ = '0.0.1'
 logfile = Files.root_log #Path(tempfile.mktemp())
 logging.basicConfig(filename=logfile,
                     level=logging.DEBUG,
@@ -43,6 +43,7 @@ _pbar_settings = {'bar_format': "%s{desc:<30} {percentage:4.1f}symbol| %s{bar:30
                                                               Fore.LIGHTYELLOW_EX),
                  'ncols':115,
                  'smoothing':1}
+
 _pbar_settings['bar_format'] = re.sub('symbol', '%', _pbar_settings['bar_format'])
 
 def _set_system_formats(decimal_sep='.', list_sep=','):

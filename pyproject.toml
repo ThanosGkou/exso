@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "exso"
-version = "0.0.0"
+version = "0.0.1"
 description = "A powerful data colllector"
 authors = [
   { name="Thanos Natsikas", email="ath.natsikas@example.com" },
