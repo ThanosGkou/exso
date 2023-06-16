@@ -358,11 +358,21 @@ class Node(NodeAccessors, NodeConstructors):
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     def plot(self, tz_pipe=['utc','eet'], start_date=None, end_date=None, area=False, show = True, save_path = None):
+        '''
+        save_path : str|Path (directory or path/that/ends/with.html)
+        '''
 
         if self.kind not in ['file', 'property']:
-            print('\n-->You can only plot a node whose "kind" is "file" or "property". "{}" is of kind: {}'.format(self.dna, self.kind))
-            print('--> Aborting.')
+            raise IOError('\n-->You can only plot a node whose "kind" is "file" or "property". "{}" is of kind: {}'.format(self.dna, self.kind))
+            input('--> Aborting.')
             sys.exit()
+
+        if save_path:
+            save_path = Path(save_path)
+            if save_path.suffix == ".html":
+                pass
+            else:
+                save_path = (save_path / self.name).with_suffix('.html')
 
         if area:
             fig = Plot.area_plot(df=self(tz_pipe, start_date, end_date), show=show, save_path=save_path)
@@ -454,17 +464,21 @@ class Node(NodeAccessors, NodeConstructors):
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     def export(self, to_path, tz_pipe = None, start_date = None, end_date = None):
-        ''' Caution: Where does the tz_pipe refer to?
-            A new pipe, as if we started from the original?
-            Or starting from the last timezone modifcation?
         '''
+        to_path: str or Path
+            if the node is a file, the "to_path" can be either a filepath, or a directory (in which, a fille called <self.name>.csv will be created)
+            If the node is a directory, the "to_path" must be a directory
+        '''
+
+        if Path(to_path) in self.ascendants.path:
+            raise IOError("The target path cannot be within the exso-database. (Given path was: {})".format(to_path))
+
         if isinstance(to_path, str):
             to_path = Path(to_path)
 
-
         if self.kind == 'file':
             df = self(tz_pipe = tz_pipe, start_date = start_date, end_date=end_date)
-            # to_path.parent.mkdir(exist_ok=True, parents=True)
+
             # user entered a custom path, and directly called for a file export. so, respect that
             if to_path.suffix == '.csv':
                 target = to_path
