@@ -222,42 +222,51 @@ Open a windows terminal, and [activate the exso virtual environment](#activate-t
   ```
 
   ```sh
-  usage: py -m exso [-h] [-rl ROOT_LAKE] [-rb ROOT_BASE] [--which WHICH [WHICH ...]] [--val_report VAL_REPORT] [--val_dates VAL_DATES [VAL_DATES ...]] [--val_fields VAL_FIELDS [VAL_FIELDS ...]] [-loc QUERY_LOCATOR]
-          [-output_dir QUERY_OUTPUT_DIR] [-tz QUERY_TZ] [-from QUERY_FROM] [-until QUERY_UNTIL] [-extract] [-plot] [-stacked] [--decimal_sep DECIMAL_SEP] [--list_sep LIST_SEP]
-          {info,update,validate,query,set_system_formats}
+  usage: py -m exso [-h] [-rl ROOT_LAKE] [-rb ROOT_BASE] [--which WHICH [WHICH ...]]
+                  [--groups {ISPResults,ISPForecasts,ISPRequirements,Forecasts,UnitAvailabilities,Transmission,Balancing,DAS,Hydro,SCADA,DAM,IntraDayMarket,DemandSupplyBids,Gas} [{ISPResults,ISPForecasts,ISPRequirements,Forecasts,UnitAvailabilities,Transmission,Balancing,DAS,Hydro,SCADA,DAM,IntraDayMarket,DemandSupplyBids,Gas} ...]]
+                  [--val_report VAL_REPORT] [--val_dates VAL_DATES [VAL_DATES ...]]
+                  [--val_fields VAL_FIELDS [VAL_FIELDS ...]] [-loc QUERY_LOCATOR] [-output_dir QUERY_OUTPUT_DIR]
+                  [-tz QUERY_TZ] [-from QUERY_FROM] [-until QUERY_UNTIL] [-extract] [-plot] [-stacked]
+                  [--decimal_sep DECIMAL_SEP] [--list_sep LIST_SEP]
+                  {info,update,validate,query,set_system_formats}
 
-  positional arguments:
-    {info,update,validate,query,set_system_formats}
+positional arguments:
+  {info,update,validate,query,set_system_formats}
 
-  options:
-    -h, --help            show this help message and exit
-    -rl ROOT_LAKE, --root_lake ROOT_LAKE
-    -rb ROOT_BASE, --root_base ROOT_BASE
-    --which WHICH [WHICH ...]
-                          --which argument can be either 'all' (default), or a list of valid report-names (space-separated)
-    --val_report VAL_REPORT
-                          report name you wish to validate.
-    --val_dates VAL_DATES [VAL_DATES ...]
-                          space separated date(s) to validate. format: YYYY-M-D
-    --val_fields VAL_FIELDS [VAL_FIELDS ...]
-                          "Field(s)" are the filenames, as to be found in the database folder of a specific report (space separated).
-    -loc QUERY_LOCATOR, --query_locator QUERY_LOCATOR
-                          'locator' means a unique identifier of database objects. example: root.admie.isp1ispresults, will extract the whole database of this report and transform it / slice it depending on the rest of the options you
-                          set.
-    -output_dir QUERY_OUTPUT_DIR, --query_output_dir QUERY_OUTPUT_DIR
-                          If specified, it will be used to save the generated plot (if -plot), and/or the extracted timeslice (if -extract).
-    -tz QUERY_TZ, --query_tz QUERY_TZ
-    -from QUERY_FROM, --query_from QUERY_FROM
-                          Start date(time) of query (YYYY-M-D [H:M])
-    -until QUERY_UNTIL, --query_until QUERY_UNTIL
-                          End date(time) of query (YYYY-M-D [H:M])
-    -extract, --query_extract
-                          If added, it means you wish to EXTRACT the specified query (among possible other actions)
-    -plot, --query_plot   If added, it means you wish to PLOT the upstream query (among possible other actions)
-    -stacked, --plot_stacked
-                          If added, it means you wish the PLOT specified, to be a stacked-area plot
-    --decimal_sep DECIMAL_SEP
-    --list_sep LIST_SEP
+options:
+  -h, --help            show this help message and exit
+  -rl ROOT_LAKE, --root_lake ROOT_LAKE
+  -rb ROOT_BASE, --root_base ROOT_BASE
+  --which WHICH [WHICH ...]
+                        --which argument can be either 'all' (default), or a list of valid report-names (space-
+                        separated)
+  --groups {ISPResults,ISPForecasts,ISPRequirements,Forecasts,UnitAvailabilities,Transmission,Balancing,DAS,Hydro,SCADA,DAM,IntraDayMarket,DemandSupplyBids,Gas} [{ISPResults,ISPForecasts,ISPRequirements,Forecasts,UnitAvailabilities,Transmission,Balancing,DAS,Hydro,SCADA,DAM,IntraDayMarket,DemandSupplyBids,Gas} ...]
+  --val_report VAL_REPORT
+                        report name you wish to validate.
+  --val_dates VAL_DATES [VAL_DATES ...]
+                        space separated date(s) to validate. format: YYYY-M-D
+  --val_fields VAL_FIELDS [VAL_FIELDS ...]
+                        "Field(s)" are the filenames, as to be found in the database folder of a specific report
+                        (space separated).
+  -loc QUERY_LOCATOR, --query_locator QUERY_LOCATOR
+                        'locator' means a unique identifier of database objects. example: root.admie.isp1ispresults,
+                        will extract the whole database of this report and transform it / slice it depending on the
+                        rest of the options you set.
+  -output_dir QUERY_OUTPUT_DIR, --query_output_dir QUERY_OUTPUT_DIR
+                        If specified, it will be used to save the generated plot (if -plot), and/or the extracted
+                        timeslice (if -extract).
+  -tz QUERY_TZ, --query_tz QUERY_TZ
+  -from QUERY_FROM, --query_from QUERY_FROM
+                        Start date(time) of query (YYYY-M-D [H:M])
+  -until QUERY_UNTIL, --query_until QUERY_UNTIL
+                        End date(time) of query (YYYY-M-D [H:M])
+  -extract, --query_extract
+                        If added, it means you wish to EXTRACT the specified query (among possible other actions)
+  -plot, --query_plot   If added, it means you wish to PLOT the upstream query (among possible other actions)
+  -stacked, --plot_stacked
+                        If added, it means you wish the PLOT specified, to be a stacked-area plot
+  --decimal_sep DECIMAL_SEP
+  --list_sep LIST_SEP
   
   ```
           
