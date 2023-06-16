@@ -357,7 +357,7 @@ class Node(NodeAccessors, NodeConstructors):
         return dff
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def plot(self, tz_pipe=['utc','eet'], start_date=None, end_date=None, area=False, show = True, save_path = None):
+    def plot(self, tz_pipe=['utc','eet'], start_date=None, end_date=None, area=False, show = True, save_path = None, title = None, ylabel = None):
         '''
         save_path : str|Path (directory or path/that/ends/with.html)
         '''
@@ -374,10 +374,13 @@ class Node(NodeAccessors, NodeConstructors):
             else:
                 save_path = (save_path / self.name).with_suffix('.html')
 
+        if not title:
+            title = self.parent.name + "." + self.name
+
         if area:
-            fig = Plot.area_plot(df=self(tz_pipe, start_date, end_date), show=show, save_path=save_path)
+            fig = Plot.area_plot(df=self(tz_pipe, start_date, end_date), show=show, save_path=save_path, title=title, ylabel = ylabel)
         else:
-            fig = Plot.line_plot(df=self(tz_pipe, start_date, end_date), show=show, save_path=save_path)
+            fig = Plot.line_plot(df=self(tz_pipe, start_date, end_date), show=show, save_path=save_path, title=title, ylabel = ylabel)
 
         return fig
 
