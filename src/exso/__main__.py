@@ -141,4 +141,12 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+        input('\n\nSuccessful.')
+    except:
+        print('An error occured')
+        print(traceback.format_exc())
+        input('\n\nFailed...')
+
+
