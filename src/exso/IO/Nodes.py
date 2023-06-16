@@ -358,6 +358,7 @@ class Node(NodeAccessors, NodeConstructors):
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     def plot(self, tz_pipe=['utc','eet'], start_date=None, end_date=None, area=False, show = True, save_path = None):
+
         if self.kind not in ['file', 'property']:
             print('\n-->You can only plot a node whose "kind" is "file" or "property". "{}" is of kind: {}'.format(self.dna, self.kind))
             print('--> Aborting.')
@@ -413,6 +414,8 @@ class Node(NodeAccessors, NodeConstructors):
     # ********   *********   *********   *********   *********   *********   *********   *********
     @staticmethod
     def apply_tz_pipe(df, tz_pipe):
+        if isinstance(tz_pipe, str):
+            tz_pipe = ['utc', tz_pipe]
 
         if tz_pipe:
             df = df.tz_localize(tz_pipe[0])
