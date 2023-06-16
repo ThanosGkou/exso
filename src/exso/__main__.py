@@ -37,7 +37,7 @@ def main():
 
     p.add_argument('-loc', '--query_locator',
                    help="'locator' means a unique identifier of database objects. \nexample: root.admie.isp1ispresults, will extract the whole database of this report and transform it / slice it depending on the rest of the options you set.")
-    p.add_argument('-output_dir', '--query_output_dir',
+    p.add_argument('-output_dir', '--query_output_dir', default=None,
                    help='If specified, it will be used to save the generated plot (if -plot), and/or the extracted timeslice (if -extract).')
     p.add_argument('-tz', '--query_tz', default='EET')
     p.add_argument('-from', '--query_from', help="Start date(time) of query (YYYY-M-D [H:M])")
@@ -107,9 +107,9 @@ def main():
         node = tree[arguments.query_locator]
 
         if arguments.query_extract:
-            if arguments.root_base in save_dir.parents:
-                print()
-                print('You must not distract the database (or the datalake) directories. Store somewhere else.')
+            if not save_dir:
+                print("\nYou must specify an output_dir when in -extract mode")
+                input('Failed.')
                 sys.exit()
 
             node.export(to_path = save_dir,
