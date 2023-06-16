@@ -1,6 +1,6 @@
 import sys
 import argparse
-
+import traceback
 import exso
 from pathlib import Path
 
