@@ -149,7 +149,11 @@ pip install --upgrade exso
 -----
 ### Command Line Interface (CLI)
 
-Open a windows terminal, and [activate the exso virtual environment](#activate-the-virtual-environment)
+An alternative way of the CLI-based usage, since v0.0.1 is the ExSO.xlsm file. 
+It contains click and browse buttons that automatically generate the propert CLI-command.
+    ![img.png](resources/ExSO_xlsm_snapshot.png#center)
+
+For direct use of the terminal, open a windows terminal, and [activate the exso virtual environment](#activate-the-virtual-environment)
 - List available reports and text descriptions (available in the sense of ***exso***-available, not necessarily already present in datalake/database)
 
   ```sh
