@@ -8,14 +8,15 @@ Hydro: ('Hydro Units', 'Total Hydro Production']
 DispatchableLoad: ('Dispatchable Load', 'Total Dispatchable Load']
 NetBorderSchedules: ('Net Border Schedules', 'Total Net Schedules']
 NetBorderMarketSchedules: ('Net Border Market Schedules', 'Total Net Border Schedules']
-AuctionCBS: ('Auction CBS (DAM+CRIDAs)', 'Total Market CBS (+XBID)')
-TotalMarketCBS: ['Total Market CBS (+XBID)', 'Total Market Schedules']
+AuctionCBS: ('Auction CBS (DAMCRIDAs)', 'Total Market CBS (XBID)')
+TotalMarketCBS: ('Total Market CBS (XBID)', 'Total Market Schedules']
 ReserveRequirements: ('Reserve Requirements', 'Corridor Limit')
 
 $ISP_Activations
 Thermal: ('Thermal Units', 'Total Thermal activation']
 Hydro: ('Hydro Units', 'Total Hydro activation']
 DispatchableLoad: ('Dispatchable Load', 'Total Dispatchable Load']
+DemandResponse: ('Demand Response', 'Total Demand Response']
 
 $CCGT_Schedule
 CCGT_Schedule: ('CCGT', 'last']
@@ -26,7 +27,6 @@ Thermal: ('Thermal Unit', 'Hydro Unit')
 Hydro: ('Hydro Unit', 'Hydro Units DOWN Total']
 DispatchableLoad: ('Dispatchable Load Unit', 'Dispatchable Load Units DOWN Total']
 DemandResponse: ('Demand Response Unit','Demand Response Units Total']
-
 
 $aFRR
 aFRR: ('aFRR', 'Thermal Unit')
@@ -40,7 +40,7 @@ mFRR: ('mFRR', 'Thermal Unit')
 Thermal: ('Thermal Unit', 'Hydro Unit')
 Hydro: ('Hydro Unit', 'Hydro Units DOWN Total']
 DispatchableLoad: ('Dispatchable Load Unit', 'Dispatchable Load Units DOWN Total']
-DemandResponse: ('Demand Response Unit','Demand Response Units Total']
+DemandResponse: ('Demand Response Unit','Demand Response Units DOWN Total']
 
 $RR
 RR: ('RR', 'Thermal Unit')
