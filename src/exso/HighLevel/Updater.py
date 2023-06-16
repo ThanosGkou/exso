@@ -122,14 +122,11 @@ class Updater:
 
         reqs = self.read_textfile(self.refresh_requirements_file)
 
-        # reqs['all'] = eval(reqs['all'])
         reqs['already_done'] = eval(reqs['already_done'])
 
         all_reports = self.rp.get_available()['report_name'].values
         requirements = {report_name: False for report_name in all_reports}
 
-        # if reqs['all'] == True:
-        #     requirements.update({rn:True for rn in all_reports})
         if reqs['which']:
             requirements.update({rn:True for rn in reqs['which']})
         elif reqs['all_except']:
@@ -142,7 +139,6 @@ class Updater:
         self.logger.info("Input given: {}".format(reqs))
         self.logger.info("Previously fulfilled: {}".format(previously_fulfilled))
         self.logger.info("Reports deemed to need requirement: {}".format([r for r,v in requirements.items() if v]))
-        print()
 
         return requirements
 
@@ -303,7 +299,7 @@ class Updater:
         r = Report.Report(self.rp, report_name, self.root_lake, self.root_base, api_allowed=True)
         if self.refresh_requirements[report_name]:
             self.logger.info("Refresh requirement = True. Deleting the existing database: {}".format(r.database_path))
-            print('\t\tIt seems like you upgraded to the latest exso version, which brought some changes to the specific report ({}). This report\'s data, just for this time, will be fully refreshed instead of just updated.'.format(report_name))
+            print('\tIt seems like you upgraded to the latest exso version, which brought some changes to the specific report ({}). This report\'s data, just for this time, will be fully refreshed instead of just updated.'.format(report_name))
             shutil.rmtree(r.database_path, ignore_errors=True)
 
         lake = DataLake.DataLake(r, use_lake_version=use_lake_version, retroactive_update = retroactive_update)
