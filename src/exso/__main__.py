@@ -51,15 +51,12 @@ def main():
         if getattr(arguments, attr):
             setattr(arguments,attr, Path(getattr(arguments,attr)))
 
-    if arguments.which == "all":
-        all = True
-        some = None
-    else:
-        all = False
-        some = arguments.which
-
-
-
+    # if arguments.which == "all":
+    #     all = True
+    #     some = None
+    # else:
+    #     all = False
+    #     some = arguments.which
 
 
     if arguments.mode == 'info':
@@ -80,8 +77,7 @@ def main():
     if arguments.mode == 'update':
         upd = exso.Updater(root_lake=arguments.root_lake,
                            root_base=arguments.root_base,
-                           all=all,
-                           some = some
+                           which = arguments.which
                            )
         upd.run()
 
