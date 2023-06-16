@@ -413,9 +413,11 @@ class Node(NodeAccessors, NodeConstructors):
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     @staticmethod
-    def apply_tz_pipe(df, tz_pipe):
+    def apply_tz_pipe(df, tz_pipe, truncate_tz_after = False):
         if isinstance(tz_pipe, str):
             tz_pipe = ['utc', tz_pipe]
+            if truncate_tz_after:
+                tz_pipe = tz_pipe + [None]
 
         if tz_pipe:
             df = df.tz_localize(tz_pipe[0])
