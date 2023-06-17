@@ -139,7 +139,10 @@ if __name__ == '__main__':
     try:
         main()
         input('\n\nSuccessful.')
+    except SystemExit as ex: # --help mode
+        pass
     except:
+        print()
         print('An error occured')
         print(traceback.format_exc())
         input('\n\nFailed...')
