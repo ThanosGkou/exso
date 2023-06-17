@@ -36,7 +36,7 @@ _decimal_sep = formats['decimal_sep']
 _thousand_sep = ','
 _list_sep = formats['list_sep']
 
-_dt_format = "%Y-%m-%D %H:%M"
+_dt_format = "%Y-%m-%d %H:%M"
 
 _pbar_settings = {'bar_format': "%s{desc:<30} {percentage:5.2f}symbol| %s{bar:15}%s{r_bar}" % (Fore.LIGHTGREEN_EX,
                                                               Fore.YELLOW,
