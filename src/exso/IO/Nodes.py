@@ -300,7 +300,7 @@ class Node(NodeAccessors, NodeConstructors):
             raise Warning("Cannot call a node of kind: '{}'.".format(self.kind))
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def __call__(self, tz_pipe = None, start_date = None, end_date = None) -> pd.DataFrame | dict:
+    def __call__(self, tz_pipe = None, start_date = None, end_date = None, truncate_tz = False) -> pd.DataFrame | dict:
 
         if isinstance(self.fruit, type(None)):
             self.first_call()
@@ -312,18 +312,18 @@ class Node(NodeAccessors, NodeConstructors):
             df = {}
             for c in self.children:
                 # print('\t\tCalling child ', c)
-                df[c.name] = c(tz_pipe, start_date, end_date)
+                df[c.name] = c(tz_pipe, start_date, end_date, truncate_tz)
 
         elif self.kind == 'file':
             df = self.fruit.copy()
-            df = self.apply_tz_pipe(df, tz_pipe)
+            df = self.apply_tz_pipe(df, tz_pipe, truncate_tz)
             df = self.apply_date_filter(df, start_date, end_date, self.is_multiindex)
 
         elif self.kind == 'property':
             if not isinstance(self.parent.fruit, type(None)):
                 df = self.parent.fruit.loc[:, self.name].to_frame()
             else:
-                parent_df = self.parent(tz_pipe, start_date, end_date)
+                parent_df = self.parent(tz_pipe, start_date, end_date, truncate_tz)
                 df = parent_df.loc[:, self.name].to_frame()# this is a view
 
         else:
@@ -426,10 +426,10 @@ class Node(NodeAccessors, NodeConstructors):
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     @staticmethod
-    def apply_tz_pipe(df, tz_pipe, truncate_tz_after = False):
+    def apply_tz_pipe(df, tz_pipe, truncate_tz = False):
         if isinstance(tz_pipe, str):
             tz_pipe = ['utc', tz_pipe]
-            if truncate_tz_after:
+            if truncate_tz:
                 tz_pipe = tz_pipe + [None]
 
         if tz_pipe:
@@ -466,7 +466,7 @@ class Node(NodeAccessors, NodeConstructors):
 
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def export(self, to_path, tz_pipe = None, start_date = None, end_date = None):
+    def export(self, to_path, tz_pipe = None, start_date = None, end_date = None, truncate_tz=False):
         '''
         to_path: str or Path
             if the node is a file, the "to_path" can be either a filepath, or a directory (in which, a fille called <self.name>.csv will be created)
@@ -480,7 +480,7 @@ class Node(NodeAccessors, NodeConstructors):
             to_path = Path(to_path)
 
         if self.kind == 'file':
-            df = self(tz_pipe = tz_pipe, start_date = start_date, end_date=end_date)
+            df = self(tz_pipe = tz_pipe, start_date = start_date, end_date=end_date, truncate_tz=truncate_tz)
 
             # user entered a custom path, and directly called for a file export. so, respect that
             if to_path.suffix == '.csv':
@@ -502,7 +502,7 @@ class Node(NodeAccessors, NodeConstructors):
             to_path.mkdir(exist_ok=True, parents = True)
             for child in self.children:
                 child_dir = to_path / child.name
-                child.export(child_dir, tz_pipe, start_date, end_date)
+                child.export(child_dir, tz_pipe, start_date, end_date, truncate_tz)
 
 
 # ********   *********   *********   *********   *********   *********   *********   *********
