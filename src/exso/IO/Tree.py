@@ -309,6 +309,7 @@ class Tree(Search, TreeConstructors, TreeAccessors):
         self.max_depth = sorted([n.depth for n in self.nodes])[-1]
 
         self.make_dna_chains()
+        return self
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     def make_dirs(self):
