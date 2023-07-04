@@ -567,8 +567,10 @@ Data can be accessed, visualized, manipulated and extracted through Node operati
 They are common accross all node-access operations, and they can modify the returned time-range (from/to), and the returned timezone.
 
 - #####  tz_pipe 
-  - string, list, or None
-  - If a string is provided, the database data will first be localized as UTC, and then returned, converted to the specified timezone.
+  string, list, or None
+  - If a string is provided:
+    - The database data will first be localized as UTC, and then returned, converted to the specified timezone.
+    - It can be combined with the "truncate_tz" argument, in order to first convert to desired timezone, but then truncate the trailing tz information
   - If a list is provided: [database_timezone, target_timezone, (None)]
   - The first argument specified the database-timezone, and **must always be UTC**
   - The second argument be any pytz compatible timezone: Try to stick to wider zones (EET, CET, UTC, GMT) and not country-wide timezones (e.g. Europe/Athens, etc.)
@@ -576,9 +578,13 @@ They are common accross all node-access operations, and they can modify the retu
     - **IF provided, must be None**. This means, to truncate the trailing timezone information (e.g. **2022-1-1 00:00+02:00 --> 2022-1-1 00:00**)
     - **IF not provided** (so, list is of length 2), the returned data will contain the tz-information.
 
+- #####  truncate_tz
+  bool (default = False)
+  - It only has an effect if tz_pipe is a string
+  - It truncates the trailing tz-information (e.g. 2023-1-1 00:00 **+03:00** will become 2023-1-1 00:00)
 
 - #####  start_date,  end_date 
-  - string, pd.Timestamp, datetime-like, None
+  string, pd.Timestamp, datetime-like, None
   - start_date = None means to start from the beginning of the file until end_date
   - end_date = None means to span from start_date  until the end of the file
   - string-format must be: YYYY-MM-DD HH:MM, as in all ***exso*** datetime occasions.
@@ -596,6 +602,8 @@ Retrieve a node's data:
   # retrieve data only for January '22, converted to EET timezone, and truncate the tz-information:
   # data is retrieved from memory
   node_data_range = node(tz_pipe = ['utc', 'eet', None], start_date = '2022-1-1', end_date = '2022-1-31')
+  # or equivalently:
+  node_data_range = node(tz_pipe = 'eet', start_date = '2022-1-1', end_date = '2022-1-31', truncate_tz = True)
   
   # the same, but this time, keep the tz-information
   node_data_range = node(tz_pipe = ['utc', 'eet'], start_date = '2022-1-1', end_date = '2022-1-31')
