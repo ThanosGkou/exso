@@ -384,6 +384,7 @@ class Joiner:
         for field, subfield in pbar:
             dfs = [self.data[d][field][subfield] for d in self.file_df.index]
             joined_data[field][subfield] = pd.concat([*dfs], axis = 0)
+            pbar.set_postfix_str(s=field)
 
         tf = time.time() - t0
         self.logger.info( "--> Joining completed. Joined {} files in: {:,} sec ({} sec/file on average)".format(self.file_df.shape[0],
