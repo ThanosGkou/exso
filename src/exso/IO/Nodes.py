@@ -357,7 +357,7 @@ class Node(NodeAccessors, NodeConstructors):
         return dff
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def plot(self, tz_pipe=['utc','eet'], start_date=None, end_date=None, area=False, show = True, save_path = None, title = None, ylabel = None):
+    def plot(self, tz_pipe=None, start_date=None, end_date=None, area=False, show = True, save_path = None, title = None, ylabel = None):
         '''
         save_path : str|Path (directory or path/that/ends/with.html)
         '''
@@ -398,7 +398,7 @@ class Node(NodeAccessors, NodeConstructors):
         self.is_multiindex = is_multiindex
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def reader(self, is_multiindex, tz_pipe:list|None=None):
+    def reader(self, is_multiindex, tz_pipe:list|str|None=None):
         ''' Caution: If I read something once, with a specific tz_pipe,
             then, I fI re-call this, it won't be read again, because it stays as a fruit.
         '''
@@ -427,6 +427,7 @@ class Node(NodeAccessors, NodeConstructors):
     # ********   *********   *********   *********   *********   *********   *********   *********
     @staticmethod
     def apply_tz_pipe(df, tz_pipe, truncate_tz = False):
+
         if isinstance(tz_pipe, str):
             tz_pipe = ['utc', tz_pipe]
             if truncate_tz:
