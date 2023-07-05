@@ -133,119 +133,112 @@ class TreeConstructors:
             n = self.nodes[i]
             n.make_ascendants()
             n.make_dna()
+
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def hot_start(self, root, content):
-        new_depth = root.depth + 1
-        kind = root.depth2kind(new_depth)
-        if isinstance(content, dict):
-            for k, v in content.items():
-                new_root = root.path / k
-                if kind == 'file':
-                    new_root = new_root + '.csv'
+    def hot_start(self, root, root_content):
+        ''' input is a node, and an arbitrary dictionary, finally leading to dataframe leaves
+        '''
+        # new_depth = root.depth + 1
+        # kind = root.depth2kind(new_depth)
+        child_depth = root.depth + 1
 
-                if isinstance(v, pd.DataFrame):
-                    if self.ignore_fruits:
-                        fruit = None
-                    else:
-                        fruit = v
-                else:
-                    fruit = None
+        if isinstance(root_content, dict):
+            for child_name, child_content in root_content.items():
+                child_path = root.path / child_name
 
-                parent = Node(k, depth=new_depth, path=new_root, kind=kind, parent=root, fruit=fruit)
-                self.nodes.append(parent)
-                self.hot_start(parent, v)
+                if isinstance(child_content, dict):
+                    child_kind = 'dir'
+                elif isinstance(child_content, pd.DataFrame):
+                    child_kind = 'file'
+                    child_path = child_path.with_suffix('.csv')
 
-        elif isinstance(content, pd.DataFrame):
+                # if kind == 'file':
+                #     new_root = new_root + '.csv'
 
-            if isinstance(content.index, pd.MultiIndex):
-                cols = content.columns.levels[0].to_list()
+                fruit = None
+                if isinstance(child_content, pd.DataFrame) and self.ignore_fruits == False:
+                    fruit = child_content
+
+                node = Node(child_name, depth = child_depth, path = child_path, kind = child_kind, parent = root, fruit=fruit)
+                # parent = Node(k, depth=new_depth, path=new_root, kind=kind, parent=root, fruit=fruit)
+
+                self.nodes.append(node)
+                self.hot_start(node, child_content)
+
+        elif isinstance(root_content, pd.DataFrame):
+
+            if isinstance(root_content.index, pd.MultiIndex):
+                cols = root_content.columns.levels[0].to_list()
                 root.is_multiindex = True
             else:
-
-                cols = content.columns
+                cols = root_content.columns
 
             for c in cols:
                 try:
                     property_path = root.path / c
                 except:
-                    print(content.head())
+                    print(root_content.head())
                     print()
                     print('Problematic column:', c)
                     print()
                     sys.exit()
 
-                nn = Node(name=c, depth=new_depth, path=property_path, kind=root.depth2kind(new_depth),
-                          parent=root)
-                self.nodes.append(nn)
-
-        elif isinstance(content, list):
-            for k in content:
-
-                n = Node(k, depth=new_depth, path=root.path / (k+'.csv'), kind=kind, parent=root)
+                n = Node(name=c, depth=child_depth, path=property_path, kind='property', parent=root)
                 self.nodes.append(n)
-                if n.path.exists():
-                    if 'Unavailability_Reason' in n.path.name:
-                        n.encoding = 'utf-16'
-                    else:
-                        n.encoding = 'utf-8'
 
-                    cols = pd.read_csv(n.path, nrows=1, index_col=0, encoding=n.encoding, sep=exso._list_sep, decimal=exso._decimal_sep).columns.to_list()
-                    is_multiindex = any([c.startswith('Unnamed') for c in cols])
-                    if is_multiindex:
-                        n.is_multiindex = True
-
-                    for c in cols:
-                        property_path = n.path / c
-                        nn = Node(name=c, depth=new_depth + 1, path=property_path, kind=root.depth2kind(new_depth + 1), parent=n)
-                        self.nodes.append(nn)
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     def cold_start(self, root, xml_tree):
         ''' By default ignores any file that is not a csv.
             But also ignores the start-pattern specified in the __init__'''
         for path in root.path.iterdir():
-            if any(list(map(lambda x: path.name.startswith(x), self.ignore_initials))):
+            if any(list(map(lambda x: path.name.startswith(x), self.ignore_if_startswith))):
                 continue
             depth = root.depth + 1
-            kind = root.depth2kind(depth)
 
             if path.is_dir():
+                kind = 'dir'
                 xml_tree[path.name] = {}
                 parent = Node(path.name, depth=depth, path=path, kind=kind, parent=root)
                 self.nodes.append(parent)
                 xml_tree[path.name].update(self.cold_start(parent, xml_tree[path.name]))
-            else:
-                if 'csv' in path.name:
-                    entity_name = path.name.split('.')[0]
-                    xml_tree[entity_name] = []
-                    f = Node(name=entity_name, depth=depth, path=path, kind=kind, parent=root)
-                    self.nodes.append(f)
 
-                    if 'Unavailability_Reason' in path.name:
-                        f.encoding = 'utf-16'
-                    else:
-                        f.encoding = 'utf-8'
+            elif path.is_file():
 
-                    try:
-                        cols = pd.read_csv(path, nrows=1, index_col=0, encoding=f.encoding, sep= exso._list_sep, decimal=exso._decimal_sep).columns.to_list()
-                    except:
-                        print()
-                        print("ERROR while sniffing file:", path)
-                        print()
-                        print(traceback.format_exc())
-                        sys.exit()
-                    is_multiindex = any([c.startswith('Unnamed') for c in cols])
+                if path.suffix != '.csv':
+                    continue
 
+                kind = 'file'
+                entity_name = path.with_suffix("").name
+                xml_tree[entity_name] = []
+                f = Node(name=entity_name, depth=depth, path=path, kind=kind, parent=root)
+                self.nodes.append(f)
 
-                    if is_multiindex:
-                        f.is_multiindex = True
-                        cols = Node.read_multiindex(object, path, nrows=1).columns.levels[0]
+                if 'Unavailability_Reason' in path.name:
+                    f.encoding = 'utf-16'
+                else:
+                    f.encoding = 'utf-8'
 
-                    for c in cols:
-                        property_path = path / c
-                        n = Node(name=c, depth=depth + 1, path=property_path, kind=root.depth2kind(depth + 1), parent=f)
-                        self.nodes.append(n)
-                        xml_tree[entity_name].append(c)
+                try:
+                    cols = pd.read_csv(path, nrows=1, index_col=0, encoding=f.encoding, sep= exso._list_sep, decimal=exso._decimal_sep).columns.to_list()
+                except:
+                    print()
+                    print("ERROR while sniffing file:", path)
+                    print()
+                    print(traceback.format_exc())
+                    sys.exit()
+
+                is_multiindex = any([c.startswith('Unnamed') for c in cols])
+
+                if is_multiindex:
+                    f.is_multiindex = True
+                    cols = Node.read_multiindex(object, path, nrows=1).columns.levels[0]
+
+                for c in cols:
+                    property_path = path / c
+                    n = Node(name=c, depth=depth + 1, path=property_path, kind='property', parent=f)
+                    self.nodes.append(n)
+                    xml_tree[entity_name].append(c)
 
         return xml_tree
 
@@ -266,32 +259,92 @@ class Tree(Search, TreeConstructors, TreeAccessors):
                - use the indicated accessors (see documentation) to acess, transform, plot and export any node(s)
     '''
     instances = []
-    def __init__(self, root_path, zero_depth_kind='root', zero_depth_name='root', ignore_initials:str|list = '.'):
-        self.instances.append(self)
-        if isinstance(ignore_initials, str):
-            ignore_initials = [ignore_initials]
-        if isinstance(root_path, str):
-            root_path = Path(root_path)
-        self.ignore_initials = ignore_initials
-        self.init_depth = len(root_path)
-        self.dna_is_initialized = False
-        self.calibrate_depths(zero_depth_kind)
-        self.root = Node(name=zero_depth_name, depth=0, path=root_path, kind=zero_depth_kind, parent=None)
+    def __init__(self, root_path:Path|str|None = None, root_dict:dict|None = None, depth_mapping:dict|None = None, ignore_if_startswith:str|list = '.', root_name:str|None = None, make = True, ignore_fruits = False):
 
+        self.instances.append(self)
+
+        self.compile_input(root_path, root_dict, depth_mapping, ignore_if_startswith, root_name, ignore_fruits)
+
+        self.root = Node(name=self.root_name, depth=0, path=self.root_path, kind='dir', parent=None)
         self.nodes = [self.root]
 
+        if make:
+            if self.start_mode == 'hot':
+                self.hot_start(root = self.root, root_content=root_dict)
+            else:
+                self.cold_start(root = self.root, xml_tree={})
+
+            self.max_depth = sorted([n.depth for n in self.nodes])[-1]
+            self.size = len(self.nodes)
+            self.nodes = Group(self.nodes)
+            self.make_dna_chains()
+
+            if self.depth_mapping:
+                self.assign_depth_names()
+
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def calibrate_depths(self, zero_depth_kind):
+    def compile_input(self, root_path, root_dict, depth_mapping, ignore_if_startswith, root_name, ignore_fruits):
 
-        kinds = ['root', 'publisher', 'report', 'field', 'file', 'property']
-        reference_depth = [i for i, k in enumerate(kinds) if k == zero_depth_kind][0]
-        calibrated_kinds = kinds[reference_depth:]
+        if isinstance(root_path, str):
+            root_path = Path(root_path)
 
-        kinds = {i: k for i, k in enumerate(calibrated_kinds)}
-        self.kinds = kinds
+        if isinstance(root_path, Path):
+            start_depth = len(root_path)
+            if isinstance(root_dict, dict):
+                start_mode = 'hot'
+            else:
+                start_mode = 'cold'
+                assert root_path.exists()
+        else:
+            start_mode = 'hot'
+            assert isinstance(root_dict, dict)
+            start_depth = 0
+
+        if isinstance(ignore_if_startswith, str):
+            ignore_if_startswith = [ignore_if_startswith]
+
+        if not root_name:
+            root_name = "root"
+
+        if depth_mapping:
+            # this means, there is a strict connection between depth and kind.
+            # so, if:    root > sth > sthelse   is a directory (of a custom-kind = report)
+            # then also: root > sth2 > sthelse2 is a directory (of a custom-kind = report)
+            assert isinstance(depth_mapping, dict)
+        else:
+            # no strict relation between depth and kind
+            # kinds will be given as root / dir / file / property (column)
+            depth_mapping = {}
+
+        self.root_path = root_path
+        self.root_dict = root_dict
+        self.start_mode = start_mode
+        self.ignore_if_startswith = ignore_if_startswith
+        self.root_name = root_name
+        self.start_depth = start_depth
+        self.ignore_fruits = ignore_fruits
+
+        self.dna_is_initialized = False
+        self.depth_mapping = depth_mapping
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def make_tree(self, from_dict=None, ignore_fruits = True):
+    # def calibrate_depths(self, zero_depth_kind):
+    #
+    #     kinds = ['root', 'publisher', 'report', 'field', 'file', 'property']
+    #     reference_depth = [i for i, k in enumerate(kinds) if k == zero_depth_kind][0]
+    #     calibrated_kinds = kinds[reference_depth:]
+    #
+    #     kinds = {i: k for i, k in enumerate(calibrated_kinds)}
+    #     self.kinds = kinds
+
+    # ********   *********   *********   *********   *********   *********   *********   *********
+    def assign_depth_names(self):
+        assert self.max_depth <= max([k for k in self.depth_mapping.keys()])
+        for n in self.nodes:
+            n.kind = self.depth_mapping[n.depth]
+
+    # ********   *********   *********   *********   *********   *********   *********   *********
+    def make_tree_bak(self, from_dict=None, ignore_fruits = True):
 
         if from_dict:
             self.ignore_fruits = ignore_fruits
@@ -318,7 +371,9 @@ class Tree(Search, TreeConstructors, TreeAccessors):
         [fn.path.mkdir(exist_ok=True, parents=True) for fn in field_nodes]
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def is_empty(self, path:Path):
+    def is_empty(self, path:Path|None = None):
+        if isinstance(path, type(None)):
+            path = self.root_path
         if not path.exists():
             return True
         if path.is_file():
@@ -344,7 +399,6 @@ class Tree(Search, TreeConstructors, TreeAccessors):
         # STR.tree(self.root.path, level = 2)
         seedir.seedir(self.root.path, sticky_formatter=True, style='emoji')
 
-
     # ********   *********   *********   *********   *********   *********   *********   *********
     def combine(self, *locators, tz_pipe = ['utc', 'eet', None], start_date = None, end_date = None):
         nodes = list(map(self.get_node, *locators))
@@ -358,6 +412,7 @@ class Tree(Search, TreeConstructors, TreeAccessors):
             if len(tz_pipe) == 3:
                 df = df.tz_localize(tz_pipe[2])
         return df
+    # ********   *********   *********   *********   *********   *********   *********   *********
 
 
 
