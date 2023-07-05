@@ -150,7 +150,7 @@ class TreeConstructors:
                     child_kind = 'dir'
                 elif isinstance(child_content, pd.DataFrame):
                     child_kind = 'file'
-                    child_path = child_path.with_suffix('.csv')
+                    child_path = child_path.with_suffix('.csv') # hot start only has names, not paths. So i manually add it
 
                 # if kind == 'file':
                 #     new_root = new_root + '.csv'
@@ -203,7 +203,7 @@ class TreeConstructors:
                 self.nodes.append(parent)
                 xml_tree[path.name].update(self.cold_start(parent, xml_tree[path.name]))
 
-            elif path.is_file():
+            elif path.is_file(): # iterdir() automatically includes the .csv extension (on the contrrry of hot-start mode)
 
                 if path.suffix != '.csv':
                     continue
