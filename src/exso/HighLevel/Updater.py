@@ -321,10 +321,13 @@ class Updater:
 
         if requirements:
 
-
             data = lake.query(dates_iterable=requirements['range']['date'], keep_raw=keep_raw)
-            base.tree = Tree(root_path=base.tree.root.path, zero_depth_kind=base.tree.root.kind)
-            base.tree.make_tree(from_dict=data,ignore_fruits=True)
+
+            # I only want the   s t r u c t u r e   of data:dict, not the actual dataframes.
+            # The dataframes belong to the newly-parsed lake, not to the pre-existing database. So: ignore_fruits = True
+            # TODO: I dont really like the ignore_fruits implementation.
+            base.tree = Tree(root_path=base.tree.root.path, root_dict = data, depth_mapping=base.tree.depth_mapping, ignore_fruits = True)
+            # base.tree.make_tree(from_dict=data,ignore_fruits=True)
             base.tree.make_dirs()
             base.update(data)
 
