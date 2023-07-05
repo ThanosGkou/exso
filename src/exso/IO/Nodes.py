@@ -266,7 +266,7 @@ class Node(NodeAccessors, NodeConstructors):
         if not isinstance(self.fruit, type(None)): # clause to prevent recursive read of parent/children if already read
             return
 
-        if self.kind in ['root', 'publisher', 'report', 'field']:
+        if self.kind not in ['file', 'property']:
 
             df = {}
             for c in self.children:
@@ -307,7 +307,7 @@ class Node(NodeAccessors, NodeConstructors):
 
         self.dispatch = self.fruit.copy()
 
-        if self.kind in ['root', 'publisher', 'report', 'field']:
+        if self.kind not in ['file', 'property']:
 
             df = {}
             for c in self.children:
