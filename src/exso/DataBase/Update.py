@@ -71,8 +71,9 @@ class Update:
             return
 
         basenode = self.tree.get_node(locator)
-        lobbytree = Tree(root_path=basenode.path, zero_depth_kind=basenode.kind )
-        lobbytree.make_tree(from_dict = lobby, ignore_fruits = False) # sos, dont turn to true
+        lobbytree = Tree(root_path=basenode.path,
+                         root_dict = lobby,
+                         depth_mapping = {k:v for k,v in self.tree.depth_mapping.items() if k >= basenode.depth})
 
         if self.status.exists == False:
             self.__fast_update(self.tree, lobbytree)
@@ -92,6 +93,7 @@ class Update:
         for fn in pbar:
 
             lobby_df = lobbytree.get_node(fn.dna)()
+            pbar.set_postfix_str(s=fn.name)
 
             if self.is_multiindex == False:
                 lobby_df = self.force_timezone_to(lobby_df, timezone=None)
@@ -121,7 +123,6 @@ class Update:
 
             base_df = fn()
             lobby_df = lobbytree.get_node(fn.dna)()
-
             if self.is_multiindex == False:
                 lobby_df = self.force_timezone_to(lobby_df, timezone=None)
 
