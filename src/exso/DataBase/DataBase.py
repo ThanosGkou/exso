@@ -72,14 +72,17 @@ class DataBase(Query, Update):
         self.status = Status(**args_needed)
         self.status.refresh(self.dir)
 
-        self.tree = Tree(root_path=self.dir, zero_depth_kind = 'report')
+
         if self.status.exists:
             # this is robust, because it includes possible alterations to structure
-            self.tree.make_tree()
+            self.tree = Tree(root_path=self.dir, depth_mapping={0: 'report', 1: 'field', 2: 'file', 3: 'property'})
+            # self.tree.make_tree()
         else:
             # this is a mostly valid thing, but sometimes, new fields are created (e.g. Market Schedule)
             # so, in a freshly built database, it requires feedback from the actual parsing
-            self.tree.make_tree(from_dict = self.r.cue_summary)
+            root_dict = self.resemble_dict(self.r.cue_summary)
+            self.tree = Tree(root_path = self.dir, root_dict=root_dict, depth_mapping={0: 'report', 1: 'field', 2: 'file', 3: 'property'})
+            # self.tree.make_tree(from_dict = self.r.cue_summary)
 
         self.tree.make_dna_chains()
 
@@ -88,6 +91,17 @@ class DataBase(Query, Update):
 
         # sugg = self.search("PROTERGIA", n_best=10,)
         # df = self.query(locator = sugg.dna[0])
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def resemble_dict(self, cue_dict):
+        new_dict = {}
+        for field, subfields_list in cue_dict.items():
+            new_dict[field] = {}
+            for subfield in subfields_list:
+                new_dict[field][subfield] = {}
+        return new_dict
+
+
 
 
 # *******  *******   *******   *******   *******   *******   *******
