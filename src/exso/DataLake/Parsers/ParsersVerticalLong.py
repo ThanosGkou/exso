@@ -474,6 +474,49 @@ class IDM_CRIDA3_AggDemandSupplyCurves(DAM_AggDemandSupplyCurves):
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
+class ISPEnergyOffers(DAM_AggDemandSupplyCurves):
+    def param_updater(self):
+        self.eigen_cols = ['DIR']
+        self.mode = 'expanded'
+        self.index_cols = ['ID_PERIOD', 'AA']
+        self.index_cols_to_keep = ['ID_PERIOD', 'AA']
+        self.payload_cols = ['QUANTITY_MW', 'PRICE']
+        self.database_tzone = 'UTC'
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def pre_proc(self, df: pd.DataFrame) -> pd.DataFrame:
+
+        df = df.sort_values(by='DIR').reset_index(drop=True)
+        df = df.drop(columns='SEG', errors='ignore')
+        df = df.replace({'Dn':'Down'})
+        # make a AA column to match the rest of the work done for Henex agg demand
+        # wherever the time interval changes, put a 1, otherwise 0. Then multiply by the index
+        df['AA'] = (df['ID_PERIOD'].diff() != pd.Timedelta(0,'D')).astype(int) * df.index
+
+        # replace zeros with nans, extend from the closest previous non-zero
+        # the first instance (first hour of the file) will be still NaN, so replace with zero, and convert to int.
+        df['AA'] = (df['AA'].replace(0, np.NAN).
+                    ffill().
+                    fillna(0).
+                    astype(int))
+        # subtract it from the linearly increasing index, to get the desired: 0 1 2 3 4 ... 150 0 1 2 3 4
+        df['AA'] = df.index - df['AA']
+
+        df = pd.pivot_table(df, index=self.index_cols, columns=self.eigen_cols, values=self.payload_cols, dropna=True)
+
+        df = df.swaplevel(axis=1).sort_index(axis = 1)
+        index_ = df.index
+        period_dates_utc = self.period_dates.tz_convert(self.database_tzone).tz_localize(None)
+
+        index_ = index_.set_levels(period_dates_utc, level='ID_PERIOD')#, verify_integrity = False)
+        index_ = index_.rename({'ID_PERIOD': ''})
+        df.index = index_
+        # input('--')
+        return df
+
+###############################################################################################
+###############################################################################################
+###############################################################################################
 
 class DAM_MarketCoupling(DAM_Results):
     #todo: make the DAM_Results operations more generic, so as to be usable also for aMarket COupling
