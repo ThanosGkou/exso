@@ -400,18 +400,19 @@ class Tree(Search, TreeConstructors, TreeAccessors):
         seedir.seedir(self.root.path, sticky_formatter=True, style='emoji')
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def combine(self, *locators, tz_pipe = ['utc', 'eet', None], start_date = None, end_date = None):
+    def combine(self, *locators, assign_name:str|None = None):
         nodes = list(map(self.get_node, *locators))
-        dfs = [node(start_date = start_date, end_date = end_date) for node in nodes]
+        dfs = [node() for node in nodes]
         cols = []
         for df in dfs:
             cols.extend(df.columns.to_list())
         df = pd.concat([*dfs], axis = 1)
-        if tz_pipe:
-            df = df.tz_localize(tz_pipe[0]).tz_convert(tz_pipe[1])
-            if len(tz_pipe) == 3:
-                df = df.tz_localize(tz_pipe[2])
-        return df
+        if not assign_name:
+            assign_name = "_".join(Group(nodes).name)
+
+        node = Node(assign_name, path = self.root.path / ".virtual" / assign_name, depth = 2, kind = 'file', parent = self.root, fruit = df)
+
+        return node
     # ********   *********   *********   *********   *********   *********   *********   *********
 
 
