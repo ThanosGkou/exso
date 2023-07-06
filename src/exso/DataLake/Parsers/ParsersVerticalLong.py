@@ -474,10 +474,10 @@ class IDM_CRIDA3_AggDemandSupplyCurves(DAM_AggDemandSupplyCurves):
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
-class ISPEnergyOffers(DAM_AggDemandSupplyCurves):
+class ISPEnergyOffers(ArchetypeLong):
     def param_updater(self):
         self.eigen_cols = ['DIR']
-        self.mode = 'expanded'
+        self.mode = 'collapsed'
         self.index_cols = ['ID_PERIOD', 'AA']
         self.index_cols_to_keep = ['ID_PERIOD', 'AA']
         self.payload_cols = ['QUANTITY_MW', 'PRICE']
@@ -511,8 +511,62 @@ class ISPEnergyOffers(DAM_AggDemandSupplyCurves):
         index_ = index_.set_levels(period_dates_utc, level='ID_PERIOD')#, verify_integrity = False)
         index_ = index_.rename({'ID_PERIOD': ''})
         df.index = index_
-        # input('--')
         return df
+    # *******  *******   *******   *******   *******   *******   *******
+    def transposeAll(self, subfields_dfs):
+        return subfields_dfs
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def rolling_post_proc(self, subfields_dfs):
+        return subfields_dfs
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def expost(self, fields_dfs):
+        return fields_dfs
+
+    # *******  *******   *******   *******   *******   *******   *******
+###############################################################################################
+###############################################################################################
+###############################################################################################
+class ISPCapacityOffers(ISPEnergyOffers):
+    def param_updater(self):
+        # *******  *******   *******   *******   *******   *******   *******
+        self.eigen_cols = ['DIR', 'SERVICETYPE']
+        self.mode = 'expanded'
+        self.index_cols = ['ID_PERIOD', 'AA']
+        self.index_cols_to_keep = ['ID_PERIOD', 'AA']
+        self.payload_cols = ['QUANTITY_MW', 'PRICE']
+        self.database_tzone = 'UTC'
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def pre_proc(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = super().pre_proc(df)
+        df = df.swaplevel(0,1,axis = 1).sort_index(axis =1 ) # bring top level the Service (FCR, etc), then the Price or Q, then the direction
+        return df
+    # *******  *******   *******   *******   *******   *******   *******
+    def split_cue_points(self, df):
+
+        subfields = df.columns.get_level_values(level = 0).unique() # get product types (FCR, aFRR, mFRR
+        subfields_dfs = {subfield:df[subfield].swaplevel(0,1,axis = 1) for subfield in subfields}
+        # print(subfields)
+        # print(subfields_dfs['FCR'])
+        # print(df.head())
+        # input('----')
+        return subfields_dfs
+    # *******  *******   *******   *******   *******   *******   *******
+    def transposeAll(self, subfields_dfs):
+        return subfields_dfs
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def rolling_post_proc(self, subfields_dfs):
+        return subfields_dfs
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def expost(self, fields_dfs):
+        return fields_dfs
+
+    # *******  *******   *******   *******   *******   *******   *******
+    pass
 
 ###############################################################################################
 ###############################################################################################
