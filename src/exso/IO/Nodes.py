@@ -249,7 +249,10 @@ class Node(NodeAccessors, NodeConstructors):
         self.is_multiindex = False # added. Careful to establish it correctly in the AggDemandCurves
 
         # a bit messy, but solved the problem
-        self.tree = inspect.currentframe().f_back.f_locals["self"]
+        try:
+            self.tree = inspect.currentframe().f_back.f_locals["self"]
+        except:
+            pass
         self.tz_history = []
 
     # ********   *********   *********   *********   *********   *********   *********   *********
