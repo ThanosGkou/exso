@@ -541,13 +541,13 @@ class ISPCapacityOffers(ISPEnergyOffers):
     # *******  *******   *******   *******   *******   *******   *******
     def pre_proc(self, df: pd.DataFrame) -> pd.DataFrame:
         df = super().pre_proc(df)
-        df = df.swaplevel(0,1,axis = 1).sort_index(axis =1 ) # bring top level the Service (FCR, etc), then the Price or Q, then the direction
+        df = df.swaplevel(0,1,axis = 1).sort_index(axis =1) # bring top level the Service (FCR, etc), then the Price or Q, then the direction
         return df
     # *******  *******   *******   *******   *******   *******   *******
     def split_cue_points(self, df):
 
         subfields = df.columns.get_level_values(level = 0).unique() # get product types (FCR, aFRR, mFRR
-        subfields_dfs = {subfield:df[subfield].swaplevel(0,1,axis = 1) for subfield in subfields}
+        subfields_dfs = {subfield:df[subfield].swaplevel(0,1,axis = 1).sort_index(axis = 1) for subfield in subfields}
         # print(subfields)
         # print(subfields_dfs['FCR'])
         # print(df.head())
