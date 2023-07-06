@@ -34,11 +34,11 @@ An analytical framework for the Greek Power&Gas System Operation ("SO") and Mark
 
 
 
-|  id | Report Name                          |  id | Report Name                          |  id | Report Name                          | id | Report Name                          |
-|----:|:-------------------------------------|----:|:-------------------------------------|----:|:-------------------------------------|---:|:-------------------------------------|
-|   1 | AdhocISPResults                      |  21 | IDM_CRIDA2_AggDemandSupplyCurves     |  41 | ISP1DayAheadRESForecast              |  61| SystemRealizationSCADA               |
-|   2 | BalancingCapacityProduct             |  22 | IDM_CRIDA2_MarketCoupling            |  42 | ISP1ISPResults                       |
-|   3 | BalancingEnergyProduct               |  23 | IDM_CRIDA2_Results                   |  43 | ISP1Requirements                     |
+|  id | Report Name                          |  id | Report Name                          |  id | Report Name                          |     id | Report Name            |
+|----:|:-------------------------------------|----:|:-------------------------------------|----:|:-------------------------------------|-------:|:-----------------------|
+|   1 | AdhocISPResults                      |  21 | IDM_CRIDA2_AggDemandSupplyCurves     |  41 | ISP1DayAheadRESForecast              |     61 | SystemRealizationSCADA |
+|   2 | BalancingCapacityProduct             |  22 | IDM_CRIDA2_MarketCoupling            |  42 | ISP1ISPResults                       | **62** | **ISPEnergyOffers**    |
+|   3 | BalancingEnergyProduct               |  23 | IDM_CRIDA2_Results                   |  43 | ISP1Requirements                     | **63** | **ISPCapacityOffers**  |
 |   4 | DAM_AggDemandSupplyCurves            |  24 | IDM_CRIDA2_ResultsSummary            |  44 | ISP1UnitAvailabilities               |
 |   5 | DAM_BlockOrders                      |  25 | IDM_CRIDA3_AggDemandSupplyCurves     |  45 | ISP2DayAheadLoadForecast             |
 |   6 | DAM_GasVTP                           |  26 | IDM_CRIDA3_MarketCoupling            |  46 | ISP2DayAheadRESForecast              |
@@ -279,7 +279,7 @@ options:
 # IDE-based Usage
 
 ## Basic update
-The below script will download and insert to the database all (61) currently supported reports. For more information continue reading.
+The below script will download and insert to the database all (63) currently supported reports. For more information continue reading.
 
 ```sh
 from exso import Updater
@@ -300,7 +300,7 @@ Progress bars will be displayed for every kind of operation for each report, as 
 
 #### Performance & System Requirements
 
-A **full cold-start** process of all 61 reports, might take from **2 to over 5 hours**, depending on internet speed, processing power, memory and non-***exso*** PC usage. Indicative time requirements:
+A **full cold-start** process of all 63 reports, might take from **2 to over 5 hours**, depending on internet speed, processing power, memory and non-***exso*** PC usage. Indicative time requirements:
 
 - Pentium-tier processors + 4GB RAM --> ~6 hours (not a good idea in general)
 - 8th-gen high-performance i5 processor + 16GB --> 2.5 hours
@@ -320,7 +320,7 @@ The combined Database & Datalake takes up approximately **4GB of disk space**
 
 -----
 ## Implemented Reports
-***exso*** currently supports a total of 61 reports from ADMIE/IPTO and HEnEx. Some of them are obsolete (but still useful for analytics), and some ongoing.
+***exso*** currently supports a total of 63 reports from ADMIE/IPTO and HEnEx. Some of them are obsolete (but still useful for analytics), and some ongoing.
 
 In order to review the available reports or decide which ones fit your needs and update only those, a Report.Pool object can be useful.
 ```sh
