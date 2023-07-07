@@ -548,11 +548,44 @@ The file is called **"Hydro.csv"** and is located in the directory **"root/admie
     ```sh
     tree['root']['admie']['AdhocISPResults']['ISP_Activations']['Hydro'] # case sensitive: it accesses the names of the children of each successive node access
     ```
+#### Locator Shortcuts...
+- It's agood practice to access nodes with their **full dna chain**, because it will work every time. 
+- That being said, and depending on the shortest unique part of the dna-chain, accross the database, shorter chains may also work.
 
+   ```sh
+   tree = exso.Tree()
+   ```
+- For example, **ALL of the below will work normally**, because there is only one entity in the whole database called Imbalance Price  (€/MWh)":
+  ```sh
+  # Full DNA: "root.admie.imbabe.imbabe.Imbalance Price  (€/MWh)"
   
+  tree['root.admie.imbabe.imbabe.Imbalance Price  (€/MWh)'] # ok
+  tree['admie.imbabe.imbabe.Imbalance Price  (€/MWh)']      # ok
+  tree['imbabe.imbabe.Imbalance Price  (€/MWh)']            # ok
+  tree['imbabe.Imbalance Price  (€/MWh)']                   # ok
+  tree['Imbalance Price  (€/MWh)']                          # ok
+  ```
+  
+- But, **NONE of the below will work:**
+  ```sh
+  # Full DNA: root.henex.dam_results.results.results.MCP
+  
+  tree['results.results.mcp']
+  tree['results.mcp']
+  tree['mcp']
+  ```
+  - These will raise an error:
+   
+    ![locator_ambiguity.png](resources/ambiguity_error.png)
 
 
+```sh
+# In this case, the acceptable (non-ambiguous) locators would be:
 
+tree['root.henex.dam_results.results.results.MCP']
+tree['henex.dam_results.results.results.MCP']
+tree['dam_results.results.results.MCP']
+```
 
 
 
