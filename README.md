@@ -746,6 +746,33 @@ isp1.export(to_path = "where/to/export/sliced_data_eet", tz_pipe = ['utc', 'eet'
 # That is, if to be re-called without arguments, it will immediately return its raw content: UTC, tz-unaware, full available range
 
 ```
+## Combine Nodes
+The **.combine()** method of the exso.Tree, can be used to combined data on the node-level.
+Advantage:
+- Instead of being forced to call each node's data (frame), and then manually combine/transform them
+- A virtual node is created, which has all the desired data, and all the Node objct's methods (plot, export, etc.)
+
+```sh
+tree = exso.Tree(root_base)
+
+# a tuple or list of dnas as first, locational argument
+combo = tree.combine(("henex.dam_results.results.results.mcp",
+                      'henex.idm_crida1_results.results.results.mcp',
+                      'henex.idm_crida2_results.results.results.mcp',
+                      'henex.idm_crida3_results.results.results.mcp',
+                      'admie.imbabe.imbabe.imbabe.Imbalance Price  (€/MWh)',
+                      'mFRR Price Down (€/MWh)',
+                      'mFRR Price Up (€/MWh)'),
+                     with_name = "Market Prices", # the name of the virtual node
+                     handle_synonymity = ['_dam','_crida1','_crida2','_crida3']))
+                     
+# handle_synonommity = 'auto' or a list of suffixes
+
+combo.plot(tz_pipe = 'EET', start_date = '2023-6-1')
+
+```
+![combine_nodes_viz.png](resources/combine_nodes_viz.png)
+
 
 ## Visualization
 ***exso*** utilizes the (extremely helpful and interactive) package [plotly](https://plotly.com/python) for data visualization.
