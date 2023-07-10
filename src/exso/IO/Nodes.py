@@ -380,6 +380,7 @@ class Node(NodeAccessors, NodeConstructors):
         if not title:
             title = self.parent.name + "." + self.name
 
+
         if area:
             fig = Plot.area_plot(df=self(tz_pipe, start_date, end_date), show=show, save_path=save_path, title=title, ylabel = ylabel)
         else:
