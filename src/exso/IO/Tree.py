@@ -1,9 +1,11 @@
 import os
+import copy
 import re
 import sys
 import traceback
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import seedir
 import exso
@@ -249,14 +251,15 @@ class TreeConstructors:
 class Tree(Search, TreeConstructors, TreeAccessors):
     ''' Tree Class: a custom database framework for nested csv files
 
-        :param root_path: [str|Path] The path of the database directory
-        :param zero_depth_kind (optional): [str]. Any of: root, publisher, report, field, file. default = 'root'
-        :param zero_depth_name (optional): [str]. A custom string to name the root node. default = 'root'
-        :param ignore_inintials (optional): [str|list]. Pattern(s) to ignore if encountered on the beggining of any file or directory in the tree. default = '.'
+        :param root_path: [str|Path|None] [default = None] The path of the database directory
+        :param root_dict: [dict|None] [default = None] If provided, a hot-start tree will be created. Format: structured or unstructured dict, whose final leafs are DataFr
+        :param depth_mapping (optional): [dict|None]. A mapping, of k:v pairs. Keys are the depth (relative to the root, starting from 0) and values are strings. e.g. {0:'root', 1:'publisher', ...}
+        :param root_name (optional): [str] [default = 'root']. A custom string to name the root node. default = 'root'
+        :param ignore_initials (optional): [str|list] [default = '.']. Pattern(s) to ignore if encountered on the beggining of any file or directory in the tree.
+        :param ignore_fruits (optional): [bool] [default = False]
 
         Usage: - Instantiate a Tree object
-               - call the .make_tree() method
-               - use the indicated accessors (see documentation) to acess, transform, plot and export any node(s)
+               - use the indicated accessors (see documentation) to access, transform, combine, plot and export any node(s)
     '''
     instances = []
     def __init__(self, root_path:Path|str|None = None, root_dict:dict|None = None, depth_mapping:dict|None = None, ignore_if_startswith:str|list = '.', root_name:str|None = None, make = True, ignore_fruits = False):
@@ -400,17 +403,51 @@ class Tree(Search, TreeConstructors, TreeAccessors):
         seedir.seedir(self.root.path, sticky_formatter=True, style='emoji')
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def combine(self, *locators, assign_name:str|None = None):
+    def combine(self, *locators, with_name:str|None = None, handle_synonymity:str|list = 'auto'):
         nodes = list(map(self.get_node, *locators))
-        dfs = [node() for node in nodes]
-        cols = []
-        for df in dfs:
-            cols.extend(df.columns.to_list())
-        df = pd.concat([*dfs], axis = 1)
-        if not assign_name:
-            assign_name = "_".join(Group(nodes).name)
 
-        node = Node(assign_name, path = self.root.path / ".virtual" / assign_name, depth = 2, kind = 'file', parent = self.root, fruit = df)
+        if handle_synonymity == 'auto':
+            suffixes = ["_" + str(i) for i in range(1, len(*locators))]
+        else:
+            suffixes = handle_synonymity
+
+        dfs = [node() for node in nodes]
+        original_cols = [df.columns.to_list() for df in dfs].copy()
+
+        # if a column is found in more than one dataframe columns, add a suffix to distinguish it
+
+        new_cols = copy.deepcopy(original_cols)
+        for i in range(len(original_cols)):  # for each list of df columns
+            examined_cols = original_cols[i]  # we look at the originals
+            visited = []
+            for j in range(len(original_cols)):
+                if j == i:  # dont compare to yourself
+                    continue
+
+                other = original_cols[j]  # we look at the originals of other dataframes
+                conflicts = np.intersect1d(np.array(examined_cols), np.array(other))  # are there any conflicts at all?
+
+                if len(conflicts):  # if yes,
+                    for conf in conflicts:  # for each conflictual string:
+                        examined_arg = [i for i, col in enumerate(examined_cols) if
+                                        col == conf and i not in visited]  # find its location in the examined list (only if it hasnt been revisited)
+                        if not examined_arg:
+                            continue
+                        else:
+                            examined_arg = examined_arg[0]
+
+                        visited.append(examined_arg)
+                        new_cols[i][examined_arg] += suffixes[i]  # and rename the new columns accordingly
+
+        renamers = [{k: v for k, v in zip(original_cols[i], new_cols[i])} for i in range(len(new_cols))]  # create one renamer per dataframe
+
+        [dfs[i].rename(renamers[i], axis = 'columns', inplace = True) for i in range(len(dfs))]
+
+        df = pd.concat([*dfs], axis = 1)
+        if not with_name:
+            with_name = "_".join(Group(nodes).name)
+
+        node = Node(with_name, path = self.root.path / ".virtual" / with_name, depth = 2, kind = 'file', parent = self.root, fruit = df)
 
         return node
     # ********   *********   *********   *********   *********   *********   *********   *********
