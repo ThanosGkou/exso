@@ -84,23 +84,15 @@ class Status:
     def get_sample_filepath(self, dir):
         self.logger.info("\t\tAttempting to access a sample database file ('guide file'), in order to assess the data-range that is already stored in the Databse.")
 
-        inner_dirs = [inner for inner in dir.iterdir() if inner.is_dir()]
         sample_file = None
 
-        if not inner_dirs:
-            self.logger.info('\t\tNo files or dirs detected within the database..')
-
+        internal_files = list(dir.rglob('*.csv'))
+        if internal_files:
+            sample_file = internal_files[0]
+            self.logger.info('\t\t\tFiles found within the check_directory: {}'.format(sample_file.parent))
+            self.logger.info('\t\tControl Filepath: "{}"'.format(sample_file))
         else:
-            check_dir = inner_dirs[0]
-            self.logger.info('\t\tAssessing subdirectory: "{}"'.format(check_dir))
-            sample_files = check_dir.glob('*.csv')
-
-            try:
-                sample_file = next(sample_files)
-                self.logger.info('\t\t\tFiles found within the check_directory: {}'.format(sample_file.parent))
-                self.logger.info('\t\tControl Filepath: "{}"'.format(sample_file))
-            except:
-                self.logger.info('\t\tSubdirectory is empty. \n\t\t\t-->Assuming that the whole database is EMPTY. ')
+            self.logger.info('\t\tNo files or dirs detected within the database..')
 
         return sample_file
 
