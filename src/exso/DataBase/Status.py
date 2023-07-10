@@ -14,7 +14,7 @@ date_lambda = lambda x: datetime.datetime.strftime(DateTime.date_magician(x, ret
 # *******  *******   *******   *******   *******   *******   *******
 # *******  *******   *******   *******   *******   *******   *******
 class Status:
-    def __init__(self, dir, db_timezone, lake_inherent_tz, min_potential_datetime, max_potential_datetime, resolution, period_covered):
+    def __init__(self, dir, db_timezone, lake_inherent_tz, min_potential_datetime, max_potential_datetime, resolution):
         self.logger = logging.getLogger(__name__ + '.' + self.__class__.__name__)
         self.timezone = db_timezone
         self.dir = dir
@@ -22,7 +22,7 @@ class Status:
         self.min_potential_datetime = min_potential_datetime
         self.max_potential_datetime = max_potential_datetime
         self.resolution = resolution
-        self.period_covered = period_covered
+        # self.period_covered = period_covered
         self.initialize()
 
 
@@ -50,13 +50,13 @@ class Status:
                         'potential':{'date':self.max_potential_datetime.date(),
                                      'datetime':self.max_potential_datetime}},
 
-                 'range':{'observed':{'date':pd.DatetimeIndex([]),
-                                      'str':None},
-                          'ideal':{'date':pd.date_range(self.min_potential_datetime.date(),
-                                                        self.max_potential_datetime.date(),
-                                                        freq=self.period_covered),
-                                   'str':None},
-                          },
+                 # 'range':{'observed':{'date':pd.DatetimeIndex([]),
+                 #                      'str':None},
+                 #          'ideal':{'date':pd.date_range(self.min_potential_datetime.date(),
+                 #                                        self.max_potential_datetime.date(),
+                 #                                        freq=self.period_covered),
+                 #                   'str':None},
+                 #          },
 
                  'timezones': {'lake': self.lake_inherent_tz,
                                'base': self.timezone,

@@ -49,6 +49,16 @@ class Query:
 ###############################################################################################
 class DataBase(Query, Update):
     def __init__(self, report,  db_timezone, db_suffix = None):
+        ''' Utilized attributes of report object:
+            .persistent_long
+            .database_path
+            .database_min_potential_datetime
+            .database_max_potential.datetime
+            .inherent_Tz
+            # .period_covered
+            .resolution
+        '''
+
         self.logger = logging.getLogger(__name__ + '.' + self.__class__.__name__)
 
         self.r = report
@@ -65,7 +75,7 @@ class DataBase(Query, Update):
                        'min_potential_datetime': self.r.database_min_potential_datetime,
                        'max_potential_datetime': self.r.database_max_potential_datetime,
                        'lake_inherent_tz':self.r.inherent_tz,
-                       'period_covered': self.r.period_covered,
+                       # 'period_covered': self.r.period_covered,
                        'resolution':self.r.resolution,}
 
 
