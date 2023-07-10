@@ -58,7 +58,7 @@ class Plot:
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     @staticmethod
-    def area_plot(df, cols=None, save_path=None, title=None, ylabel=None, xlabel=None, ytick_suffix=None, legend_title=None, show=True, add_total = True, cmap = 'viridis', hovermode = 'x'):
+    def area_plot(df, cols=None, save_path=None, title=None, ylabel=None, xlabel=None, ytick_suffix=None, legend_title=None, show=True, add_total = False, cmap = 'viridis', hovermode = 'x'):
 
         if isinstance(df, pd.Series):
             df = df.to_frame(name='Values')
