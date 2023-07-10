@@ -1,3 +1,5 @@
+import re
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -82,6 +84,11 @@ class Plot:
         df = df.dropna(axis = 'columns', how='all')
         df = df.drop(columns = df.columns[df.sum()==0])
         df = df.replace(0, np.NAN)
+
+        remove = list(map(lambda x: re.search('total', x.lower()), df.columns.to_list()))
+        remove = [i for i,r in enumerate(remove) if r]
+        remove = df.columns[remove]
+        df = df.drop(columns = remove, errors='ignore')
         if add_total:
             df['TOTAL'] = df.sum(axis= 1)
 
