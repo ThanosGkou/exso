@@ -89,11 +89,14 @@ class Plot:
         remove = [i for i,r in enumerate(remove) if r]
         remove = df.columns[remove]
         df = df.drop(columns = remove, errors='ignore')
-        if add_total:
-            df['TOTAL'] = df.sum(axis= 1)
+        cols = df.columns.to_list()
+        # if add_total:
+        df['_TOTAL'] = df.sum(axis= 1)
 
         cmap_hex = Plot.get_sized_colormap_plotly_compatible(n_colors=df.shape[1], cmap_name=cmap)
-        fig = px.area(df, x= df.index, y = df.columns, color_discrete_sequence = cmap_hex)
+        fig = px.area(df, x= df.index, y = cols, color_discrete_sequence = cmap_hex)
+        fig.add_trace(go.Scatter(x = df.index, y = df['_TOTAL'], name='TOTAL (sum)', mode = 'lines',fillcolor='black', opacity=0.7, line = dict(color = 'black')))
+        
 
         fig.update_yaxes(ticksuffix=ytick_suffix, showgrid=True, separatethousands=True, tickfont_size=24,
                          linecolor='black', showline=True, gridcolor='darkgray')
@@ -119,7 +122,8 @@ class Plot:
                 family="Times New Roman",
                 size=18,
                 color="RebeccaPurple"
-            )
+            ),
+            hoverlabel={'font':{'size':8}}
         )
 
         fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
