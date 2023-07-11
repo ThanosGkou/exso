@@ -95,8 +95,14 @@ class TreeAccessors:
             if os.path.isfile(locator):
                 node = self.get_nodes_whose('path', equals=locator, collapse_if_single=True)
             else:
-                locator = DNA(locator)
-                node = self.get_node(locator)
+                if '>>' in locator:
+                    explicit_dna = re.search('.*(?=.>>)', locator).group()
+                    explicit_node = self.get_node(explicit_dna)
+                    node = explicit_node.get_relevants(depth = self.max_depth - 1)[0]
+                else:
+                    locator = DNA(locator)
+                    node = self.get_node(locator)
+
         elif isinstance(locator,DNA):
             absolute_dna_locator = self.dna_match(locator)
             node = self.get_nodes_whose('dna', equals=absolute_dna_locator, collapse_if_single=True)
