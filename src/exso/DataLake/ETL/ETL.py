@@ -44,6 +44,8 @@ class Loader:
             engine = 'openpyxl'
         elif file_format == 'xls':
             engine = None
+        elif file_format == 'csv':
+            engine = None
         else:
             raise NotImplementedError
         self.engine = engine
@@ -60,6 +62,8 @@ class Loader:
 
         if self.r.report_name in ['BalancingEnergyProduct', 'BalancingCapacityProduct']:
             self._reader = Readers.adhoc_reader
+        elif self.r.publisher == 'entsoe':
+            self._reader = Readers.csv_reader
         else:
             self._reader = Readers.standard_reader
 
@@ -226,7 +230,13 @@ class Parser:
             else:
                 import exso.DataLake.Parsers.ParsersVerticalWide as RelevantParsers
 
-        parser = getattr(RelevantParsers, self.r.report_name)
+        if self.r.publisher == 'entsoe':
+            if 'generation_per_plant' in self.r.report_name.lower():
+                parser = RelevantParsers.GenerationPerPlant
+            else:
+                parser = RelevantParsers.ENTSO
+        else:
+            parser = getattr(RelevantParsers, self.r.report_name)
 
         info_for_parser = {'report_name': self.r.report_name,
                            'cue_dict': self.r.cue_dict,
@@ -362,7 +372,6 @@ class Joiner:
 
     # *******  *******   *******   *******   *******   *******   *******
     def joinAll(self):
-
         the_first_str_date = list(self.data.keys())[0]
         internal_structure = self.data[the_first_str_date]
         joined_data = {field: {} for field in internal_structure.keys()}
@@ -390,6 +399,9 @@ class Joiner:
         self.logger.info( "--> Joining completed. Joined {} files in: {:,} sec ({} sec/file on average)".format(self.file_df.shape[0],
                                                                                                   round(tf, 2), round( tf / self.file_df.shape[0], 3)))
         self.data = joined_data
+
+        # TODO: Check for consecutive nans from end to start.
+        #   e.g. If the LAST 3 days are all NaN, completely delete them from the database, in order to avoid update-confusions
         return joined_data
     # *******  *******   *******   *******   *******   *******   *******
 
