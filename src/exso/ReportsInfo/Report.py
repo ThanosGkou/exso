@@ -10,6 +10,7 @@ from exso.ReportsInfo.Interpretation import Metadata, ReadingSettings, ParsingSe
 from exso.Utils.DateTime import DateTime
 from exso.Utils.Misc import Misc
 from exso.Utils.STR import STR
+from exso.Utils.Similarity import Similarity
 
 # *********************************************
 
@@ -180,6 +181,7 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
 
         self.logger.info("API access allowed? {}".format(self.api_allowed))
 
+        self.check_existence()
 
         self.df = self.get_report_data()
         self.json = self.df.to_dict(orient='records')[0]
@@ -197,35 +199,45 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
         self.database_min_potential_datetime, self.database_max_potential_datetime = self.get_database_min_max_datetimes(self.available_from, self.available_until)
 
     # *******  *******   *******   *******   *******   *******   *******
+    def check_existence(self, report_name = None):
+        if not report_name:
+            report_name = self.report_name
+
+        available_reports = self.rp.allmighty_df['report_name'].values
+        if report_name not in available_reports:
+
+            print('\n\t--> The requested report ("{}") either does not exist, or is not supported'.format(report_name))
+
+            self.logger.error("Fatal: The requested report-type ('{}') either does not exist, or is not supported".format(report_name))
+
+            n_best = 3
+            best = Similarity.find_best_match(lookup_list=available_reports,
+                                              string = report_name,
+                                              n_best=n_best)
+            print('\t    The {} reports, most similar to the one requested ({}) are:'.format(n_best, report_name))
+
+            [print('\t\t\t'+ report + ': ' + f"{similarity:.0%}") for report, similarity in best]
+            sys.exit()
+        else:
+            self.logger.info("The requested report type exists in the reports pool dataframe. Proceeding.")
+
+    # *******  *******   *******   *******   *******   *******   *******
     def get_text_description(self):
         return {'report_name':self.report_name, 'description':self.json['official_comment']}
     # *******  *******   *******   *******   *******   *******   *******
     def get_report_data(self, report_name = None):
         if not report_name:
             report_name = self.report_name
+        else:
+            self.check_existence(report_name)
 
         self.logger.info("Extracting report-type info.")
 
-        if report_name in self.rp.allmighty_df['report_name'].values:
-            df = self.rp.extract(report_name=report_name)
-            self.logger.info("The requested report type exists in the reports pool dataframe. Proceeding.")
-            self.logger.info('\n' + STR.df_to_string(df))
-            df = df.replace(np.NaN, None)
-            return df
+        df = self.rp.extract(report_name=report_name)
 
-        elif report_name in self.rp.allmighty_df['alias'].values:
-            df = self.rp.extract(alias = report_name)
-            self.logger.info("The requested report type exists in the reports pool dataframe. Proceeding.")
-            self.logger.info('\n' + STR.df_to_string(df))
-            df = df.replace(np.NaN, None)
-            return df
-
-        else:
-            print('Error: Requested report type: "{}" doesn not exist in the info file'.format(report_name))
-            print('Available report types are: {}'.format(STR.df_to_string(self.rp.get_available())))
-            self.logger.error("The requested report-type ('{}')does Not exist in the report pool dataframe".format(report_name))
-            self.logger.error('Available report types are: \n\n{}'.format(STR.df_to_string(self.rp.get_available())))
-            sys.exit()
+        self.logger.info('\n' + STR.df_to_string(df))
+        df = df.replace(np.NaN, None)
+        return df
 
     # *******  *******   *******   *******   *******   *******   *******
     def derive_directories(self, root_lake, root_base):
