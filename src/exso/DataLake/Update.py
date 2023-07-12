@@ -102,6 +102,9 @@ class Update:
 
         extra = self.intersect_with_existing(intermediate_missing='ignore')
 
+        # print()
+        # print(extra)
+        # input('safasfasfasfasfasfa')
         if self.status.up_to_date:
             udates = {}
         else:
@@ -111,6 +114,7 @@ class Update:
 
         self.udates = udates
         return udates
+
     # *******  *******   *******   *******   *******   *******   *******
     def filter_out_invalid(self, start_date, end_date):
 
