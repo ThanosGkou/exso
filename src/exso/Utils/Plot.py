@@ -96,7 +96,7 @@ class Plot:
         cmap_hex = Plot.get_sized_colormap_plotly_compatible(n_colors=df.shape[1], cmap_name=cmap)
         fig = px.area(df, x= df.index, y = cols, color_discrete_sequence = cmap_hex)
         fig.add_trace(go.Scatter(x = df.index, y = df['_TOTAL'], name='TOTAL (sum)', mode = 'lines',fillcolor='black', opacity=0.7, line = dict(color = 'black')))
-        
+
 
         fig.update_yaxes(ticksuffix=ytick_suffix, showgrid=True, separatethousands=True, tickfont_size=24,
                          linecolor='black', showline=True, gridcolor='darkgray')
@@ -215,6 +215,7 @@ class Plot:
         else:
             fig = px.line(df,color_discrete_sequence=colors[:df.shape[1]])
 
+        fig.update_traces(line = dict(width = 4))
         fig.update_traces(textposition='top center', hovertemplate=None)
         fig.update_layout(hovermode=hovermode)
 
