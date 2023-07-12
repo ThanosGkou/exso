@@ -120,7 +120,7 @@ class EntsoAssistant:
 
     # *******  *******   *******   *******   *******   *******   *******
     def _conform_weekly(self, payload):
-        if payload.empty:
+        if payload.empty or payload.shape[0] == 1:
             return payload
 
         resolution = payload.index[1] - payload.index[0]
@@ -153,6 +153,10 @@ class EntsoAssistant:
         link_is_valid, content = self.unit_request(link)
 
         if link_is_valid:
+
+            if isinstance(content, pd.Series):
+                content = content.to_frame(name=self.report_name)
+
             if isinstance(content, pd.DataFrame):
                 self.unit_save(content, filepath)
             else:
@@ -262,6 +266,7 @@ class API(EntsoAssistant):
     def query(self, report_name, start_date, end_date, dry_run=False, n_threads=1):
 
         sys.stdout = sys.__stdout__
+        self.report_name = report_name
         self.dry_run = dry_run
         self.logger.info(
             "Making query with arguments: report_name: {}, start_date: {}, end_date: {}, dry_run: {}, n_threads: {}".
@@ -272,7 +277,7 @@ class API(EntsoAssistant):
         query_type = 'query_' + '_'.join(report_components[1:]).lower()
         # query_type = 'query_' + query_type.lower()
 
-        neighbors = entsoe.mappings.NEIGHBOURS[country_code]
+        # neighbors = entsoe.mappings.NEIGHBOURS[country_code]
         # for k,v in entsoe.mappings.NEIGHBOURS.items() :
         #     print(k)
         #     print(v)
