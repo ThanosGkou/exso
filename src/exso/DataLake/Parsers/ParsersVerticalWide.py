@@ -2,6 +2,7 @@ import datetime
 import logging
 import traceback
 
+import pandas as pd
 from exso.DataLake.Parsers.ParsersArch import Archetype
 from exso.Utils.DateTime import DateTime
 
@@ -173,3 +174,67 @@ class RESMVLVPROD(ArchetypeWide):
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
+class ENTSO(ArchetypeWide):
+    # *******  *******   *******   *******   *******   *******   *******
+    def param_setter(self):
+        pass
+    # *******  *******   *******   *******   *******   *******   *******
+    def pre_proc(self, df):
+        df.index = df.iloc[:,0]
+        df = df.iloc[:, 1:].copy()
+        df.index = pd.to_datetime(df.index)
+        df = super().pre_proc(df)
+        return df
+    #     if self.replacer_mapping:
+    #         df = self.apply_replacements(df, self.replacer_mapping, regex =False, field = self.field)
+    #
+    #     if self.regex_mapping:
+    #         df = self.apply_replacements(df, self.regex_mapping, regex =True, field = self.field)
+    #
+    #     if self.dropna_settings:
+    #         df = self.drop_nans(df, settings=self.dropna_settings, field=self.field)
+    #
+    #     return df
+
+    # *******  *******   *******   *******   *******   *******   *******
+    # def split_cue_points(self, df):
+    #     return {self.field: df}
+
+    # *******  *******   *******   *******   *******   *******   *******
+    # def transposeAll(self, subfields_dfs):
+    #     return subfields_dfs
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def rolling_post_proc(self, subfields_dfs):
+        for subfield, df in subfields_dfs.items():
+
+            # df = self.apply_datetime_index(df, self.period_dates)
+
+            if self.renamer_mapping:
+                self.col_renamer(df, renamer_mapping = self.renamer_mapping, field = self.field, subfield = subfield)
+
+            if self.drop_col_settings:
+                df = self.drop_columns_if(df,
+                                          col_names=self.drop_col_settings['col_names'],
+                                          startswith=self.drop_col_settings['startswith'],
+                                          error_action=self.drop_col_settings['error_action'],
+                                          field=self.field,
+                                          subfield=subfield)
+
+            # df = df.fillna(0)
+
+            subfields_dfs[subfield] = df
+        return subfields_dfs
+
+    # *******  *******   *******   *******   *******   *******   *******
+    # def expost(self, subfields_dfs):
+    #     return subfields_dfs
+    # *******  *******   *******   *******   *******   *******   *******
+###############################################################################################
+###############################################################################################
+###############################################################################################
+class GenerationPerPlant(ENTSO):
+    def pre_proc(self, df):
+        df = df.iloc[2:].copy()
+        df = super().pre_proc(df)
+        return df
