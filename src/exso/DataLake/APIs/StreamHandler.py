@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from exso.DataLake.APIs import ADMIE, HEnEx
+from exso.DataLake.APIs import ADMIE, HEnEx, Entsoe
 from exso.DataLake.APIs import HEnExArchives
 from exso.Utils.DateTime import DateTime
 from exso.Utils.Misc import Misc
@@ -54,9 +54,13 @@ class StreamHandler:
             else:
                 api = archive_api
 
-        else:
+        elif publisher == 'admie':
             api = ADMIE.API(self.save_dir)
             api.query(report_name, start_date=start_date, end_date=end_date, dry_run=dry_run, n_threads = 6)
+
+        elif publisher == 'entsoe':
+            api = Entsoe.API(self.save_dir)
+            api.query(report_name, start_date=start_date, end_date=end_date,dry_run=dry_run, n_threads = 1)
 
         self.api = api
         self.n_links = api.n_links
