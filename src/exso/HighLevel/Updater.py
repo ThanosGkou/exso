@@ -335,21 +335,27 @@ class Updater:
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
     def derive_reports(self, rp, which:str|list|None, groups:str|list|None, only_ongoing:bool):
 
-        report_names = None
         self.logger.info("Assessing what kind of update was requested.")
         self.logger.info(f"Provided arguments: {which = }, {groups = }, {only_ongoing = }")
 
         selected = None
         implemented = rp.get_available()
 
-        if not which:
+
+        if isinstance(which, str):
+            if which == 'all':
+                which = list(implemented.report_name.values)
+            else:
+                which = implemented[implemented.report_name.str.lower() == which].report_name.squeeze()
+                which = [which]
+
+        elif not which:
             which = []
 
-        elif isinstance(which, str):
-            if which == 'all':
-                which = implemented.report_name.values
-            else:
-                which = [which]
+        elif isinstance(which, list):
+            whichh = [w.lower() for w in which]
+            whichh = implemented[implemented.report_name.str.lower().isin(whichh)].report_name.values
+            which = list(whichh)
 
         if not groups:
             groups = implemented['group'].to_list()
@@ -366,6 +372,9 @@ class Updater:
 
         self.logger.info("Will update datasets based on argument '{}'".format(selected))
         self.logger.info("To-update datasets: {}".format(report_names))
+
+        if not report_names:
+            raise LookupError("Could not locate valid reports through a")
 
         return report_names
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
