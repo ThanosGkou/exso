@@ -74,7 +74,7 @@ class ReadingSettings:
         if isinstance(self.sheet_tags, type(None)):
             self.sheet_tags = [self.report_name]
         else:
-            self.__list_parser(self.sheet_tags)
+            self.sheet_tags = self.__list_parser(self.sheet_tags)
 
         self.header = 0 if not self.header else int(self.header)
         self.use_cols = self.__interpret_use_cols(self.use_cols)
