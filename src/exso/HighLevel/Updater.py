@@ -264,12 +264,8 @@ class Updater:
         # else:
 
         fulfilled = self.initially_fulfilled.copy()
-        print('previously fulfilled')
-        print(fulfilled)
 
         fulfilled.extend(self.refresh_requirements_fulfilled)
-        print('Now fulfilled')
-        print(fulfilled)
         with open(self.fulfilled_refreshes_file, 'w') as f:
             f.write(json.dumps(fulfilled))
         self.logger.info("Successfully updated fulfilled refreshes file.")
@@ -297,6 +293,7 @@ class Updater:
         self.logger.info('\n\n\n\t\tAssessing report type: {}'.format(report_name))
 
         r = Report.Report(self.rp, report_name, self.root_lake, self.root_base, api_allowed=True)
+
         if self.refresh_requirements[report_name]:
             self.logger.info("Refresh requirement = True. Deleting the existing database: {}".format(r.database_path))
             print('\tIt seems like you upgraded to the latest exso version, which brought some changes to the specific report ({}). \n\tThis report\'s data(base), just for this time, will be fully refreshed instead of just updated.'.format(report_name))
