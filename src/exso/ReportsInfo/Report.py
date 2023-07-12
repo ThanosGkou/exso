@@ -125,7 +125,7 @@ class Pool:
             scan_by = 'report_name'
             value = report_name
 
-        df = self.allmighty_df[self.allmighty_df[scan_by] == value].copy()
+        df = self.allmighty_df[self.allmighty_df[scan_by].str.lower() == value.lower()].copy()
         self.logger.info(
             "Filetype Input Dataframe:\n" + STR.iterprint(Misc.single_row_df_to_dict(df), return_text=True))
 
@@ -204,7 +204,8 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
             report_name = self.report_name
 
         available_reports = self.rp.allmighty_df['report_name'].values
-        if report_name not in available_reports:
+        available_reports = [ar.lower() for ar in available_reports]
+        if report_name.lower() not in available_reports:
 
             print('\n\t--> The requested report ("{}") either does not exist, or is not supported'.format(report_name))
             self.logger.error("Fatal: The requested report-type ('{}') either does not exist, or is not supported".format(report_name))
@@ -215,6 +216,7 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
                                               n_best=n_best)
             print('\t    The {} reports, most similar to the one requested ({}) are:'.format(n_best, report_name))
             [print('\t\t\t'+ report + ': ' + f"{similarity:.0%}") for report, similarity in best]
+            input('Hit Enter to exit.')
             sys.exit()
         else:
             self.logger.info("The requested report type exists in the reports pool dataframe. Proceeding.")
@@ -232,7 +234,7 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
         self.logger.info("Extracting report-type info.")
 
         df = self.rp.extract(report_name=report_name)
-
+        self.report_name = df['report_name'].squeeze()
         self.logger.info('\n' + STR.df_to_string(df))
         df = df.replace(np.NaN, None)
         return df
