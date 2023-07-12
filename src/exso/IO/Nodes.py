@@ -406,9 +406,7 @@ class Node(NodeAccessors, NodeConstructors):
         ''' Caution: If I read something once, with a specific tz_pipe,
             then, I fI re-call this, it won't be read again, because it stays as a fruit.
         '''
-        # if hasattr(self, 'dna'):
-        #     print('\tLoading file: {}'.format(self.dna))
-
+        
         if is_multiindex:
             df = self.read_multiindex(self.path, header=[0, 1], index_col=[0, 1], tz_pipe=tz_pipe)
         else:
