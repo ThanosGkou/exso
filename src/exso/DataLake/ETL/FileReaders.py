@@ -6,7 +6,14 @@ from pathlib import Path
 # *******  *******   *******   *******   *******   *******   *******
 # *******  *******   *******   *******   *******   *******   *******
 class Readers:
+    @staticmethod
+    def csv_reader(kwargs, filepath):
+        if 'sheet_name' in kwargs:
+            kwargs.pop('sheet_name')
+        df = pd.read_csv(filepath, **kwargs)
+        return {0:df}
 
+    # *******  *******   *******   *******   *******   *******   *******
     @staticmethod
     def imbabe_reader(kwargs, filepath):
 
