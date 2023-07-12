@@ -181,9 +181,7 @@ class Update:
             current_tz = dff.index.tzinfo
         else:
             current_tz = None
-        print()
-        print(df)
-        print()
+
         if current_tz:
             if current_tz == timezone:
                 pass
