@@ -120,7 +120,7 @@ class Status:
                       'max':{'observed':{'date':end_date,
                                          'datetime':max_observed_datetime_inherent_tz},
                              },
-                      'range':{'observed':{'date':date_range}},
+                      # 'range':{'observed':{'date':date_range}},
                       'timezones':{'current':sample_df.index.tz},
                       'missing':missing_days}
 
