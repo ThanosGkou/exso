@@ -207,7 +207,6 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
         if report_name not in available_reports:
 
             print('\n\t--> The requested report ("{}") either does not exist, or is not supported'.format(report_name))
-
             self.logger.error("Fatal: The requested report-type ('{}') either does not exist, or is not supported".format(report_name))
 
             n_best = 3
@@ -215,7 +214,6 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
                                               string = report_name,
                                               n_best=n_best)
             print('\t    The {} reports, most similar to the one requested ({}) are:'.format(n_best, report_name))
-
             [print('\t\t\t'+ report + ': ' + f"{similarity:.0%}") for report, similarity in best]
             sys.exit()
         else:
