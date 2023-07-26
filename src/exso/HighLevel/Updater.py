@@ -59,7 +59,7 @@ class Updater:
         self.rp = self.get_pool(reports_pool)
         self.keep_steps = False
         self.mode = None
-        self.report_names = self.derive_reports(self.rp, which, groups, only_ongoing)
+        self.report_names = self.derive_reports(self.rp, which, groups, publishers, only_ongoing)
 
 
         self.refresh_requirements_file = Files.files_dir / 'refresh_requirements.txt'
@@ -355,8 +355,14 @@ class Updater:
         elif isinstance(groups, str):
             groups = [groups]
 
+        if not publishers:
+            publishers = implemented['publisher'].to_list()
+        elif isinstance(publishers, str):
+            publishers = [publishers]
+
         intersect = implemented[((implemented.report_name.isin(which))&
-                                 (implemented.group.isin(groups)))]
+                                 (implemented.group.isin(groups))&
+                                 (implemented.publisher.isin(publishers)))]
 
         if only_ongoing:
             intersect = intersect[intersect.available_until.isna() == True].copy()
