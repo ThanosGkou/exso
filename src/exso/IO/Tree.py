@@ -413,7 +413,7 @@ class Tree(Search, TreeConstructors, TreeAccessors):
         nodes = list(map(self.get_node, *locators))
 
         if handle_synonymity == 'auto':
-            suffixes = ["_" + str(i) for i in range(1, len(*locators))]
+            suffixes = ["_" + str(i) for i in range(1, len(*locators)+1,1)]
         else:
             suffixes = handle_synonymity
 
@@ -449,6 +449,11 @@ class Tree(Search, TreeConstructors, TreeAccessors):
 
         [dfs[i].rename(renamers[i], axis = 'columns', inplace = True) for i in range(len(dfs))]
 
+        resolutions = [dfs[i].index[1] - dfs[i].index[0] for i in range(len(dfs))]
+        min_resol = min(resolutions)
+        for i in range(len(resolutions)):
+            if resolutions[i] != min_resol:
+                dfs[i] = dfs[i].resample(min_resol).interpolate(method = 'linear')
         df = pd.concat([*dfs], axis = 1)
         if not with_name:
             with_name = "_".join(Group(nodes).name)
