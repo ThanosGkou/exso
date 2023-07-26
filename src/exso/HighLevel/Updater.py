@@ -28,14 +28,14 @@ from haggis import string_util as hag
 class Updater:
     """ The main API-class of the exso project to update datasets.
         Check out the __init__.__doc__ for more information """
-    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, which:str|list = 'all', groups:None|list = None, only_ongoing:bool = False):
+    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, which:str|list|None = None, groups:None|list|str = None, publishers: None|list|str = None, only_ongoing:bool = False):
         """
         Constructor parameters for the Updater class:
 
         :param root_lake: [str|Path] The desired path to use as the datalake directory
         :param root_base: [str|Path] the desired path to use as the database directory
         :param reports_pool (optional): [Report.Pool] If you have instantiated a Report.Pool object, you can pass it to avoid re-instantiation
-        :param which (optional): [list|None] If None, will update everything (unless otherwise specified through "groups" or "only_ongoing"). If not None, give a list or a str, with the specific report-names that you want to update.
+        :param which (optional): [list|str|None] If None, will update everything (unless otherwise specified through "groups" or "only_ongoing"). If not None, give a list or a str, with the specific report-names that you want to update.
         :param groups (optional): [list|None] Give a list of groups that you want to update
         :param only_ongoing (optional): [bool|False] if True, will only update reports that are still actively updated.
 
@@ -255,8 +255,6 @@ class Updater:
                 print('\t{}: {}'.format(k, v))
 
 
-
-
     # *******  *******   *******   *******   *******   *******   *******
     def update_fulfilled_refreshes(self):
         # if self.mode == 'debugging':
@@ -309,7 +307,6 @@ class Updater:
             end_date = None
 
         lake.update(start_date, end_date)
-
         base = DataBase.DataBase(r, db_timezone='UTC')
         requirements = base.get_update_requirements()
 
@@ -333,7 +330,7 @@ class Updater:
         self.r = r
 
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
-    def derive_reports(self, rp, which:str|list|None, groups:str|list|None, only_ongoing:bool):
+    def derive_reports(self, rp, which:list|None, groups:str|list|None, publishers:str|list|None, only_ongoing:bool):
 
         self.logger.info("Assessing what kind of update was requested.")
         self.logger.info(f"Provided arguments: {which = }, {groups = }, {only_ongoing = }")
@@ -341,16 +338,12 @@ class Updater:
         selected = None
         implemented = rp.get_available()
 
+        if not which: # which = None --> all reports
+            which = list(implemented.report_name.values)
 
-        if isinstance(which, str):
-            if which == 'all':
-                which = list(implemented.report_name.values)
-            else:
-                which = implemented[implemented.report_name.str.lower() == which].report_name.squeeze()
-                which = [which]
-
-        elif not which:
-            which = []
+        elif isinstance(which, str):
+            which = implemented[implemented.report_name.str.lower() == which.lower()].report_name.squeeze()
+            which = [which]
 
         elif isinstance(which, list):
             whichh = [w.lower() for w in which]
