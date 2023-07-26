@@ -14,6 +14,7 @@ def main():
 
     p.add_argument('--which', nargs='+', default="all",
                    help="--which argument can be either 'all' (default), or a list of valid report-names (space-separated)")
+    p.add_argument('--publishers', nargs='+', default='admie',choices=['admie', 'henex', 'entsoe'])
     p.add_argument('--groups', nargs='+', default=None, choices=['ISPResults',
                                                                  'ISPForecasts',
                                                                  'ISPRequirements',
@@ -86,7 +87,8 @@ def main():
         upd = exso.Updater(root_lake=arguments.root_lake,
                            root_base=arguments.root_base,
                            which = arguments.which,
-                           groups = arguments.groups
+                           groups = arguments.groups,
+                           publishers = arguments.publishers
                            )
         upd.run()
 
