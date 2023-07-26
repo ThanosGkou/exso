@@ -687,14 +687,22 @@ Plot a node's data (node must be of file- or property-kind):
 
 - e.g. report = ISP1ISPResults
   - raw datalake file has **8 sheets**, and each sheet has **multiple subfields** (e.g. thermal dispatch, hydro dispatch, load, reserve requirements, a.o.)
-  - in order to access e.g. thermal dispatch: tree['root.admie.isp1ispresults.isp_schedule.thermal]
-  - --> intuitive
-
+  - in order to access e.g. thermal dispatch:
+              
+        tree['root.admie.isp1ispresults.isp_schedule.thermal] # - --> intuitive
+  
 
 - e.g. report = ISP1DayAheadLoadForecast
   - raw datalake file has a **single sheet**, with a **single subfield** (30-min Load Forecast)
-  - in order to access it: tree['root.admie.ISP1DayAheadLoadForecast.LoadForecast.LoadForecast']
-  - --> seems repetitive, but that's how it is.
+  - in order to access it: 
+  
+        tree['root.admie.ISP1DayAheadLoadForecast.LoadForecast.LoadForecast'] # --> seems repetitive
+- Fast-Forward operator:
+  - The fast-forward operator will select the closest possible file, starting from the reference node.
+  - In order to avoid string repetitions (where that's the case), the fast-forward operator '>>' can be used to fit the dna chain / locator, as such:
+
+        tree['root.admie.isp1dayaheadloadforecast.>>'] # --> equivalent of ['root.admie.ISP1DayAheadLoadForecast.LoadForecast.LoadForecast']
+  
 
 
 
