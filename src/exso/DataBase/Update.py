@@ -74,10 +74,17 @@ class Update:
                          root_dict = lobby,
                          depth_mapping = {k:v for k,v in self.tree.depth_mapping.items() if k >= basenode.depth})
 
+        # todo: rewrite __fast and __slow update, to be modular per file, so I can choose for each file, depending on its size
+        #    whether to do a robust or a fast upsert
+        #   for now, I check the whole directory size
+
+        dirsize_thresh_MB = 50
         if self.status.exists == False:
             self.__fast_update(self.tree, lobbytree)
+
         else:
-            if mode == 'fast':
+            dirsize = sum(d.stat().st_size for d in basenode.path.rglob('*') if d.is_file()) * 1e-06
+            if mode == 'fast' or dirsize >= dirsize_thresh_MB:
                 self.__fast_update(self.tree, lobbytree)
             elif mode == 'slow':
                 self.__slow_update(self.tree, lobbytree)
