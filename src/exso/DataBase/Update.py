@@ -144,7 +144,7 @@ class Update:
 
         if self.is_multiindex == False:
             df = df[~df.index.isna()]
-            thresh = 0.9
+            thresh = 0.9 # percentage of values that are not float-convertable. If more than thresh, the column is considered unfloatable
             df = self.__insert_missing_records(df)
             ensure_float = Misc.Infer_types_of_object(df, thresh=thresh)
             df = ensure_float.df
