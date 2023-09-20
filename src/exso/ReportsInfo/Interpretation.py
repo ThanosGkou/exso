@@ -318,12 +318,14 @@ class TimeSettings:
             self.logger.info('\n\n\t\tMade test api call. Latest dates: \n{}'.format(
                 str(list(map(date_lambda, successful_dates)))))
             lake_max_date = successful_dates[0]
+            if self.publisher == 'entsoe':
+                lake_max_date = successful_dates[-1]
+
         else:
             self.logger.info("No request was successful for the query from: {}, to: {}".format(start_date, end_date))
             self.logger.info("Assuming that the maximum potential lake date is 1 period before the first failure")
             lake_max_date = start_date
             # lake_max_date = today  # probably not true, but don't care that much
-
         return lake_max_date
 
     # *******  *******   *******   *******   *******   *******   *******
