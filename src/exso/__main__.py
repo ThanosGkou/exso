@@ -1,4 +1,4 @@
-import sys
+import sys, os
 import argparse
 import traceback
 import exso
@@ -6,6 +6,9 @@ from pathlib import Path
 
 
 def main():
+    print('\n(Resizing terminal)')
+    os.system('mode con: cols=200 lines=40')
+
     args = sys.argv[1:]
     p = argparse.ArgumentParser(prog="py -m exso")
     p.add_argument("mode", choices=["info", "update", "validate", "query", "set_system_formats"])
