@@ -88,7 +88,7 @@ class Update:
     def __fast_update(self, basetree, lobbytree):
         file_nodes = basetree.get_nodes_whose('kind', equals='file')
         pbar = tqdm.tqdm(file_nodes,
-                         desc="\tDatabase Update/Insertion",
+                         desc="\tDatabase Update (fast)",
                          **exso._pbar_settings)
         for fn in pbar:
 
@@ -117,7 +117,7 @@ class Update:
 
         file_nodes = basetree.get_nodes_whose('kind', equals='file')
         pbar = tqdm.tqdm(file_nodes,
-                         desc="\tDatabase Update/Insertion",
+                         desc="\tDatabase Update (robust)",
                          **exso._pbar_settings)
         for fn in pbar:
 
