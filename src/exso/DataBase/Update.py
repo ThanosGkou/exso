@@ -22,7 +22,6 @@ date_lambda = lambda x: datetime.datetime.strftime(DateTime.date_magician(x, ret
 class Update:
     def __init__(self):
         self.logger = logging.getLogger(__name__ + '.' + self.__class__.__name__)
-        pass
 
     # *******  *******   *******   *******   *******   *******   *******
     def get_update_requirements(self):
@@ -35,19 +34,19 @@ class Update:
 
         if self.status.exists:
             start_date = self.status.dates.max.observed.datetime + pd.Timedelta(self.r.resolution)
-            end_date = self.status.dates.max.potential.datetime # f.time.database_max_potential_datetim
+            end_date = self.status.dates.max.potential.datetime
             if start_date > end_date:
                 self.logger.info('\tDatabase is up-to-date. No update requiremnets.')
                 return self.requirements
 
         else:
             if not self.r.requires_tz_handling:
-                start_date = self.status.dates.min.potential.date #self.f.time.lake_min_potential_date
-                end_date = self.status.dates.max.potential.date# self.f.time.lake_max_potential_date
+                start_date = self.status.dates.min.potential.date
+                end_date = self.status.dates.max.potential.date
 
             else:
-                start_date = self.status.dates.min.potential.datetime# self.f.time.database_min_potential_datetime
-                end_date = self.status.dates.max.potential.datetime # self.f.time.database_max_potential_datetime
+                start_date = self.status.dates.min.potential.datetime
+                end_date = self.status.dates.max.potential.datetime
 
         self.requirements['start'] = start_date
         self.requirements['end']  = end_date
