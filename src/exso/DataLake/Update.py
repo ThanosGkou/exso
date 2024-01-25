@@ -31,9 +31,7 @@ class Update:
 
     # *******  *******   *******   *******   *******   *******   *******
     def update(self, start_date: None | str | datetime.datetime = None, end_date: None | str | datetime.datetime = None):
-
         self.udates = self.dates_pipeline(start_date, end_date) # zero-in on the actual days that require download
-
 
         if self.status.up_to_date:
             self.logger.info('Inside "update" function, inherited method of DataLake. But --> Datalake is up-to-date. No update required.')

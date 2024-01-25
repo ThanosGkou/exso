@@ -32,7 +32,7 @@ class Status:
 
     def __init__(self, dir:str|Path, min_potential_date, max_potential_date, eligibility, time_lag_days:int, sheet_tags:list, period_covered:str):
         '''
-        
+
         :param dir:
         :param min_potential_date:
         :param max_potential_date:
@@ -285,8 +285,8 @@ class Status:
         '''
         file_df = self.file_df
 
-        upd = {'min': {'observed': {'date': file_df['dates'][0].date()}},
-               'max': {'observed': {'date': file_df['dates'][-1].date()}},
+        upd = {'min': {'observed': {'date': file_df['dates'].iloc[0].date()}},
+               'max': {'observed': {'date': file_df['dates'].iloc[-1].date()}},
                'range': {'observed': {'date': pd.DatetimeIndex(file_df['dates'].values),
                                       'str': np.array(file_df.index)}}
                }

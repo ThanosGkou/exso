@@ -96,8 +96,8 @@ class ArchetypeLong(Archetype):
     def _handle_extreme_stupidity(self, df):
 
         ''' sometimes, this happens
-            20   2023-03-23 19:00:00  187.34          NaN  500.0   NaN      NaN      NaN    NaN  
-                                      187.35          51.0  NaN    NaN      NaN   400.000  720.0 
+            20   2023-03-23 19:00:00  187.34          NaN  500.0   NaN      NaN      NaN    NaN
+                                      187.35          51.0  NaN    NaN      NaN   400.000  720.0
             So, same sort, same time, but the fucking price is a tiny bit different, and thus creates a new row.
         '''
         # process: first: get a bool mask array of whether delivery mtu is duplicate
@@ -134,7 +134,8 @@ class ArchetypeLong(Archetype):
             subdf = df_old[df_old['DELIVERY_MTU'] == dtm] # the problematic subdf is this
             # transfer values/fillna between entries referring to the same datetime, that are not identical due to fucking henex
             # and keep only one of them (the first, or whatever)
-            subdf = subdf.fillna(method = 'bfill').iloc[0]
+            subdf = subdf.bfill().iloc[0]
+            # subdf = subdf.fillna(method = 'bfill').iloc[0]
 
             try:
                 # this information-full subdf (which is actually a multi-idex series now)
@@ -168,7 +169,6 @@ class ArchetypeLong(Archetype):
                     if self.drop_col_settings:
                         df = self.drop_columns_if(df, **self.drop_col_settings)
                     # df = df.drop(columns = [""], errors='ignore')
-
                     subfields_dfs[subfield] = df
 
                 else:

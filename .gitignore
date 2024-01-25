@@ -7,3 +7,5 @@ main.py
 logs/
 tree.txt
 .idea/
+src/datalake/
+src/database/
