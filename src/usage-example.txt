@@ -1,6 +1,0 @@
-set http_proxy=http://10.100.133.252:80
-set https_proxy=http://10.100.133.252:80
-
-
-py main_replica.py update -rl datalake -rb database --which DAM_Results
-py main_replica.py update -rl datalake -rb database --which DAM_ResultsSummary
