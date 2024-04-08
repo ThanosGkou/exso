@@ -303,7 +303,7 @@ class Node(NodeAccessors, NodeConstructors):
             raise Warning("Cannot call a node of kind: '{}'.".format(self.kind))
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def __call__(self, tz_pipe = None, start_date = None, end_date = None, truncate_tz = False) -> pd.DataFrame | dict:
+    def __call__(self, tz_pipe = None, start_date = None, end_date = None, truncate_tz = False, drop_trivial = True) -> pd.DataFrame | dict:
 
         if isinstance(self.fruit, type(None)):
             self.first_call()
@@ -315,18 +315,26 @@ class Node(NodeAccessors, NodeConstructors):
             df = {}
             for c in self.children:
                 # print('\t\tCalling child ', c)
-                df[c.name] = c(tz_pipe, start_date, end_date, truncate_tz)
+                df[c.name] = c(tz_pipe, start_date, end_date, truncate_tz, drop_trivial)
 
         elif self.kind == 'file':
             df = self.fruit.copy()
             df = self.apply_tz_pipe(df, tz_pipe, truncate_tz)
             df = self.apply_date_filter(df, start_date, end_date, self.is_multiindex)
+            # if drop_trivial:
+            #     df = df.dropna(axis = 'columns', how='all')
+            #     try:
+            #         df = df.drop(columns = df.columns[df.sum()==0])
+            #     except:
+            #         pass
+                # df = df.replace(0, np.NAN)
+
 
         elif self.kind == 'property':
             if not isinstance(self.parent.fruit, type(None)):
                 df = self.parent.fruit.loc[:, self.name].to_frame()
             else:
-                parent_df = self.parent(tz_pipe, start_date, end_date, truncate_tz)
+                parent_df = self.parent(tz_pipe, start_date, end_date, truncate_tz, drop_trivial)
                 df = parent_df.loc[:, self.name].to_frame()# this is a view
 
         else:
@@ -360,16 +368,19 @@ class Node(NodeAccessors, NodeConstructors):
         return dff
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def plot(self, tz_pipe=None, start_date=None, end_date=None, area=False, show = True, save_path = None, title = None, ylabel = None):
+    def plot(self, tz_pipe=None, start_date=None, end_date=None, kind='area', show = True, save_path = None, title = None, ylabel = None, xlabel = None, df = None, line_cols = None, area_cols = None):
         '''
         save_path : str|Path (directory or path/that/ends/with.html)
         '''
 
-        if self.kind not in ['file', 'property']:
-            raise IOError('\n-->You can only plot a node whose "kind" is "file" or "property". "{}" is of kind: {}'.format(self.dna, self.kind))
-            input('--> Aborting.')
-            sys.exit()
 
+        if self.kind not in ['file', 'property']:
+            raise AssertionError('\n--> You can only plot a node whose "kind" is "file" or "property". "{}" is of kind: {}'.format(self.dna, self.kind))
+
+        if hasattr(self, 'dna'): # check, because synthetic nodes (from .combine()) don't have dnas
+            print('\n\tPlotting node "{}"...'.format(self.dna))
+        else:
+            print('\n\tPlotting synthetic node "{}"...'.format(self.name))
         if save_path:
             save_path = Path(save_path)
             if save_path.suffix == ".html":
@@ -380,12 +391,17 @@ class Node(NodeAccessors, NodeConstructors):
         if not title:
             title = self.parent.name + "." + self.name
 
+        if isinstance(df, type(None)):
+            df = self(tz_pipe, start_date, end_date)
 
-        if area:
-            fig = Plot.area_plot(df=self(tz_pipe, start_date, end_date), show=show, save_path=save_path, title=title, ylabel = ylabel)
-        else:
-            fig = Plot.line_plot(df=self(tz_pipe, start_date, end_date), show=show, save_path=save_path, title=title, ylabel = ylabel)
+        if kind == 'area':
+            fig = Plot.area_plot(df=df, show=show, save_path=save_path, title=title, ylabel = ylabel, xlabel=xlabel)
+        elif kind == 'line':
+            fig = Plot.line_plot(df=df, show=show, save_path=save_path, title=title, ylabel = ylabel, xlabel=xlabel)
+        elif kind == 'multi-type':
+            fig = Plot.multi_chart_type(df, show=show, save_path=save_path, title=title, ylabel=ylabel, line_cols=line_cols, area_cols=area_cols, xlabel=xlabel)
 
+        print('\t\tPlotting Completed.')
         return fig
 
     # ********   *********   *********   *********   *********   *********   *********   *********
