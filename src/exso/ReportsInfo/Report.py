@@ -46,7 +46,7 @@ class Pool:
         self.logger.info("Config Directory: {}".format(self.config_dir))
         self.logger.info("Reports Pool File: {}".format(self.config_file))
 
-        self.display_columns = ['report_name', 'publisher', 'group', 'available_from', 'available_until',
+        self.display_columns = ['report_name', 'publisher', 'group', 'country', 'available_from', 'available_until',
                                 'is_implemented', 'official_comment', 'resolution',]
 
         self.initialize()
@@ -92,6 +92,7 @@ class Pool:
         # every df has a "filetype" column, with identical values. drop after concatenation
         single_df = pd.concat([*dfs.values()], axis = 1)
         single_df = single_df.loc[:, ~single_df.columns.duplicated()]
+
         return single_df
 
     # *******  *******   *******   *******   *******   *******   *******
@@ -203,8 +204,8 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
         if not report_name:
             report_name = self.report_name
 
-        available_reports = self.rp.allmighty_df['report_name'].values
-        available_reports = [ar.lower() for ar in available_reports]
+        available_reports_as_defined = self.rp.allmighty_df['report_name'].values
+        available_reports = [ar.lower() for ar in available_reports_as_defined]
         if report_name.lower() not in available_reports:
 
             print('\n\t--> The requested report ("{}") either does not exist, or is not supported'.format(report_name))
@@ -213,9 +214,11 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
             n_best = 3
             best = Similarity.find_best_match(lookup_list=available_reports,
                                               string = report_name,
-                                              n_best=n_best)
-            print('\t    The {} reports, most similar to the one requested ({}) are:'.format(n_best, report_name))
-            [print('\t\t\t'+ report + ': ' + f"{similarity:.0%}") for report, similarity in best]
+                                              n_best=n_best,
+                                              return_indices=True)
+            print('\t    The top {} most similar reports to your request are:'.format(n_best, report_name))
+            # [print('\t\t\t'+ report + ': ' + f"{similarity:.0%}") for report, similarity in best]
+            [print('\t\t\t'+ available_reports_as_defined[i] + ': ' + f"{similarity:.0%}") for i, similarity in best]
             input('Hit Enter to exit.')
             sys.exit()
         else:
