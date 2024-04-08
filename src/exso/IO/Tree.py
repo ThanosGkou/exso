@@ -410,7 +410,7 @@ class Tree(Search, TreeConstructors, TreeAccessors):
         seedir.seedir(self.root.path, sticky_formatter=True, style='emoji')
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def combine(self, *locators, with_name:str|None = None, handle_synonymity:str|list = 'auto'):
+    def combine(self, *locators, with_name:str|None = None, handle_synonymity:str|list = 'auto', resolution = 'auto'):
         nodes = list(map(self.get_node, *locators))
 
         if handle_synonymity == 'auto':
@@ -451,13 +451,29 @@ class Tree(Search, TreeConstructors, TreeAccessors):
         [dfs[i].rename(renamers[i], axis = 'columns', inplace = True) for i in range(len(dfs))]
 
         resolutions = [dfs[i].index[1] - dfs[i].index[0] for i in range(len(dfs))]
-        min_resol = min(resolutions)
-        for i in range(len(resolutions)):
-            if resolutions[i] != min_resol:
-                dfs[i] = dfs[i].resample(min_resol).interpolate(method = 'linear')
+        if resolution == 'auto' or resolution == 'min':
+            selected_resolution = min(resolutions)
+            for i in range(len(resolutions)):
+                if resolutions[i] != selected_resolution:
+                    dfs[i] = dfs[i].resample(selected_resolution).interpolate(method='linear')
+
+        elif resolution == 'max':
+            selected_resolution = max(resolutions)
+            for i in range(len(resolutions)):
+                if resolutions[i] != selected_resolution:
+                    dfs[i] = dfs[i].resample(selected_resolution).mean() #
+
+        else:
+            selected_resolution = resolution
+            for i in range(len(resolutions)):
+                if resolutions[i] != selected_resolution:
+                    dfs[i] = dfs[i].resample(selected_resolution).mean()  #
+
+
         df = pd.concat([*dfs], axis = 1)
         if not with_name:
             with_name = "_".join(Group(nodes).name)
+
 
         node = Node(with_name, path = self.root.path / ".virtual" / with_name, depth = 2, kind = 'file', parent = self.root, fruit = df)
 
