@@ -197,10 +197,13 @@ class EntsoAssistant:
     # *******  *******   *******   *******   *******   *******   *******
     def _sequential_download(self, links, filepaths, dates = None, limit_per_minute = None):
 
+        print(f'{links = }')
+        print(f'{filepaths = }')
+
         validation = []
         tqdm.tqdm._instances.clear()
         progress_bar = tqdm.tqdm(range(len(links)),
-                            desc='\tDownload Progress',
+                            desc='\tDownload Progress (weeks)',
                             **exso._pbar_settings,
                             disable=self.dry_run)
 
@@ -215,8 +218,6 @@ class EntsoAssistant:
             path = filepaths[i]
             filename = os.path.split(path)[-1]
             progress_bar.set_postfix_str(s=filename)
-
-            # print(time.perf_counter() - to)
 
             if time.perf_counter() - to > 60:
                 residual_in_minute = limit_per_minute
@@ -258,6 +259,8 @@ class EntsoAssistant:
 ###############################################################################################
 ###############################################################################################
 class API(EntsoAssistant):
+    crossborder = ['crossborder_flows', 'scheduled_exchanges']
+    entsoe_members = entsoe.Area._member_names_
     def __init__(self, save_dir:str, api_token = None):
         self.save_dir = save_dir
         os.makedirs(self.save_dir, exist_ok=True)
@@ -273,44 +276,49 @@ class API(EntsoAssistant):
         sys.stdout = sys.__stdout__
         self.report_name = report_name
         self.dry_run = dry_run
-        self.logger.info(
-            "Making query with arguments: report_name: {}, start_date: {}, end_date: {}, dry_run: {}, n_threads: {}".
-            format(report_name, start_date, end_date, dry_run, n_threads))
+        self.logger.info( "Making query with arguments: report_name: {}, start_date: {}, end_date: {}, dry_run: {}, n_threads: {}". format(report_name, start_date, end_date, dry_run, n_threads))
 
-        report_components = report_name.split('_')
-        country_code = report_components[0]
-        query_type = 'query_' + '_'.join(report_components[1:]).lower()
-        # query_type = 'query_' + query_type.lower()
+        members_found = []
+        for code in self.entsoe_members:
+            matched = re.search(code + '_', report_name)
+            if bool(matched):
+                # the [:-1] exists, in order to drop the trailing underscore
+                members_found.append(matched.group()[:-1])
 
-        # neighbors = entsoe.mappings.NEIGHBOURS[country_code]
-        # for k,v in entsoe.mappings.NEIGHBOURS.items() :
-        #     print(k)
-        #     print(v)
-        #     print('\n\n')
-        # input('asfasf')
-        # start_date = pd.Timestamp(start_date).tz_localize('UTC')
-        # for n in neighbors:
-        #     print(country_code, '--> ', n)
-        #     print(self.client.query_scheduled_exchanges(country_code,start = start_date, end = start_date + pd.Timedelta('1D'), country_code_to = n))
-        #     print('\n\n')
-        #
-        # input('asfasfasf')
-        # self.client.query_activated_balancing_energy("GR", start = start_date, end = end_date)
-        # input('asfasf')
-        query_strings, dates = self.get_links(query_type, country_code, start_date, end_date, batch_size=7) # query the api and ask for the links only
+        country_code = report_name.split('_')[0]
+        query_text = re.sub(country_code+'_', "", report_name)
+        country_to = None
+
+        if len(members_found) == 2:
+            country_to = report_name.split('_')[1]
+            query_text = re.sub(country_to+'_', "", query_text)
+
+        query_text = hag.camel2snake(query_text)
+        query_type = 'query_' + query_text
+
+        print(f'{query_type = }')
+
+        if country_to:
+            query_strings, dates = self.get_links(query_type, country_code, start_date, end_date, batch_size=7, destination_country_code=country_to) # query the api and ask for the links only
+        else:
+            query_strings, dates = self.get_links(query_type, country_code, start_date, end_date, batch_size=7) # query the api and ask for the links only
 
         filenames = [d + '_' + report_name + '.csv' for d in dates]
+
         filepaths = [Path(self.save_dir / fn) for fn in filenames]
 
+        dates = list(map(lambda x:DateTime.date_magician(x, return_stamp=True), dates))
         if dry_run or not query_strings:  # do not actually download the files
             self.link_dates = dates
+            self.n_links = len(self.link_dates)
             self.filenames = filenames
-            self.filepaths =filepaths
+            self.filepaths = filepaths
             self.logger.info("Mode = dry-run, OR, the query is trivial. Returning without downloading anything.")
             return
-
+        # print(filepaths)
+        # self.construct_daily_filepaths_to_avoid_downloading_existing(filepaths)
+        # input('---')
         valid_indices = self.download(query_strings, dates, filepaths, n_threads=n_threads, limit_per_minute=400)
-
         self.link_dates = [d for flag,d in zip(valid_indices, dates) if flag]
         self.filepaths = [fp for flag, fp in zip(valid_indices, filepaths) if flag]
         self.filenames = [fn for flag, fn in zip(valid_indices, filenames) if flag]
@@ -318,16 +326,37 @@ class API(EntsoAssistant):
         self.n_links = len(self.link_dates)
 
     # *******  *******   *******   *******   *******   *******   *******
+    @staticmethod
+    def construct_daily_filepaths_to_avoid_downloading_existing(weekly_filepaths):
+        keep_filepaths = []
+        for i,fp in enumerate(weekly_filepaths):
+            if i == len(weekly_filepaths)-1:
+                keep_filepaths.append(weekly_filepaths[i])
+                continue
+
+            if weekly_filepaths[i].exists() and weekly_filepaths[i+1].exists():
+                continue
+
+            keep_filepaths.append(weekly_filepaths[i])
+
+        return keep_filepaths
+    # *******  *******   *******   *******   *******   *******   *******
     def get_links(self, query_type, country_code, start_date, end_date, batch_size = 1, **kwargs):
         bins = period_splitter(start_date, end_date, days_thresh=batch_size)
+
         queries = []
         dates = []
         for bin in bins:
             start_date, end_date = bin
             start_date = pd.Timestamp(start_date).tz_localize('UTC')
-            end_date = pd.Timestamp(end_date).tz_localize('UTC')
-            query_str = f'self.client.__getattribute__("{query_type}")("{country_code}", start=pd.Timestamp("{start_date}"), end=pd.Timestamp("{end_date}"))'
+            end_date = pd.Timestamp(end_date).tz_localize('UTC') - pd.Timedelta('15min')
+            if 'destination_country_code' in kwargs.keys():
+                dest = kwargs['destination_country_code']
+                query_str = f'self.client.__getattribute__("{query_type}")("{country_code}", "{dest}", start=pd.Timestamp("{start_date}"), end=pd.Timestamp("{end_date}"))'
+            else:
+                query_str = f'self.client.__getattribute__("{query_type}")("{country_code}", start=pd.Timestamp("{start_date}"), end=pd.Timestamp("{end_date}"))'
 
             queries.append(query_str)
             dates.append(DateTime.make_string_date(start_date,sep = ""))
+
         return queries, dates
