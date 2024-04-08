@@ -303,7 +303,8 @@ class Tree(Search, TreeConstructors, TreeAccessors):
                 start_mode = 'hot'
             else:
                 start_mode = 'cold'
-                assert root_path.exists()
+                if not root_path.exists():
+                    raise AssertionError("The DataBase path provided ('{}') does not exist".format(root_path))
         else:
             start_mode = 'hot'
             assert isinstance(root_dict, dict)
