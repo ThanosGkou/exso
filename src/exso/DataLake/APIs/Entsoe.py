@@ -1,3 +1,4 @@
+import re
 import traceback
 
 import entsoe
@@ -6,11 +7,14 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import exso
 import sys
+
+import haggis.string_util as hag
 import pandas as pd
 import logging
 import tqdm
 import datetime, os, shutil
 from exso.Utils.DateTime import DateTime
+from exso.Utils.STR import STR
 
 # *******  *******   *******   *******   *******   *******   *******
 date_lambda = lambda x: datetime.datetime.strftime(DateTime.date_magician(x, return_stamp = False), format="%d-%b-%y")
@@ -105,8 +109,6 @@ class EntsoAssistant:
 
         if success:
             link_is_valid = True
-            # print()
-            # print(payload)
             payload = self._conform_weekly(payload)
 
 
@@ -133,14 +135,16 @@ class EntsoAssistant:
 
     # *******  *******   *******   *******   *******   *******   *******
     def unit_save(self, content, filepath):
+        content = content.tz_convert(None)
         days = content.index.to_period('D').unique()
-        content = content.tz_convert('UTC').tz_localize(None)
+
         filename = filepath.name
         parent = filepath.parent
         pure_name = "_".join(filename.split('_')[1:])
         for d in days:
             df = content[content.index.to_period('D') == d]
-            if df.empty:
+
+            if df.empty or df.isna().sum().sum() == df.shape[0] * df.shape[1]:
                 continue
 
             str_date = DateTime.make_string_date(d, sep = '')
@@ -157,7 +161,8 @@ class EntsoAssistant:
             if isinstance(content, pd.Series):
                 content = content.to_frame(name=self.report_name)
 
-            if isinstance(content, pd.DataFrame):
+            if isinstance(content, pd.DataFrame) and content.empty == False:
+
                 self.unit_save(content, filepath)
             else:
                 self.logger.warning("Empty content arrived, although it shouldn't get until here. Just skipping...")
