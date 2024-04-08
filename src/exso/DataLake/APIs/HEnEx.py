@@ -1,4 +1,5 @@
 import datetime
+import traceback
 import logging
 import os
 import re
@@ -162,14 +163,22 @@ class Scrapers(Assistant):
         self.report_name = report_name
 
         print("\n\tDownloading from Henex Webpage (scraping)")
-        links, dates, filenames = self.get_links(start_date,end_date)
+        try:
+            links, dates, filenames = self.get_links(start_date,end_date)
+        except:
+            print(f'\tFailed to connect to henex webpage. It\'s probably the internet connection, or proxy settings.')
+            self.logger.warning("Failed to connect in enex via scraping.")
+            self.logger.debug(traceback.format_exc())
+            self.filenames = []
+            self.filepaths = []
+            self.n_links = 0
+            self.link_dates = []
+            return
+
 
         valid_indices = self.get_non_trivial_mask(filenames)  # ignore if already in lake
-
         links, dates, filenames = self.get_indexed_slice(valid_indices, links, dates, filenames)
-
         filepaths = list(map(lambda x: os.path.join(self.save_dir, x), filenames))
-
         self.filenames = filenames
         self.filepaths = filepaths
 
@@ -346,7 +355,7 @@ class Scrapers(Assistant):
         # *******  *******   *******   *******   *******   *******   *******
         @staticmethod
         def get_section(url, selector):
-            html_page = urllib.request.urlopen(url)
+            html_page = urllib.request.urlopen(url,timeout=2)
             soup = BeautifulSoup(html_page, 'html.parser')
             section = soup.findAll('section', selector)[0]
             return section
