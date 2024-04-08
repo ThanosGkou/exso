@@ -104,7 +104,7 @@ class Update:
             if self.is_multiindex == False:
                 lobby_df = self.force_timezone_to(lobby_df, timezone=None)
 
-            if self.status.exists:
+            if self.status.exists and (self.is_multiindex is False):
                 base_df_mock = pd.DataFrame(columns=list(fn.children.name))
                 df = pd.concat([base_df_mock, lobby_df], axis=0)
             else:
