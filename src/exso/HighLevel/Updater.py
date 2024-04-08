@@ -19,6 +19,7 @@ from exso.DataLake import DataLake
 from exso.IO.Tree import Tree
 from exso.ReportsInfo import Report
 from exso.Utils.DateTime import DateTime
+from exso.Utils.Similarity import Similarity
 from haggis import string_util as hag
 
 
@@ -28,7 +29,7 @@ from haggis import string_util as hag
 class Updater:
     """ The main API-class of the exso project to update datasets.
         Check out the __init__.__doc__ for more information """
-    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, which:str|list|None = None, groups:None|list|str = None, publishers: None|list|str = None, only_ongoing:bool = False):
+    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, which:str|list|None = None, groups:None|list|str = None, publishers: None|list|str = None, countries: None|list|str = None, only_ongoing:bool = False):
         """
         Constructor parameters for the Updater class:
 
@@ -59,7 +60,7 @@ class Updater:
         self.rp = self.get_pool(reports_pool)
         self.keep_steps = False
         self.mode = None
-        self.report_names = self.derive_reports(self.rp, which, groups, publishers, only_ongoing)
+        self.report_names = self.derive_reports(self.rp, which, groups, publishers, countries, only_ongoing)
 
 
         self.refresh_requirements_file = Files.files_dir / 'refresh_requirements.txt'
@@ -330,7 +331,13 @@ class Updater:
         self.r = r
 
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
-    def derive_reports(self, rp, which:list|None, groups:str|list|None, publishers:str|list|None, only_ongoing:bool):
+    def derive_reports(self, rp, which:list|None, groups:str|list|None, publishers:str|list|None, countries:str|list|None, only_ongoing:bool):
+        # Store the variables for later debugging capabilities
+        _which = which if isinstance(which, str) or isinstance(which, type(None)) else which.copy()
+        _groups = groups if isinstance(groups, str) or isinstance(groups, type(None)) else groups.copy()
+        _publishers = groups if isinstance(publishers, str) or isinstance(publishers, type(None)) else publishers.copy()
+        _countries = countries if isinstance(countries, str) or isinstance(countries, type(None)) else countries.copy()
+
 
         self.logger.info("Assessing what kind of update was requested.")
         self.logger.info(f"Provided arguments: {which = }, {groups = }, {only_ongoing = }")
@@ -338,32 +345,70 @@ class Updater:
         selected = None
         implemented = rp.get_available()
 
+        ###############################################################################################################
+        # A report object is given. Skip any further checks and return
+        ###############################################################################################################
+        if isinstance(which, Report.Report):
+            report_names = [which.name]
+            return report_names
+
+        ###############################################################################################################
+        # Evaluate the "which" argument
+        ###############################################################################################################
         if not which: # which = None --> all reports
+            # no specific mentions were given (neither string or list). Go to the next filtering
             which = list(implemented.report_name.values)
 
         elif isinstance(which, str):
+            # a string was given. Make a case0insensitive search, and, if anything is matched, wrap it in a list
             which = implemented[implemented.report_name.str.lower() == which.lower()].report_name.squeeze()
             which = [which]
 
         elif isinstance(which, list):
+            # a list was passed. Make a case-insensitive search, and match every list element to a report
             whichh = [w.lower() for w in which]
             whichh = implemented[implemented.report_name.str.lower().isin(whichh)].report_name.values
             which = list(whichh)
 
-        if not groups:
+        ###############################################################################################################
+        # Regardless of whether "which" was specified, apply a intersection-based filtering for groups.
+        ###############################################################################################################
+        if not groups: # if groups was not specified, add all groups
             groups = implemented['group'].to_list()
         elif isinstance(groups, str):
-            groups = [groups]
+            groups = [groups.lower()]
+        elif isinstance(groups, list):
+            groups = [g.lower() for g in groups]
 
+        ###############################################################################################################
+        # Regardless of whether "which", or "groups" was specified, apply a intersection-based filtering for publishers.
+        ###############################################################################################################
         if not publishers:
             publishers = implemented['publisher'].to_list()
         elif isinstance(publishers, str):
-            publishers = [publishers]
+            publishers = [publishers.lower()]
+        elif isinstance(publishers, list):
+            publishers = [p.lower() for p in publishers]
 
+        ###############################################################################################################
+        # Regardless of whether "which", or "groups" or "publishers" was specified, apply a intersection-based filtering for countries.
+        ###############################################################################################################
+        if not countries:
+            countries = implemented['country'].to_list()
+        elif isinstance(countries, str):
+            countries = [countries]
+        elif isinstance(countries, list):
+            countries = [c.lower() for c in countries]
+
+        ###############################################################################################################
+        # Now, find the intersection of all transformed-values for which, groups, publishers and countries
+        ###############################################################################################################
         intersect = implemented[((implemented.report_name.isin(which))&
                                  (implemented.group.isin(groups))&
-                                 (implemented.publisher.isin(publishers)))]
+                                 (implemented.publisher.isin(publishers))&
+                                 (implemented.country.isin(countries)))]
 
+        ###############################################################################################################
         if only_ongoing:
             intersect = intersect[intersect.available_until.isna() == True].copy()
 
@@ -373,7 +418,13 @@ class Updater:
         self.logger.info("To-update datasets: {}".format(report_names))
 
         if not report_names:
-            raise LookupError("Could not locate valid reports through a")
+            if isinstance(_which, str):
+                # instantiate a report, so that, the error will trigger a .check_existence() fuzzy search, which will provide most similar available reports to the one requested
+                print("\n\t-->Could not locate any report that matches the input set: which = {}, groups = {}, publishers = {}\n".format(_which, _groups, _publishers))
+                Report.Report(rp, _which, self.root_lake, self.root_base)
+
+            else:
+                raise LookupError("Could not locate any report that matches the input set: which = {}, groups = {}, publishers = {}".format(_which, _groups, _publishers))
 
         return report_names
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
