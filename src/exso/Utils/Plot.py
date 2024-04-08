@@ -215,7 +215,7 @@ class Plot:
         else:
             fig = px.line(df,color_discrete_sequence=colors[:df.shape[1]])
 
-        fig.update_traces(line = dict(width = 4))
+        fig.update_traces(line = dict(width = 1))
         fig.update_traces(textposition='top center', hovertemplate=None)
         fig.update_layout(hovermode=hovermode)
 
@@ -319,6 +319,137 @@ class Plot:
         return fig
 
     # ********   *********   *********   *********   *********   *********   *********   *********
+    # ********   *********   *********   *********   *********   *********   *********   *********
+    @staticmethod
+    def multi_chart_type(df, line_cols=None, area_cols = None, initialize_as = 'line',
+                   title=None, xlabel=None, ylabel=None, ytick_suffix=None, show=True, legend_title=None,
+                   save_path=None, secondary_y_cols=None, secondary_y_label=None, width=1800, height=1000,
+                   hovermode='x'):
+
+        if isinstance(df,pd.Series):
+            df = df.to_frame(name = 'Values')
+
+        if initialize_as == 'line':
+            if not line_cols:
+                line_cols = df.columns.to_list()
+            else:
+                if not area_cols:
+                    area_cols = [c for c in df.columns.to_list() if c not in line_cols]
+                    # area_cols = []
+                else:
+                    line_cols = [lc for lc in line_cols if lc not in area_cols]
+
+
+        elif initialize_as == 'area':
+            if not area_cols:
+                area_cols = df.columns.to_list()
+            else:
+                if not line_cols:
+                    line_cols = []
+                else:
+                    area_cols = [ac for ac in area_cols if ac not in line_cols]
+
+        else:
+            raise ValueError()
+
+        if not title:
+            title = ""
+        if not secondary_y_label:
+            secondary_y_label = ""
+        if not save_path:
+            save_path = Files._exso_dir / "_plotly_.html"
+        if not ytick_suffix:
+            ytick_suffix = ""
+        if not legend_title:
+            legend_title = ""
+        if not ylabel:
+            ylabel = ""
+        if not xlabel:
+            xlabel = "Date"
+
+        fig = plotly.subplots.make_subplots(specs=[[{"secondary_y": True}]])
+        fig = plotly.subplots.make_subplots(cols=1, rows=2)
+
+
+        px.area()
+        # fig = go.Figure()
+
+
+        for col in line_cols:
+            fig.add_trace(
+                go.Scatter(x = df.index, y = df[col],name = col, yaxis = 'y1')
+            )
+        i = 0
+        for col in area_cols:
+            if i == 0:
+                fig.add_trace(go.Scatter(x=df.index, y=df[col], name=col, yaxis='y2', fill='tozeroy'))
+                i += 1
+            fig.add_trace(go.Scatter(x=df.index, y=df[col], name=col, yaxis='y2', fill='tonexty'))
+
+
+        fig.update_traces(line=dict(width=1),
+                          textposition = 'top center',
+                          hovertemplate = None)
+
+        fig.update_layout(hovermode=hovermode,
+                          paper_bgcolor = 'rgba(0,0,0,0)',
+                          plot_bgcolor = 'snow',
+                          legend_title = legend_title,
+                          autosize = False,
+                          width = width,
+                          height = height,
+                          # font_family="Courier New",
+                          # font_color="black",
+                          # title_font_family="Times New Roman",
+                          title_font_color="black",
+                          # legend_title_font_color="black",
+                          title={'text': '<b>' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'},
+                          xaxis_title='<b>' + xlabel,
+                          yaxis_title='<b>' + ylabel,
+                          # legend_title='<b>' + legend_title,
+                          font=dict(
+                              family="Courier New",
+                              size=18,
+                              color="RebeccaPurple"),
+                           yaxis2=dict(overlaying='y', side='right', title=secondary_y_label)
+                          )
+
+        fig.update_yaxes(ticksuffix=ytick_suffix,
+                         showgrid=True,
+                         separatethousands=True,
+                         tickfont_size=24,
+                         linecolor='black',
+                         showline=True,
+                         gridcolor='darkgray')
+        fig.update_xaxes(tickfont_size=24,
+                         linecolor='black',
+                         showline=True,
+                         gridcolor='darkgray')
+
+        config = {'displayModeBar': True,
+                  'scrollZoom': True,
+                  # 'dragmode': 'pan',
+                  'toImageButtonOptions': {'format': 'png',  # one of png, svg, jpeg, webp
+                                           'filename': 'custom_image',
+                                           'height': 500,  # or None
+                                           'width': 700,  # or None
+                                           'scale': 1  # Multiply title/legend/axis/canvas sizes by this factor
+                                           },
+                  # 'modeBarButtonsToRemove': ['zoom', 'pan'],
+                  'modeBarButtonsToAdd': ['drawline',
+                                          'drawopenpath',
+                                          'drawclosedpath',
+                                          'drawcircle',
+                                          'drawrect',
+                                          'eraseshape'
+                                          ]
+                  }
+
+        fig.write_html(save_path, config = config)
+
+        if show:
+            fig.show(config=config)
+        return fig
 
 ###############################################################################################
 ###############################################################################################
