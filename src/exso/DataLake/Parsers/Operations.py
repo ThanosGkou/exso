@@ -328,7 +328,19 @@ class Operations:
             df.index = period_dates
         except:
             df = self.handle_irregular(df, period_dates)
-            df.index = period_dates
+            try:
+                df.index = period_dates
+            except:
+                try:
+                    # xbid on 2024-03-10 is fucked up. Applied this general-looking fi
+                    df = df.drop(index=df.index[df.index.duplicated(keep='first')])
+                    df = df.reindex(period_dates)
+                except:
+
+                    logger.error("Could not attach period_dates to dataframe, even after handling irregular")
+                    logger.error(f"Period dates: (shape = {period_dates.size}). {period_dates = }")
+                    logger.error(f'Dataframe size: {df.shape}')
+                    logger.error(f'Dataframe:\n\n{df}')
 
         return df
 
@@ -342,6 +354,7 @@ class Operations:
 
         slicing_hour = 3
         slicing_step = slicing_hour * scale
+
         if period_dates.shape[0] > df.shape[0]:
             # October dst, uncatched by report datafile
             df = pd.concat([df.iloc[:slicing_step], df.iloc[slicing_step:slicing_step + scale], df.iloc[slicing_step:]], axis = 0)
