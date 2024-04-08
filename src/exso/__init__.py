@@ -41,7 +41,7 @@ _dt_format = "%Y-%m-%d %H:%M"
 _pbar_settings = {'bar_format': "%s{desc:<30} {percentage:5.2f}symbol| %s{bar:15}%s{r_bar}" % (Fore.LIGHTGREEN_EX,
                                                               Fore.YELLOW,
                                                               Fore.LIGHTYELLOW_EX),
-                 'ncols':115,
+                 'ncols':125,
                  'smoothing':1}
 
 _pbar_settings['bar_format'] = re.sub('symbol', '%', _pbar_settings['bar_format'])
