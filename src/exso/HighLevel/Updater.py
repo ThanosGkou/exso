@@ -29,7 +29,7 @@ from haggis import string_util as hag
 class Updater:
     """ The main API-class of the exso project to update datasets.
         Check out the __init__.__doc__ for more information """
-    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, which:str|list|None = None, groups:None|list|str = None, publishers: None|list|str = None, countries: None|list|str = None, only_ongoing:bool = False):
+    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, which:str|list|None = None, groups:None|list|str = None, publishers: None|list|str = None, countries: None|list|str = None, only_ongoing:bool = False, allow_handshake_connection = True):
         """
         Constructor parameters for the Updater class:
 
@@ -56,7 +56,7 @@ class Updater:
         self.set_dirs(root_lake, root_base)
         self.start_date = None
         self.end_date = None
-
+        self.allow_handshake = allow_handshake_connection
         self.rp = self.get_pool(reports_pool)
         self.keep_steps = False
         self.mode = None
@@ -291,7 +291,7 @@ class Updater:
     def single(self, report_name, use_lake_version, retroactive_update, keep_raw = False, refresh_database = False):
         self.logger.info('\n\n\n\t\tAssessing report type: {}'.format(report_name))
 
-        r = Report.Report(self.rp, report_name, self.root_lake, self.root_base, api_allowed=True)
+        r = Report.Report(self.rp, report_name, self.root_lake, self.root_base, api_allowed=self.allow_handshake)
 
         if self.refresh_requirements[report_name]:
             self.logger.info("Refresh requirement = True. Deleting the existing database: {}".format(r.database_path))

@@ -82,7 +82,7 @@ class StreamHandler:
         sys.stdout = sys.__stdout__
         lake_content = len(list(Path(self.save_dir).glob('*')))
 
-        if publisher != 'henex' or report_name in ['IDM_XBID_Results', 'DAM_GasVTP'] or lake_content > 0:
+        if publisher != 'henex' or report_name in ['IDM_XBID_Results', 'DAM_GasVTP', 'IDM_IDA1_Results'] or lake_content > 0:
             return None
         else:
 

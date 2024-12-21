@@ -123,7 +123,7 @@ class Plot:
                 size=18,
                 color="RebeccaPurple"
             ),
-            hoverlabel={'font':{'size':8}}
+            hoverlabel={'font':{'size':12}}
         )
 
         fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')

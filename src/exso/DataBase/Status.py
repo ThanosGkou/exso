@@ -103,8 +103,10 @@ class Status:
         min_observed_datetime_inherent_tz = sample_df.index[2] # would use zero, but crashes in multiindex. [1] doesn't hurt anyways
         max_observed_datetime_inherent_tz = sample_df.index[-1]
 
-
-        daily = sample_df.resample('D').sum(numeric_only = True).tz_localize(None)
+        if sample_df.columns[0].startswith('Unnamed'):
+            daily = pd.DataFrame(index=sample_df.index.unique(), columns=['1','2'], data=0).resample('D').sum(numeric_only=True).tz_localize(None)
+        else:
+            daily = sample_df.resample('D').sum(numeric_only = True).tz_localize(None)
         date_range = daily.index
         start_date = date_range[0]
         end_date = date_range[-1]

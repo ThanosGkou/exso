@@ -60,7 +60,9 @@ class API(Assistant):
         links = self.get_indexed_slice(valid_indices, candidate_links)
         #new
         if dry_run:
-            self.save_dir = os.path.join(self.save_dir, '.temp')
+            self.save_dir = self.save_dir / '.temp'
+            self.save_dir.mkdir(exist_ok=True)
+            # self.save_dir = os.path.join(self.save_dir, '.temp')
 
         filepaths, filenames, dates = self.extract_filepaths_filenames_dates(links)
 
@@ -108,12 +110,21 @@ class API(Assistant):
         generators = {'IDM_CRIDA1_Results': 'https://www.enexgroup.gr/documents/20126/853663/{}_EL-CRIDA1_Results_EN_v{}.xlsx',
                       'IDM_CRIDA2_Results':'https://www.enexgroup.gr/documents/20126/853680/{}_EL-CRIDA2_Results_EN_v{}.xlsx',
                       'IDM_CRIDA3_Results': 'https://www.enexgroup.gr/documents/20126/853704/{}_EL-CRIDA3_Results_EN_v{}.xlsx',
+
+                      'IDM_CRIDA3_Results': 'https://www.enexgroup.gr/documents/20126/853704/{}_EL-CRIDA3_Results_EN_v{}.xlsx',
+                      'IDM_CRIDA3_Results': 'https://www.enexgroup.gr/documents/20126/853704/{}_EL-CRIDA3_Results_EN_v{}.xlsx',
+                      'IDM_IDA1_Results': 'https://www.enexgroup.gr/documents/20126/3257249/{}_EL-IDA1_Results_EN_v{}.xlsx',
+                      'IDM_IDA2_Results': 'https://www.enexgroup.gr/documents/20126/3257281/{}_EL-IDA2_Results_EN_v{}.xlsx',
+                      'IDM_IDA3_Results': 'https://www.enexgroup.gr/documents/20126/3257522/{}_EL-IDA3_Results_EN_v{}.xlsx',
                       'IDM_CRIDA1_MarketCoupling': 'https://www.enexgroup.gr/documents/20126/853668/{}_EL-CRIDA1_PrelimResults_EN_v{}.xlsx',
                       'IDM_CRIDA2_MarketCoupling': 'https://www.enexgroup.gr/documents/20126/853692/{}_EL-CRIDA2_PrelimResults_EN_v{}.xlsx',
                       'IDM_CRIDA3_MarketCoupling': 'https://www.enexgroup.gr/documents/20126/855431/{}_EL-CRIDA3_PrelimResults_EN_v{}.xlsx',
                       'IDM_CRIDA1_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/853660/{}_EL-CRIDA1_AggrCurves_EN_v{}.xlsx',
                       'IDM_CRIDA2_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/853695/{}_EL-CRIDA2_AggrCurves_EN_v{}.xlsx',
                       'IDM_CRIDA3_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/853701/{}_EL-CRIDA3_AggrCurves_EN_v{}.xlsx',
+                      'IDM_IDA1_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/3257246/{}_EL-IDA1_AggrCurves_EN_v{}.xlsx',
+
+
                       'DAM_Results':'https://www.enexgroup.gr/documents/20126/200106/{}_EL-DAM_Results_EN_v{}.xlsx',
                       'DAM_MarketCoupling':'https://www.enexgroup.gr/documents/20126/200091/{}_EL-DAM_PrelimResults_EN_v{}.xlsx',
                       'DAM_PhysicalDeliveriesOfftakes':'https://www.enexgroup.gr/documents/20126/214481/{}_EL-DAM_POSNOMs_EN_v{}.xlsx',

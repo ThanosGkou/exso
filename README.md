@@ -1,36 +1,41 @@
 # ExSO
-An analytical framework for the Greek Power&Gas System Operation ("SO") and Market Exchange ("Ex") Data.
+An analytical framework for the Greek and European Power&Gas, System Operation ("SO") & Market Exchange ("Ex").
 
 
 -----
 ## <span style="color: #cdd613"> What is it? </span>
-**exso** provides an integrated framework for retrieving, extracting, transforming, loading and analyzing timeseries data for the Greek Power&Gas sector.
+**ExSO** provides an integrated framework for retrieving, extracting, transforming, loading and analyzing time-aware data for the Greek and European Power&Gas sector.
 
-- The core of the project is to provide an automated, versatile and robust framework for:
-  - Downloading raw files ("the Datalake"), as reported by the Publishing Entities (ADMIE/IPTO, HEnEX, Desfa, ...)
-  - Parsing/converting raw files to flat, clean, high-quality timeseries
+It was developed as a private project, focusing on the Greek power & gas system. On the same architecture, support for Entso-e data was added, while more data-sources being planned for integration. 
+
+([ENTSO-e's transparency platform](https://transparency.entsoe.eu/) was a game-changer on pan-european transparency. **ExSO**'s value to this end, consists of enabling automated updates, robust data storage, retrieval, transformations and visuals)
+
+- The core of the project is the provision of an automated, versatile and robust framework for:
+  - Downloading raw files ("the Datalake"), as reported by Power&Gas Publishing Entities (ENTSO-e, ADMIE/IPTO, HEnEX, Desfa, ...)
+  - Compiling raw, sparse files into flat, clean, high-quality timeseries
   - Inserting/updating the parsed data to a local, self-maintained database ("the Database")
-  - Providing an API for accecssing, slicing, transforming, analyzing, and visualizing the local Database.
+  - Providing an API for accessing, slicing, transforming, analyzing, and visualizing the local Database.
 
 
-- The local database consists of a tree structure of local directories and .csv files. The resons we opted for csv-based format are aligned with the [Rationale](#rationale) of the project:
-  - Anyone can access a csv file without needing programming or SQL skills
-  - No local/remote database server required
-  - No significant loss of speed
+- The local database consists of a tree structure of local directories and .csv files. The reasons why we opted for csv-based format are aligned with the [Rationale](#rationale) of the project:
+  - Anyone can access a csv file without needing programming or SQL skills (wider access)
+  - No local/remote database server required (portability)
+  - No significant loss of speed (good enough efficiency)
 
 -----
 ## Rationale
 **Publicly-available does not always mean publicly-accessible**
-- Market players, TSOs, and professionals in the energy sector may or may not already have access to some of the data made accessible by **exso**, through paid or "mebers only" subscriptions (e.g. market participants).
+- Market players, TSOs, and professionals in the energy sector may or may not already have access to some of the data made accessible by **ExSO**, through paid or "members only" subscriptions (e.g. market participants).
 - Individuals, researchers, and in (surprisingly) many cases professionals are either not entitled, or not willing to pay for high-quality data access.
 - Even when an interested party is willing to pay for high-quality, long-term timeseries data, it's not clear where would he/she attend to.
 - To our knowledge, no commercial or "members-only" database provides any of the variety, the duration, the reliability and the transparency that **exso** provides.
-- We strongly believe in open access and transparency. **ExSO** is a project aiming to render publicly-available data in the scope of the Greek Power&Gas sector, utilizable and accessible by anyone, expert or not.
+- We strongly believe in open access and transparency. **ExSO** is a project aiming to render publicly-available data in the scope of the Power&Gas sector, utilizable and accessible by anyone, expert or not.
 
 -----
 ## Main Features
 
-- Get **info** about implemented reports, their content, their availability periods, metadatata, etc.
+- Get **information** on implemented *Reports*, their content, their availability periods, metadatata, etc.
+  - A *Report* is any set of properties, according to the way it's being published (e.g. Bulgarian Load @entsoe, ISP1ISPResults - Integrated Scheduling Process @admie, etc.)
 - **Create** a local database of Market and System data (flat, seamless timeseries over the whole availability interval of each report)
 - **Update** (hot/cold-start) the datalake and database for all or some of the implemented reports
 - Interactive **Visualization**
@@ -40,359 +45,19 @@ An analytical framework for the Greek Power&Gas System Operation ("SO") and Mark
   ### <span style="color:  #cdd613 "> Implemented Reports  </span> 
 
   ([see more here](#implemented-reports))
+  - As of version v1.0.0, there are:
+    - 63 implemented reports for the greek power system & power exchange, and;
+    - 5 types of Entso-e reports (Load, Generation per Type, Day-Ahead Prices, Exchange Schedule, Observed Flows) for almost all of the ENTSO-e listed countries
 
-
-
-|  id | Report Name                          |  id | Report Name                          |  id | Report Name                          |     id | Report Name            |
-|----:|:-------------------------------------|----:|:-------------------------------------|----:|:-------------------------------------|-------:|:-----------------------|
-|   1 | AdhocISPResults                      |  21 | IDM_CRIDA2_AggDemandSupplyCurves     |  41 | ISP1DayAheadRESForecast              |     61 | SystemRealizationSCADA |
-|   2 | BalancingCapacityProduct             |  22 | IDM_CRIDA2_MarketCoupling            |  42 | ISP1ISPResults                       | **62** | **ISPEnergyOffers**    |
-|   3 | BalancingEnergyProduct               |  23 | IDM_CRIDA2_Results                   |  43 | ISP1Requirements                     | **63** | **ISPCapacityOffers**  |
-|   4 | DAM_AggDemandSupplyCurves            |  24 | IDM_CRIDA2_ResultsSummary            |  44 | ISP1UnitAvailabilities               |
-|   5 | DAM_BlockOrders                      |  25 | IDM_CRIDA3_AggDemandSupplyCurves     |  45 | ISP2DayAheadLoadForecast             |
-|   6 | DAM_GasVTP                           |  26 | IDM_CRIDA3_MarketCoupling            |  46 | ISP2DayAheadRESForecast              |
-|   7 | DAM_MarketCoupling                   |  27 | IDM_CRIDA3_Results                   |  47 | ISP2ISPResults                       |
-|   8 | DAM_PhysicalDeliveriesOfftakes       |  28 | IDM_CRIDA3_ResultsSummary            |  48 | ISP2Requirements                     |
-|   9 | DAM_PreMarketSummary                 |  29 | IDM_LIDA1_AggDemandSupplyCurves      |  49 | ISP2UnitAvailabilities               |
-|  10 | DAM_Results                          |  30 | IDM_LIDA1_Results                    |  50 | ISP3IntraDayLoadForecast             |
-|  11 | DAM_ResultsSummary                   |  31 | IDM_LIDA1_ResultsSummary             |  51 | ISP3IntraDayRESForecast              |
-|  12 | DayAheadLoadForecast                 |  32 | IDM_LIDA2_AggDemandSupplyCurves      |  52 | ISP3ISPResults                       |
-|  13 | DayAheadRESForecast                  |  33 | IDM_LIDA2_Results                    |  53 | ISP3Requirements                     |
-|  14 | DAS                                  |  34 | IDM_LIDA2_ResultsSummary             |  54 | ISP3UnitAvailabilities               |
-|  15 | DayAheadSchedulingUnitAvailabilities |  35 | IDM_LIDA3_AggDemandSupplyCurves      |  55 | LTPTRsNominationsSummary             |
-|  16 | HVCUSTCONS                           |  36 | IDM_LIDA3_Results                    |  56 | RealTimeSCADARES                     |
-|  17 | IDM_CRIDA1_AggDemandSupplyCurves     |  37 | IDM_LIDA3_ResultsSummary             |  57 | RealTimeSCADASystemLoad              |
-|  18 | IDM_CRIDA1_MarketCoupling            |  38 | IDM_XBID_Results                     |  58 | ReservoirFillingRate                 |
-|  19 | IDM_CRIDA1_Results                   |  39 | IMBABE                               |  59 | RESMV                                |
-|  20 | IDM_CRIDA1_ResultsSummary            |  40 | ISP1DayAheadLoadForecast             |  60 | RESMVLVPROD                          |
-
-
-
-
-
-
-
------
-## Installation
-
-Required Python Version >=3.10
-```sh
-pip install exso
-
-# Upgrade to most recent version:
-pip install --upgrade exso
-```
-
-- Note: If you are connected through your company's access point, and your company has restrictions against [PyPI](https://pypi.org/) and/or [GitHub](https://github.com/), you may be unable to install, not just ***exso*** but any open-source python package.
-### For non-programmers
-- Regardless of whether you have another Python installation in your PC or not, go ahead and install the [latest Python version](https://www.python.org/ftp/python/3.11.3/python-3.11.3-amd64.exe). Opt-in for the "Add Python to PATH" option during installation pop-up.
-    - ***exso*** is tested for Python >=3.10. Any previous version (<=3.9) will most likely be partially or fully incompatible.
-  
-
-- After installation is complete, **open a windows terminal** (In windows search, type "cmd" and hit enter)
-
-
-- **Create a virtual environment** ([more on virtual environments (venvs) and how they work](https://docs.python.org/3/library/venv.html#how-venvs-work))
-  - First, locate which python versions are installed by typing (in the command-line terminal):
-
-    ```sh
-    py -0
-    ```
-           
-  - Take note of the latest version (let's assume it is 3.11), and type:
-    ```sh
-    py -3.11 -m venv "C:\Users\yourUserNameHere\exso_venv"
-    
-    # (Hit Enter) Now the vitrtual environment is created.
-    ```
-        
-        
-      
-- #### Activate the Virtual Environment
-    ```sh
-    # (replace yourUserNameHere with your actual windows username, and hit enter)
-    "C:\Users\yourUserNameHere\exso_venv\Scripts\activate.bat"
-    ```
-      
-      
-    
-
-- Install the ***exso*** package by typing (in the **same command line session**)
-  ```sh
-  pip install exso
-  ```
-
-### Things to consider when upgrading
-- Make sure, that you re-inform ***exso*** on your [system's data format settings](#system-formats)
-
-
------
-# ***exso*** API
- ***exso*** can be used either through the **command line interface** ("CLI-based" for short), intended for only the core usage, **or** as an importable **python package** through any IDE ("IDE-based" for short), intended and allowing more advanced usage.
-- At the moment, the CLI-based API has some namespace inconsistencies compared to the IDE-based API
-- They can only become annoying if frequently switching from CLI-based to IDE-based usage, which is not really probable, but they will nonetheless be conformed by the next ***exso*** version.
-
-### For non-programmers
-* Both the CLI-based and the IDE-based usages are fairly straight-forward
-* For Command-Line interface, see the [CLI documentation](#command-line-interface-cli)
-* For IDE-based usage:
-  * Either install a proper IDE (e.g. [Pycharm Community](https://www.jetbrains.com/pycharm/download/download-thanks.html?platform=windows&code=PCC) is an excellent IDE but there's some learning curve involved), OR 
-  * Use the python-interface:
-    * Open a command-line terminal and [Activate the exso virtual environment](#activate-the-virtual-environment)
-    * Then, simply write "python" and hit enter
-      ![img_1.png](resources/img_1.png)
-    * Now, follow the [IDE-based usage documentation](#ide-based-usage)
-  
-
-* It is **critical** that you read the [System Formats](#system-formats) section before you get going.
-* If you plan to use the exso API also for querying/time-slicing/visualizing data, you should read the documentation on [Database](#database), [Nodes](#nodes), and the [examples snippets](#examples-use-cases-special-attention)
-
-
-
------
-### Command Line Interface (CLI)
-
-An alternative way of the CLI-based usage, since v0.0.1 is the ExSO.xlsm file. 
-It contains click and browse buttons that automatically generate the propert CLI-command.
-    ![img.png](resources/ExSO_xlsm_snapshot.png#center)
-
-For direct use of the terminal, open a windows terminal, and [activate the exso virtual environment](#activate-the-virtual-environment)
-- List available reports and text descriptions (available in the sense of ***exso***-available, not necessarily already present in datalake/database)
-
-  ```sh
-  py -m exso info
-  ```
-       
-- Set system formats:
-  ```sh
-  # Recommended: The below stand-alone command, permanently informs exso on your system format settings, and does not require to 
-  #              be explicitly specified again
-  
-  py -m exso set_system_formats --decimal_sep "your decimal separator" --list_sep "your list separator"
-  # Otherwise, you can still specify the --decimal_sep and/or --list_sep arguments, but if the mode argument is not "set_system_formats",
-  # the modification will be valid just for this run of exso, and will revert to default values afterwards.
-  ```
-       
-       
-       
-
-- Database & Datalake update (or first-time setup)
-  - **IMPORTANT:** Whenever an argument refers to a path (e.g. path/to/whatever), this should better be placed **inside double quotes** to ensure smooth operation (avoid issues with empty spaces in paths).
-  ```sh
-  py -m exso update -rl path/to/root/datalake -rb path/to/root/database # or...
-  py -m exso update -rl path/to/root/datalake -rb path/to/root/database --which ReportName1 ReportName2 ReportName3
-  ```
-
-  
-  - You can find the full path to your specified directories by clicking on the address bar of windows explorer
-
-    ![img.png](resources/img.png#center)
-
-
-- Extraction / Timezone Conversion / Timeslicing / Visualizing (See section [Node Locators](#node-locators))
-  ```sh
-  py -m exso query -rb path/to/root/database -loc NodeLocator -output_dir path/to/some/dir -tz desiredTimezone -from YYYY-MM-DD -until YYYY-MM-DD -extract -plot -stacked
-  ```
-
-- **Hint**: To avoid too much copy-pasting, the default values for root-lake and root-base are ".\datalake" and ".\database"
-  - This means, that (after having activated the virtual environment), if you navigate to a desired directory, you can launch the command line without specifying the -rl and -rb arguments
-  ```sh
-  # Activate venv (indicative name of venv = "deploy_exso")
-  C:\Users\theUser>Desktop\VENVs\PythonVENVs\deploy_exso\Scripts\activate.bat
-  
-  # Navigate to desired directory, that will host / is already hosting both the datalake and the database
-  (deploy_exso) C:\Users\theUser>cd Desktop\exso_data
-  
-  # you can now launch exso without specifying root-lake and/or root-base paths
-  (deploy_exso) C:\Users\theUser\Desktop\exso_data>py -m exso update
-  ```
-  
-- 
-
-  #### Notes on CLI arguments
-  - **<span style="color: #2fb2b6"> -rl</span>**: path to the (desired or existing) root datalake directory
-  - **<span style="color: #2fb2b6"> -rb</span>**: path to the (desired or existing) root databake directory
-  - **<span style="color: #2fb2b6"> --which</span>**: if the positional argument is **update**, you can optionally enter only specific report names to update (space separated, case-sensitive, as they are listed in the [Implemented Reports](#implemented-reports) section)
-  - the <span style="color: #2fb2b6"> **-extract** </span> argument, if passed, must be accompanied by the -output_dir argument
-  - the <span style="color: #2fb2b6"> **-plot** </span> argument is valid only if the node corresponding to the given NodeLocator is a file or property node (not a directory)
-  - the <span style="color: #2fb2b6"> **-stacked** </span> argument makes the plot (if given) a stacked-area plot
-  - the <span style="co[exso_CLI.doc](src%2Fexso_CLI.doc)lor: #2fb2b6"> **-tz** </span> argument is optional.  If given, it will convert the database data (which is in UTC) to the specified timezone (including daylight-saving shifts) 
-    - Recommendation: Don't enter country-specific timezone names. Prefer broader timezones (e.g. EET, CET, UTC, etc.).
-  - the <span style="color: #2fb2b6"> **-from** </span> argument is optional (can be combined with -until): format "YYYY-MM-DD HH:MM"
-  - the <span style="color: #2fb2b6"> **-until** </span> argument is optional (can be combined with -from): format "YYYY-MM-DD HH:MM"
-
-  #### CLI formal documentation
-
-  ```sh
-  py -m exso --help
-  ```
-
-  ```sh
-  usage: py -m exso [-h] [-rl ROOT_LAKE] [-rb ROOT_BASE] [--which WHICH [WHICH ...]]
-                  [--groups {ISPResults,ISPForecasts,ISPRequirements,Forecasts,UnitAvailabilities,Transmission,Balancing,DAS,Hydro,SCADA,DAM,IntraDayMarket,DemandSupplyBids,Gas} [{ISPResults,ISPForecasts,ISPRequirements,Forecasts,UnitAvailabilities,Transmission,Balancing,DAS,Hydro,SCADA,DAM,IntraDayMarket,DemandSupplyBids,Gas} ...]]
-                  [--val_report VAL_REPORT] [--val_dates VAL_DATES [VAL_DATES ...]]
-                  [--val_fields VAL_FIELDS [VAL_FIELDS ...]] [-loc QUERY_LOCATOR] [-output_dir QUERY_OUTPUT_DIR]
-                  [-tz QUERY_TZ] [-from QUERY_FROM] [-until QUERY_UNTIL] [-extract] [-plot] [-stacked]
-                  [--decimal_sep DECIMAL_SEP] [--list_sep LIST_SEP]
-                  {info,update,validate,query,set_system_formats}
-
-  positional arguments:
-    {info,update,validate,query,set_system_formats}
-
-  options:
-    -h, --help            show this help message and exit
-    -rl ROOT_LAKE, --root_lake ROOT_LAKE
-    -rb ROOT_BASE, --root_base ROOT_BASE
-    --which WHICH [WHICH ...]
-                          --which argument can be either 'all' (default), or a list of valid report-names (space-
-                          separated)
-    --groups {ISPResults,ISPForecasts,ISPRequirements,Forecasts,UnitAvailabilities,Transmission,Balancing,DAS,Hydro,SCADA,DAM,IntraDayMarket,DemandSupplyBids,Gas} [{ISPResults,ISPForecasts,ISPRequirements,Forecasts,UnitAvailabilities,Transmission,Balancing,DAS,Hydro,SCADA,DAM,IntraDayMarket,DemandSupplyBids,Gas} ...]
-    --val_report VAL_REPORT
-                          report name you wish to validate.
-    --val_dates VAL_DATES [VAL_DATES ...]
-                          space separated date(s) to validate. format: YYYY-M-D
-    --val_fields VAL_FIELDS [VAL_FIELDS ...]
-                          "Field(s)" are the filenames, as to be found in the database folder of a specific report
-                          (space separated).
-    -loc QUERY_LOCATOR, --query_locator QUERY_LOCATOR
-                          'locator' means a unique identifier of database objects. example: root.admie.isp1ispresults,
-                          will extract the whole database of this report and transform it / slice it depending on the
-                          rest of the options you set.
-    -output_dir QUERY_OUTPUT_DIR, --query_output_dir QUERY_OUTPUT_DIR
-                          If specified, it will be used to save the generated plot (if -plot), and/or the extracted
-                          timeslice (if -extract).
-    -tz QUERY_TZ, --query_tz QUERY_TZ
-    -from QUERY_FROM, --query_from QUERY_FROM
-                          Start date(time) of query (YYYY-M-D [H:M])
-    -until QUERY_UNTIL, --query_until QUERY_UNTIL
-                          End date(time) of query (YYYY-M-D [H:M])
-    -extract, --query_extract
-                          If added, it means you wish to EXTRACT the specified query (among possible other actions)
-    -plot, --query_plot   If added, it means you wish to PLOT the upstream query (among possible other actions)
-    -stacked, --plot_stacked
-                          If added, it means you wish the PLOT specified, to be a stacked-area plot
-    --decimal_sep DECIMAL_SEP
-    --list_sep LIST_SEP
-  
-  ```
-          
-
------
-# IDE-based Usage
-
-## Basic update
-The below script will download and insert to the database all (63) currently supported reports. For more information continue reading.
-
-```sh
-from exso import Updater
-# define where you want the datalake and the database to be stored in the disk
-root_lake = r"path\to\desired\datalake\directory" # e.g. r"C:\Users\your_username\exsodata\datalake"
-root_base = r"path\to\desired\database\directory" # e.g. r"C:\Users\your_username\exsodata\database"
-
-
-# root_lake and root_base can also be pathlib.Path objects
-upd = Updater(root_lake, root_base)
-upd.run()
-
-```
-#### Update Progress
-Progress bars will be displayed for every kind of operation for each report, as demonstrated in the figure below, for e.g. report = DAM_Results:
-
-![progress_bar_example.png](resources/progress_bar_example.png)
-
-#### Performance & System Requirements
-
-A **full cold-start** process of all 63 reports, might take from **2 to over 5 hours**, depending on internet speed, processing power, memory and non-***exso*** PC usage. Indicative time requirements:
-
-- Pentium-tier processors + 4GB RAM --> ~6 hours (not a good idea in general)
-- 8th-gen high-performance i5 processor + 16GB --> 2.5 hours
-- 12th-gen high-performance i7 processor + 16GB --> 1.5 hours
-
-After the first database update (creation actually), each **daily or weekly update** process takes a matter of **a few minutes**.
-
-***exso*** is not optimized for performance (and probably won't be anytime soon):
-
-- Publishing parties keep on changing formats, contents, adding/removing report sections, modifying string representations, etc. 
-- This requires very "low-level" (in variable level, not machine-level) control over reading, parsing, datetime-indexing in order to work for all reports
-- Frankly performance is not essential: 
-  - The blow is taken once, at the database initialization: Daily, weekly, monthly updates are really a matter of minutes.
-  - The database querying speeds are fast (speed in data operations is always refering to a specific context). The computational cost lies in parsing the datalake files.
-
-The combined Database & Datalake takes up approximately **4GB of disk space**
-
------
-## Implemented Reports
-***exso*** currently supports a total of 63 reports from ADMIE/IPTO and HEnEx. Some of them are obsolete (but still useful for analytics), and some ongoing.
-
-In order to review the available reports or decide which ones fit your needs and update only those, a Report.Pool object can be useful.
-```sh
-from exso import Report
-
-# Instantiate a report Pool object
-rp = Report.Pool()
-description = rp.get_text_description() # returns a dictionary of available reports. e.g. {report_name1: report1_description, report_name2: report2_description}
-
-# to get the description of a specific report, you can print:
-report_name = "select a valid report name"
-print(description[report_name])
-
-# The .get_available() method, returns dataframe with available reports, and their basic metadata
-# To get only a list of names, set only_names <- False
-metadata = rp.get_available(only_names = False)
-
-```
-![pool_get_available.png](resources/get_available().png)
-
-
-
-
-
------
-## Custom Update
-
-There are filtering options available, in order to narrow-down the set of reports to be updated.
-```sh
-
-# Now, if you conclude that you want e.g. 3 specific reports (at least for now), you can:
-
-interesting_reports = ['reportname1', 'reportname2', 'reportname3']
-upd = Updater(root_lake, root_base, which = interesting_reports)
-
-
-# Or, that you want a specific group of reports (you can review the available groupings by Reports.Pool().list_groups()
-
-interesting_groups = ['ISPForecasts', 'ISPResults']
-upd = Updater(root_lake, root_base, groups = interesting_groups)
-
-
-# Or, that you want only reports that are active (not obsolete)
-upd = Updater(root_lake, root_base, only_ongoing = True)
-
-
-# Or the intersection of any combination of those:
-upd = Updater(root_lake, root_base, which = interesting_reports, groups = interesting_groups, only_ongoing=True)
-
-
-
-# Very often, a specific datalake-file (excel file) for a given date, may have multiple versions. (e.g. YYYYMMDD_report_01.xlsx, YYYYMMDD_report_02.xlsx)
-# The use_lake_version argument allows to select which version to use.
-# By default it is set to 'latest'.  Other options: 'first' or any natural number
-upd.run(use_lake_version = 'latest')
-
-# The below query, will use datalake-files whose version is 4, given that the file actually has 4 or more versions.
-# If the specific file has only two versions, then version 2 will be used.
-# The integer lake version is interpreted as: "Use this version, or the most recent version available prior to it"
-upd.run(use_lake_version = 4)
-```
 
 -----
 # Datalake
-The datalake consists of raw excel (.xls, or .xlsx, or .zip of .xls*) reports, as published by the publishing parties. 
+The datalake consists of raw (.xls*, .csv, .zip) reports, as published by the publishing parties. 
 - Each report is published (is available) over a specific date range (some reports may be no longer actively updated but still useful for historical analysis)
 - Each report is published on a specific frequency (e.g. each day, each week, each month, etc.)
-- Each report file content, spans over various horizons (e.g. one day-long, one week-long, one month-long, etc.)
-- Each report file consists of one or more excel sheets
-- Each report is expressed in a specific timezone (EET, UTC or CET) and may or may not have well-defined daylight-saving switches.
+- Each report's content, spans over various horizons (e.g. one day-long, one week-long, one month-long, etc.)
+- Each discrete report-file consists of one or more excel sheets
+- Each report's data is expressed in a specific timezone (EET, UTC or CET) and may or may not have well-defined daylight-saving switches.
 
 -----
 # Datalake &rarr; Database
@@ -555,7 +220,7 @@ The file is called **"Hydro.csv"** and is located in the directory **"root/admie
    ```sh
    tree = exso.Tree()
    ```
-- For example, **ALL of the below will work normally**, because there is only one entity in the whole database called Imbalance Price  (€/MWh)":
+- For example, **ALL of the below will work normally**, because there is only one entity in the whole database ***named*** "Imbalance Price  (€/MWh)" (whose .name attribute equals)
   ```sh
   # Full DNA: "root.admie.imbabe.imbabe.Imbalance Price  (€/MWh)"
   
@@ -788,7 +453,7 @@ The visualization of a Node object is as simple as calling its .plot() method:
 
 Graphs can be zoomed in/out, rescaled, columns can be toggled-on/off in real time.
 
-&rarr; By default, ***exso*** will **omit to plot any columns that are Zero or NaN** over the whole selected timerange, in order to nake the plot lighter.
+&rarr; By default, ***exso*** will **omit to plot any columns that are Zero or NaN** over the whole selected timerange, in order to make the plot lighter, both compuatationally and on the eyes.
 
 ```sh
 isp1_thermal_gen = t['root.admie.isp1ispresults.isp_schedule.thermal']
@@ -808,12 +473,13 @@ fig = isp1_thermal_gen.plot(area = True, start_date = '2022-1-1', end_date = '20
 - show = True/False argument, controls whether to automatically display the graph when its rendered (in both cases, a figure object is returned)
 - The save_path argument accepts a Path-like entry (.html), to locally save the graph (regardless of whether show=True/False)
 
-
+---
 ## Disclaimers
 - Any modification on the datalake and database structure, file and directory names, additions/deletions, will probably cause malfunctions.
 - If you must open a database csv in-place (directly from the database directory, e.g. for quick inspection), which you shouldn't, you should at least not perform any saves (even if apparently, no changes were made)
 - If you accidentally modify e.g. a database file, and the Updater malfunctions, you can manually delete the whole reports folder, and re-run the Updater.
 
+---
 ## System Formats
 By default, ***exso*** uses:
 - "," (comma) for list separation 
@@ -937,15 +603,15 @@ If ***ExSO*** assists you in making the "publicly available" data, actually valu
 
 #### APA
 
-  - Natsikas, T. (2023). ExSO: market Exchange and Sytem Operation analytical framework (Version 0.0.1) [Computer software]. https://github.com/ThanosGkou/exso
+  - Natsikas, T. (2023). ExSO: Market Exchange and System Operation analytical framework (Version 1.0.0) [Computer software]. https://github.com/ThanosGkou/exso
 
 #### BibTeX
-- @software{Natsikas_ExSO_market_Exchange_2023,
+- @software{Natsikas_ExSO_Market_Exchange_2023,
 author = {Natsikas, Thanos},
 month = apr,
-title = {{ExSO: market Exchange and Sytem Operation analytical framework}},
+title = {{ExSO: Market Exchange and System Operation analytical framework}},
 url = {https://github.com/ThanosGkou/exso},
-version = {0.0.1},
+version = {1.0.0},
 year = {2023}
 }
 

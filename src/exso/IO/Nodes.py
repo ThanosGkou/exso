@@ -368,7 +368,7 @@ class Node(NodeAccessors, NodeConstructors):
         return dff
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def plot(self, tz_pipe=None, start_date=None, end_date=None, kind='area', show = True, save_path = None, title = None, ylabel = None, xlabel = None, df = None, line_cols = None, area_cols = None):
+    def plot(self, tz_pipe=None, start_date=None, end_date=None, kind='area', show = True, save_path = None, title = None, ylabel = None, xlabel = None, df = None, line_cols = None, area_cols = None, transformation = None):
         '''
         save_path : str|Path (directory or path/that/ends/with.html)
         '''
@@ -393,6 +393,8 @@ class Node(NodeAccessors, NodeConstructors):
 
         if isinstance(df, type(None)):
             df = self(tz_pipe, start_date, end_date)
+        if transformation:
+            df = transformation(df)
 
         if kind == 'area':
             fig = Plot.area_plot(df=df, show=show, save_path=save_path, title=title, ylabel = ylabel, xlabel=xlabel)
@@ -451,12 +453,17 @@ class Node(NodeAccessors, NodeConstructors):
             if truncate_tz:
                 tz_pipe = tz_pipe + [None]
 
+        if isinstance(df.index, pd.MultiIndex):
+            extra = {'level':0}
+        else:
+            extra = {}
+
         if tz_pipe:
-            df = df.tz_localize(tz_pipe[0])
+            df = df.tz_localize(tz_pipe[0], **extra)
             if len(tz_pipe) >= 2:
-                df = df.tz_convert(tz_pipe[1])
+                df = df.tz_convert(tz_pipe[1], **extra)
             if len(tz_pipe) == 3:
-                df = df.tz_localize(tz_pipe[2])
+                df = df.tz_localize(tz_pipe[2], **extra)
 
         return df
 
@@ -469,20 +476,15 @@ class Node(NodeAccessors, NodeConstructors):
             columns_new = np.where(cols_as_read.str.contains('Unnamed'), '', cols_as_read)
             df.rename(columns=dict(zip(cols_as_read, columns_new)), level=i, inplace=True)
 
+        _raw = df.copy()
 
         def to_datetime(x):
             return pd.Timestamp(x)
 
-        index_ = df.index
-        index_0 = index_.get_level_values(0).unique()
-        to_dt = np.vectorize(to_datetime)(index_0)
+        df.index = df.index.set_levels([pd.to_datetime(df.index.levels[0]), df.index.levels[1]])
+        df = Node.apply_tz_pipe(df, tz_pipe)
 
-        to_dt = Node.apply_tz_pipe(pd.to_datetime(to_dt), tz_pipe)
-
-        index_ = index_.set_levels(to_dt, level=0)
-        df.index = index_
         return df
-
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     def export(self, to_path, tz_pipe = None, start_date = None, end_date = None, truncate_tz=False):

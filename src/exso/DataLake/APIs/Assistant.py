@@ -49,7 +49,12 @@ class Assistant:
                success = True
                break
            except:
-               try_number += 1
+               try:
+                   response = requests.get(link, proxies={'https': "http://10.100.133.251:80"})
+                   success  = True
+                   break
+               except:
+                   try_number += 1
 
         if success == False:
             return False,  None
