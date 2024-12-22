@@ -704,6 +704,15 @@ class IDM_CRIDA2_ResultsSummary(DAM_ResultsSummary):
 class IDM_CRIDA3_ResultsSummary(DAM_ResultsSummary):
     pass
 ###############################################################################################
+class IDM_IDA1_ResultsSummary(DAM_ResultsSummary):
+    pass
+###############################################################################################
+class IDM_IDA2_ResultsSummary(DAM_ResultsSummary):
+    pass
+###############################################################################################
+class IDM_IDA3_ResultsSummary(DAM_ResultsSummary):
+    pass
+###############################################################################################
 class DAM_PreMarketSummary(DAM_ResultsSummary):
     pass
 ###############################################################################################

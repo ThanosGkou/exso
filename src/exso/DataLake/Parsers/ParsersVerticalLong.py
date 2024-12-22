@@ -480,6 +480,14 @@ class IDM_CRIDA2_AggDemandSupplyCurves(DAM_AggDemandSupplyCurves):
 ###############################################################################################
 class IDM_CRIDA3_AggDemandSupplyCurves(DAM_AggDemandSupplyCurves):
     pass
+class IDM_IDA1_AggDemandSupplyCurves(DAM_AggDemandSupplyCurves):
+    pass
+###############################################################################################
+class IDM_IDA2_AggDemandSupplyCurves(DAM_AggDemandSupplyCurves):
+    pass
+###############################################################################################
+class IDM_IDA3_AggDemandSupplyCurves(DAM_AggDemandSupplyCurves):
+    pass
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
@@ -623,6 +631,12 @@ class IDM_CRIDA1_MarketCoupling(DAM_MarketCoupling):
 class IDM_CRIDA2_MarketCoupling(DAM_MarketCoupling):
     pass
 class IDM_CRIDA3_MarketCoupling(DAM_MarketCoupling):
+    pass
+class IDM_IDA1_MarketCoupling(DAM_MarketCoupling):
+    pass
+class IDM_IDA2_MarketCoupling(DAM_MarketCoupling):
+    pass
+class IDM_IDA3_MarketCoupling(DAM_MarketCoupling):
     pass
 ###############################################################################################
 ###############################################################################################
