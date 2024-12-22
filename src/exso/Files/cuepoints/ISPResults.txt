@@ -5,6 +5,8 @@ ISPEnergyPrices: ('Energy Marginal Prices', 'Cleared Energy')
 ISPEnergyVolumes: ('Cleared Energy', 'Thermal Units')
 Thermal: ('Thermal Units', 'Total Thermal Production']
 Hydro: ('Hydro Units', 'Total Hydro Production']
+RES: ('RES Units', 'Energy Surplus')
+EnergySurplus: ('Energy Surplus', 'Dispatchable Load')
 DispatchableLoad: ('Dispatchable Load', 'Total Dispatchable Load']
 MarketCBS: ('Net Border Schedules', 'Total Net Schedules']
 TotalMarketCBS: ('Net Border Market Schedules', 'Total Net Border Schedules']
@@ -13,6 +15,8 @@ ReserveRequirements: ('Reserve Requirements', 'Corridor Limit')
 $ISP_Activations
 Thermal: ('Thermal Units', 'Total Thermal activation']
 Hydro: ('Hydro Units', 'Total Hydro activation']
+RES: ('RES Units', 'Energy Surplus')
+EnergySurplus: ('Energy Surplus', 'Dispatchable Load')
 DispatchableLoad: ('Dispatchable Load', 'Total Dispatchable Load']
 DemandResponse: ('Demand Response', last]
 
@@ -23,22 +27,28 @@ $FCR
 FCR: ('FCR', 'Thermal Unit')
 Thermal: ('Thermal Unit', 'Hydro Unit')
 Hydro: ('Hydro Unit', 'Hydro Units DOWN Total']
+RES: ('RES Unit', 'Dispatchable Load Unit')
 DispatchableLoad: ('Dispatchable Load Unit', 'Dispatchable Load Units DOWN Total']
-DemandResponse: ('Demand Response Unit', last]
+DemandResponse: ('Demand Response Unit', 'Demand Response Units Total']
+FCR_Capacity_Adj: ('FCR Capacity Adjustment', last]
 
 $aFRR
 aFRR: ('aFRR', 'Thermal Unit')
 Thermal: ('Thermal Unit', 'Hydro Unit')
 Hydro: ('Hydro Unit', 'Hydro Units DOWN Total']
+RES: ('RES Unit', 'Dispatchable Load Unit')
 DispatchableLoad: ('Dispatchable Load Unit', 'Dispatchable Load Units DOWN Total']
-DemandResponse: ('Demand Response Unit', last]
+DemandResponse: ('Demand Response Unit', 'Demand Response Units Total']
+aFRR_Capacity_Adj: ('AFRR Capacity Adjustment', last]
 
 $mFRR
 mFRR: ('mFRR', 'Thermal Unit')
 Thermal: ('Thermal Unit', 'Hydro Unit')
 Hydro: ('Hydro Unit', 'Hydro Units DOWN Total']
+RES: ('RES Unit', 'Dispatchable Load Unit')
 DispatchableLoad: ('Dispatchable Load Unit', 'Dispatchable Load Units DOWN Total']
-DemandResponse: ('Demand Response Unit', last]
+DemandResponse: ('Demand Response Unit', 'MFRR Capacity Adjustment')
+mFRR_Capacity_Adj: ('MFRR Capacity Adjustment', last]
 
 $RR
 RR: ('RR', 'Thermal Unit')
