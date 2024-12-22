@@ -430,7 +430,7 @@ class CuePoints:
 
         ''' be carefule where to strip(), becasue any spaces put within the quotes is deliberate'''
         cue_bounds = cue_bounds[1:-1]
-        start_cue, end_cue = list(map(lambda x: re.sub('["\']', '', x.strip()), cue_bounds.split(',')))
+        start_cue, end_cue = list(map(lambda x: re.sub(r'["\']', '', x.strip()), cue_bounds.split(',')))
 
         if start_cue == 'None' or not start_cue:
             start_cue = None

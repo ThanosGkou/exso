@@ -481,7 +481,7 @@ class LogSplitter:
         ender = re.search(report_enders[0], self.raw_log)
 
         report_log = self.raw_log[starter.start():ender.end()]
-        facts_raw = re.findall('\+\+.*', report_log)
+        facts_raw = re.findall(r'\+\+.*', report_log)
 
         facts = {}
         [facts.update(self.events_cleaner(fact)) for fact in facts_raw]
@@ -532,7 +532,7 @@ class LogSplitter:
     # *******  *******   *******   *******   *******   *******   *******
     def extractAll(self):
         self.read()
-        report_starters = re.findall('<\w+>', self.raw_log)
+        report_starters = re.findall(r'<\w+>', self.raw_log)
         report_names = list(map(lambda x: re.sub('<|>', '', x), report_starters))
         for report_name in report_names:
             self.extract(report_name)
@@ -547,7 +547,7 @@ class LogSplitter:
     def events_cleaner(event):
         ''' an event starts with two "+" signs, and kas a key, a ":" and a value '''
 
-        event = re.sub('\++', '', event).split(':')
+        event = re.sub(r'\++', '', event).split(':')
         event = list(map(lambda x: x.strip().lower(), event))
         event = {event[0]:event[1]}
         return event

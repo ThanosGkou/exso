@@ -196,7 +196,7 @@ class Assistant:
         filepaths = list(map(lambda filename: os.path.join(self.save_dir, filename), filenames))
         try:
             # well named files are named as: YYYYMMDD_ReportName_#vv.xls*
-            dates = list(map(lambda filename: DateTime.date_magician(re.findall('\d{8}', filename)), filenames))
+            dates = list(map(lambda filename: DateTime.date_magician(re.findall(r'\d{8}', filename)), filenames))
 
         except:
             # some files may have ill-formed names, such as: 20200722_ISP1_ISPResults_ISP1_2020-07-22_20200721140009.xlsx
@@ -205,7 +205,7 @@ class Assistant:
             dates = []
             for fn in filenames:
                 try:
-                    str_date = re.findall('\d{8}_', fn)
+                    str_date = re.findall(r'\d{8}_', fn)
                     if len(str_date) == 0: # the file is very ill-formed and will be ignored (very rarely)
                         continue
 

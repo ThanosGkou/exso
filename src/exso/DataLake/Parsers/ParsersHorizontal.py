@@ -637,7 +637,7 @@ class SystemRealizationSCADA(ArchetypeHorizontal):
         modes += "+" + ccgt_df[plant_name + "_ST"].astype(bool).astype(int).astype(str) + "ST"
 
         # the output is "", "ST". "1GT+ST", "2GT+ST", etc.
-        modes = modes.replace({'\+0ST': '', '1ST': 'ST', '0GT': ''}, regex=True)
+        modes = modes.replace({r'\+0ST': '', '1ST': 'ST', '0GT': ''}, regex=True)
         return modes
 
     # *******  *******   *******   *******   *******   *******   *******

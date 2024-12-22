@@ -72,7 +72,7 @@ class Readers:
         def vector_eval(x):
             try:
                 nominator, denominator = x[1:].split('/')
-                denominator = re.sub('\^', '**', denominator)
+                denominator = re.sub(r'\^', '**', denominator)
 
                 results = eval(nominator + '/' + denominator)
                 return results

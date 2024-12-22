@@ -187,7 +187,7 @@ class Status:
         '''
 
         filenames = list(map(lambda x: os.path.split(x)[-1], filepaths))
-        str_dates = list(map(lambda x: re.findall('\d{8}', x)[0], filenames))
+        str_dates = list(map(lambda x: re.findall(r'\d{8}', x)[0], filenames))
 
         dates = DateTime.date_magician(str_dates, return_stamp=False)
 

@@ -65,7 +65,7 @@ class STR:
 
 
         if return_text:
-            valid_text = re.sub('\n\+', '\n', prev_text)
+            valid_text = re.sub(r'\n\+', '\n', prev_text)
             return '\n' + valid_text
 
     # ********   *    ********   *    ********   *    ********   *   ********

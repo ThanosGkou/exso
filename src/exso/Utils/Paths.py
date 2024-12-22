@@ -38,7 +38,7 @@ class Paths:
                                             eligibility['end_filter'],
                                             eligibility['extension_filter'])
 
-        rule = re.sub('\*\*+', '*', rule)  # replace multi conseq. stars
+        rule = re.sub(r'\*\*+', '*', rule)  # replace multi conseq. stars
 
         return rule
 

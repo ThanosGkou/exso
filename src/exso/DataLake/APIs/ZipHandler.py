@@ -180,7 +180,7 @@ class PoolCleaner:
 
     # *******  *******   *******   *******   *******   *******   *******
     def derive_categs(self):
-        unique_categs = np.unique(list(map(lambda x: re.sub('\d\d+', '', x.with_suffix("").name), self.pool_files)))
+        unique_categs = np.unique(list(map(lambda x: re.sub(r'\d\d+', '', x.with_suffix("").name), self.pool_files)))
         unique_categs = np.unique(list(map(lambda x: re.sub('_EL-|_EN_v|- Copy', '', x).strip(), unique_categs)))
         return unique_categs
 

@@ -348,7 +348,7 @@ class Scrapers(Assistant):
                        'LIDA':'https://www.enexgroup.gr/el/markets-publications-el-intraday-market-lida', # deprecated
                        'CRIDA':'https://www.enexgroup.gr/el/markets-publications-el-intraday-market'}
 
-        market_no_digit = re.sub('\d','', market)
+        market_no_digit = re.sub(r'\d','', market)
         return market_urls[market_no_digit]
 
 
@@ -404,7 +404,7 @@ class Scrapers(Assistant):
             text = display_setting.string
             ''' something like: " Εμφάνιση 1 - 7 από 325 αποτελέσματα. " 
             '''
-            n_files_per_page = re.findall('(?<=-\s)\d', text) #lookbehind if "-\s"
+            n_files_per_page = re.findall(r'(?<=-\s)\d', text) #lookbehind if "-\s"
             n_files_per_page = int(n_files_per_page[0])
 
             return n_files_per_page

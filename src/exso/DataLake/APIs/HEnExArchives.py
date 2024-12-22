@@ -77,8 +77,7 @@ class ArchiveScraper(Assistant):
 
     def _get_links_and_filepaths(self, filtered_anchors, base_url, save_dir):
         file_names = [anchor.text for anchor in filtered_anchors]
-        file_names = list(map(lambda x: x[re.search('\d{4}', x).start():].strip(), file_names))
-
+        file_names = list(map(lambda x: x[re.search(r'\d{4}', x).start():].strip(), file_names))
         file_links = [base_url + anchor['href'] for anchor in filtered_anchors]
 
         zip_filepaths = [save_dir / fn for fn in file_names]
@@ -224,7 +223,7 @@ class MarketArchive(ArchiveScraper):
 
 
         self.n_links = len(self.links)
-        self.link_dates = list(map(lambda x: re.findall('\d+', str(x)), self.filepaths))
+        self.link_dates = list(map(lambda x: re.findall(r'\d+', str(x)), self.filepaths))
 
         self.download(self.links, self.filepaths, n_threads=n_threads)
 
@@ -346,7 +345,7 @@ class SystemArchive(ArchiveScraper):
                 pass
 
         self.n_links = len(self.links)
-        self.link_dates = list(map(lambda x: re.findall('\d+', str(x)), self.filepaths))
+        self.link_dates = list(map(lambda x: re.findall(r'\d+', str(x)), self.filepaths))
         self.download(self.links, self.filepaths, n_threads = n_threads)
 
         zh = ZipHandler.ZipHandler(zipped_dir=self.save_dir, extract_to_dir=self.save_dir, must_not_contain='DryRun')
