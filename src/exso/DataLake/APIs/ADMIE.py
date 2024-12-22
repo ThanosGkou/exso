@@ -45,7 +45,8 @@ class API(Assistant):
                          format(report_name, start_date, end_date, dry_run, n_threads))
 
         candidate_links = self.get_links(report_name, start_date, end_date) # query the api and ask for the links only
-
+        if isinstance(candidate_links, type(None)):
+            candidate_links = []
         self.logger.info("Got {} candidate links".format(len(candidate_links)))
 
         candidate_filenames = list(map(lambda x: Path(x).name, candidate_links))
