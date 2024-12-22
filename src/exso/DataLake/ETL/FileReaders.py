@@ -1,4 +1,7 @@
 import re
+import traceback
+import warnings
+
 import openpyxl
 import numpy as np, pandas as pd
 from pathlib import Path
@@ -37,6 +40,7 @@ class Readers:
         ''' Future-proofing against:
             FutureWarning: Defining usecols with out of bounds indices is deprecated and will raise a ParserError in a future version.
         '''
+        warnings.filterwarnings("ignore", category=UserWarning, module=re.escape('openpyxl.styles.stylesheet'))
         if 'IMBABE' in Path(filepath).name:
             df_sheets = Readers.imbabe_reader(kwargs, filepath)
             return df_sheets
@@ -60,9 +64,16 @@ class Readers:
                     index_col = None
                 kwargs['usecols'] = usecols
                 kwargs['index_col'] = index_col
-                df_sheets = pd.read_excel(filepath, **kwargs)
+                try:
+                    df_sheets = pd.read_excel(filepath, **kwargs)
+                except:
+                    warnings.warn("ERROR reading filepath")
+                    print()
+                    print(f'{filepath = }')
+                    print(f'{kwargs = }')
 
 
+        warnings.filterwarnings("default", category=UserWarning, module=re.escape('openpyxl.styles.stylesheet'))
         return df_sheets
 
     # *******  *******   *******   *******   *******   *******   *******
