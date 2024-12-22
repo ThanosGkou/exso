@@ -107,14 +107,19 @@ class StreamHandler:
     # *******  *******   *******   *******   *******   *******   *******
     def split_henex(self, report_name, start_date, end_date):
 
+        self.logger.info("Splitting HenEx query between api, scraping, and archive")
         today = datetime.datetime.today().date() + pd.Timedelta(1,'D')
 
-        api_start = today  - pd.Timedelta(323,'D')
-        api_availability = pd.date_range(api_start, today, freq='D', inclusive='both')
+        api_start_proxy = today  - pd.Timedelta(366,'D')
+        self.logger.info('\tProxy date to consider as api starting availability point: {}'.format(api_start_proxy))
+
+        api_availability = pd.date_range(api_start_proxy, today, freq='D', inclusive='both')
         zip_availability = pd.date_range('2020-11-1', '2021-12-31', freq='D')
 
         requested_range = pd.date_range(start_date, end_date, freq='D', inclusive='both')
+        self.logger.info("\tRequested range: {} to {}".format(start_date, end_date))
         api_range = np.intersect1d(api_availability, requested_range)
+        self.logger.info('\tDeduced api range: {}'.format(api_range))
 
         if isinstance(api_range, type(None)):
             self.logger.warning("Requested range (from: {}, to: {}) has no intersection with api availability (from: {}, to: {})".format(requested_range[0], requested_range[-1], api_availability[0], api_availability[-1]))
@@ -132,14 +137,16 @@ class StreamHandler:
                 query_end = None
 
             else:
-
                 query_start = pd.to_datetime(api_range[0]).date()
                 query_end = pd.to_datetime(api_range[-1] + pd.Timedelta(1,'D')).date()
                 if report_name in HEnEx.API.link_generators().keys():
                     api = HEnEx.API
+                    self.logger.info("\tSelected api = HEnEx.API")
                 else:
                     api = HEnEx.Scrapers
-
+                    self.logger.info("\tSelected api = HEnEx.Scrapers")
+                self.logger.info(f"Requested range: {api_range[0]} to {api_range[-1]}")
+                self.logger.info(f'Perceived range: {query_start} to {query_end}')
         requested_zip_range = requested_range[requested_range.isin(zip_availability)]
         zip_years_range = None
 
