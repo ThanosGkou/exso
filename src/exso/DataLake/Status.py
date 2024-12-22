@@ -285,8 +285,8 @@ class Status:
         '''
         file_df = self.file_df
 
-        upd = {'min': {'observed': {'date': file_df['dates'][0].date()}},
-               'max': {'observed': {'date': file_df['dates'][-1].date()}},
+        upd = {'min': {'observed': {'date': file_df['dates'].iloc[0].date()}},
+               'max': {'observed': {'date': file_df['dates'].iloc[-1].date()}},
                'range': {'observed': {'date': pd.DatetimeIndex(file_df['dates'].values),
                                       'str': np.array(file_df.index)}}
                }
