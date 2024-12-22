@@ -134,7 +134,7 @@ class ArchetypeLong(Archetype):
             subdf = df_old[df_old['DELIVERY_MTU'] == dtm] # the problematic subdf is this
             # transfer values/fillna between entries referring to the same datetime, that are not identical due to fucking henex
             # and keep only one of them (the first, or whatever)
-            subdf = subdf.fillna(method = 'bfill').iloc[0]
+            subdf = subdf.bfill().iloc[0]
 
             try:
                 # this information-full subdf (which is actually a multi-idex series now)
