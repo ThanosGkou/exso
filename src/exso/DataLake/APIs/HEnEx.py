@@ -110,20 +110,22 @@ class API(Assistant):
         generators = {'IDM_CRIDA1_Results': 'https://www.enexgroup.gr/documents/20126/853663/{}_EL-CRIDA1_Results_EN_v{}.xlsx',
                       'IDM_CRIDA2_Results':'https://www.enexgroup.gr/documents/20126/853680/{}_EL-CRIDA2_Results_EN_v{}.xlsx',
                       'IDM_CRIDA3_Results': 'https://www.enexgroup.gr/documents/20126/853704/{}_EL-CRIDA3_Results_EN_v{}.xlsx',
-
-                      'IDM_CRIDA3_Results': 'https://www.enexgroup.gr/documents/20126/853704/{}_EL-CRIDA3_Results_EN_v{}.xlsx',
-                      'IDM_CRIDA3_Results': 'https://www.enexgroup.gr/documents/20126/853704/{}_EL-CRIDA3_Results_EN_v{}.xlsx',
                       'IDM_IDA1_Results': 'https://www.enexgroup.gr/documents/20126/3257249/{}_EL-IDA1_Results_EN_v{}.xlsx',
                       'IDM_IDA2_Results': 'https://www.enexgroup.gr/documents/20126/3257281/{}_EL-IDA2_Results_EN_v{}.xlsx',
                       'IDM_IDA3_Results': 'https://www.enexgroup.gr/documents/20126/3257522/{}_EL-IDA3_Results_EN_v{}.xlsx',
                       'IDM_CRIDA1_MarketCoupling': 'https://www.enexgroup.gr/documents/20126/853668/{}_EL-CRIDA1_PrelimResults_EN_v{}.xlsx',
                       'IDM_CRIDA2_MarketCoupling': 'https://www.enexgroup.gr/documents/20126/853692/{}_EL-CRIDA2_PrelimResults_EN_v{}.xlsx',
                       'IDM_CRIDA3_MarketCoupling': 'https://www.enexgroup.gr/documents/20126/855431/{}_EL-CRIDA3_PrelimResults_EN_v{}.xlsx',
+                      'IDM_IDA1_MarketCoupling': 'https://www.enexgroup.gr/documents/20126/3257252/{}_EL-IDA1_PrelimResults_EN_v{}.xlsx',
+                      'IDM_IDA2_MarketCoupling': 'https://www.enexgroup.gr/documents/20126/3257278/{}_EL-IDA2_PrelimResults_EN_v{}.xlsx',
+                      'IDM_IDA3_MarketCoupling': 'https://www.enexgroup.gr/documents/20126/3257525/{}_EL-IDA3_PrelimResults_EN_v{}.xlsx',
                       'IDM_CRIDA1_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/853660/{}_EL-CRIDA1_AggrCurves_EN_v{}.xlsx',
                       'IDM_CRIDA2_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/853695/{}_EL-CRIDA2_AggrCurves_EN_v{}.xlsx',
                       'IDM_CRIDA3_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/853701/{}_EL-CRIDA3_AggrCurves_EN_v{}.xlsx',
-                      'IDM_IDA1_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/3257246/{}_EL-IDA1_AggrCurves_EN_v{}.xlsx',
 
+                      'IDM_IDA1_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/3257246/{}_EL-IDA1_AggrCurves_EN_v{}.xlsx',
+                      'IDM_IDA2_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/3257284/{}_EL-IDA2_AggrCurves_EN_v{}.xlsx',
+                      'IDM_IDA3_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/3257519/{}_EL-IDA3_AggrCurves_EN_v{}.xlsx',
 
                       'DAM_Results':'https://www.enexgroup.gr/documents/20126/200106/{}_EL-DAM_Results_EN_v{}.xlsx',
                       'DAM_MarketCoupling':'https://www.enexgroup.gr/documents/20126/200091/{}_EL-DAM_PrelimResults_EN_v{}.xlsx',
@@ -332,6 +334,10 @@ class Scrapers(Assistant):
                        'IDM_CRIDA1_ResultsSummary': 'portlet_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_B9t04v2LgOeG',
                        'IDM_CRIDA2_ResultsSummary': 'portlet_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_tY6GNWWgb8c0',
                        'IDM_CRIDA3_ResultsSummary': 'portlet_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_CF7YHvNr21f8',
+
+                        'IDM_IDA1_ResultsSummary': 'portlet_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_mRFiDHvb6Dwx',
+                        'IDM_IDA2_ResultsSummary': 'portlet_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_mPDt7zJ2kUHv',
+                        'IDM_IDA3_ResultsSummary': 'portlet_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_qFj20qHSE8Wj',
                         }
 
         selector = {'class':'portlet',
@@ -346,7 +352,9 @@ class Scrapers(Assistant):
 
         market_urls = {'DAM':'https://www.enexgroup.gr/el/markets-publications-el-day-ahead-market',
                        'LIDA':'https://www.enexgroup.gr/el/markets-publications-el-intraday-market-lida', # deprecated
-                       'CRIDA':'https://www.enexgroup.gr/el/markets-publications-el-intraday-market'}
+                       'CRIDA':'https://www.enexgroup.gr/el/markets-publications-el-intraday-market#CRIDA',
+                       'IDA':'https://www.enexgroup.gr/el/markets-publications-el-intraday-market#IDA',
+                       }
 
         market_no_digit = re.sub(r'\d','', market)
         return market_urls[market_no_digit]
@@ -390,6 +398,7 @@ class Scrapers(Assistant):
             title = dropdown.get('title')
             ''' Title format : "Σελίδα 1 από 60"'''
             max_pages = int(title.split(' ')[-1])
+
             return max_pages
 
         # *******  *******   *******   *******   *******   *******   *******
