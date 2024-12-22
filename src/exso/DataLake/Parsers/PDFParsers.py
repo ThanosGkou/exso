@@ -207,10 +207,10 @@ class UnitsMaintenanceSchedule:
 
     ################################################################################################ Merge and Post-Proc
     def day_dates_constructor(self, date):
-        date_obj = Misc.date_magician(date) + pd.Timedelta(self.start_hour, 'H')
+        date_obj = Misc.date_magician(date) + pd.Timedelta(self.start_hour, 'h')
         add_hours = 23 - self.start_hour
         start_d = date_obj.tz_localize('Europe/Athens')
-        end_d = date_obj + pd.Timedelta(add_hours, 'H')
+        end_d = date_obj + pd.Timedelta(add_hours, 'h')
         end_d = end_d.tz_localize('Europe/Athens')
         day_dates = pd.date_range(start_d, end_d, freq='H')
         return day_dates

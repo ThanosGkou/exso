@@ -109,7 +109,7 @@ class DateTime:
         date_obj = DateTime.date_magician(date, return_stamp = True)
 
         start_datetime = date_obj
-        start_datetime = start_datetime + pd.Timedelta(start_hour, 'H')
+        start_datetime = start_datetime + pd.Timedelta(start_hour, 'h')
 
         period_covered = DateTime.disambiguate_timedelta(start_datetime, period_covered)
 
@@ -127,7 +127,7 @@ class DateTime:
 
         time_entity = re.findall('[A-Za-z]', dt)
         time_entity = time_entity[0]
-        if time_entity in ['H', 'D', 'W'] or 'min' in time_entity:
+        if time_entity in ['h', 'D', 'W'] or 'min' in time_entity:
             new_timedelta = dt
         elif time_entity == 'M':
             days_in_month = start_date.days_in_month
@@ -154,7 +154,7 @@ class DateTime:
 
         naive_dates = pd.date_range(pd.Timestamp(from_year,1,1,0,0,0),
                                     pd.Timestamp(to_year,12,31,23,0,0),
-                                    freq='H')
+                                    freq='h')
 
 
         if not return_datetime:
