@@ -327,7 +327,7 @@ class Misc:
                 #     if ret ==bool:
                 #         return True
                 #     else:
-                #         return np.NAN
+                #         return np.nan
                     # sys.exit()
                 if ret == bool:
                     return True
@@ -338,7 +338,7 @@ class Misc:
                 if ret == bool:
                     return False
                 else:
-                    return np.NAN
+                    return np.nan
 
         # *******  *******   *******   *******   *******   *******   *******
         # *******  *******   *******   *******   *******   *******   ******

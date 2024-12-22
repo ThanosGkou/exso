@@ -519,7 +519,7 @@ class ReservoirFillingRate(ArchetypeHorizontal):
         self.drop_col_settings.update(startswith='Unnamed')
         self.dropna_settings.update(how= None, axis= 'columns', thresh=5)  # at least 5 non-nan to keep the col. Why 5? cause it works
         self.action_if_empty_df = 'return_compat'
-        self.empty_df_filler.update(fill_value = np.NaN)
+        self.empty_df_filler.update(fill_value = np.nan)
         self.skip_rows_at_final = 1
 
     # *******  *******   *******   *******   *******   *******   *******

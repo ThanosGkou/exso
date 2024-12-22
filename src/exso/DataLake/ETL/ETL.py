@@ -87,7 +87,7 @@ class Loader:
         in_memory = {date: self.rename_locator_keys_to_tag_keys(date_dicts) for date, date_dicts in in_memory.items()}
 
         tot_time = time.time() - t0
-        time_per_file = np.NaN if self.file_df.empty else round(tot_time/self.file_df.shape[0],3)
+        time_per_file = np.nan if self.file_df.empty else round(tot_time/self.file_df.shape[0],3)
         self.logger.info( "--> Reading completed. Parsed {} files in: {:,} sec ({} sec/file on average)".format(self.file_df.shape[0],
                                                                                                   round(tot_time, 2),
                                                                                                   time_per_file))

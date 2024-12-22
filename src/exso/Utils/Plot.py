@@ -83,7 +83,7 @@ class Plot:
 
         df = df.dropna(axis = 'columns', how='all')
         df = df.drop(columns = df.columns[df.sum()==0])
-        df = df.replace(0, np.NAN)
+        df = df.replace(0, np.nan)
 
         remove = list(map(lambda x: re.search('total', x.lower()), df.columns.to_list()))
         remove = [i for i,r in enumerate(remove) if r]

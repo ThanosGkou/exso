@@ -285,7 +285,7 @@ class Node(NodeAccessors, NodeConstructors):
                     # in partial-testing cases (e.g. database has 01&02 of Jan 2022, and new update is 03 of Jan)
                     # maybe (in henex usually), a subfield does not exist in the cached base, but exists in the new query
                     # e.g. Lignite volumes in crida markets.
-                    df[child.name] = np.NAN
+                    df[child.name] = np.nan
 
                 child.fruit = df.loc[:, child.name]
                 if self.is_multiindex == False:
@@ -327,7 +327,7 @@ class Node(NodeAccessors, NodeConstructors):
             #         df = df.drop(columns = df.columns[df.sum()==0])
             #     except:
             #         pass
-                # df = df.replace(0, np.NAN)
+                # df = df.replace(0, np.nan)
 
 
         elif self.kind == 'property':

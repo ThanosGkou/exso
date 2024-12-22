@@ -385,7 +385,7 @@ class DAM_BlockOrders(DAM_Results):
         self.eigen_cols = ['SIDE_DESCR', 'CLASSIFICATION']
         self.payload_cols = ['TOTAL_ORDERS', 'TOTAL_QUANTITY','MATCHED_ORDERS', 'MATCHED_QUANTITY']
         self.mode = 'expanded'
-        self.drop_col_settings = {'startswith': "Unnamed",'col_names':["", np.NaN]}
+        self.drop_col_settings = {'startswith': "Unnamed",'col_names':["", np.nan]}
 
 
 ###############################################################################################
@@ -504,7 +504,7 @@ class ISPEnergyOffers(ArchetypeLong):
 
         # replace zeros with nans, extend from the closest previous non-zero
         # the first instance (first hour of the file) will be still NaN, so replace with zero, and convert to int.
-        df['AA'] = (df['AA'].replace(0, np.NAN).
+        df['AA'] = (df['AA'].replace(0, np.nan).
                     ffill().
                     fillna(0).
                     astype(int))

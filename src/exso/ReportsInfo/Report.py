@@ -239,7 +239,7 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
         df = self.rp.extract(report_name=report_name)
         self.report_name = df['report_name'].squeeze()
         self.logger.info('\n' + STR.df_to_string(df))
-        df = df.replace(np.NaN, None)
+        df = df.replace(np.nan, None)
         return df
 
     # *******  *******   *******   *******   *******   *******   *******

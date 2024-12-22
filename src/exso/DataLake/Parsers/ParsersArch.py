@@ -86,7 +86,7 @@ class Archetype(Operations):
         self.dropna_settings = {'how':None, 'thresh':None, 'axis':'columns'} #
         self.action_if_empty_df = None #[None, 'return_empty', 'return_compat'
         self.empty_df_filler = {'arbitrary_columns':None, # None, or list of arbitary lenght, with arbitrary columns
-                                  'fill_value':np.NaN}
+                                  'fill_value':np.nan}
 
         self.drop_col_settings = {'col_names':None, 'startswith':'MOCK', 'error_action':'ignore'}
         self.last_column_trigger = None
