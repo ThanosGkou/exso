@@ -107,9 +107,9 @@ class UnitsMaintenanceSchedule:
             col_indix_merge = [5,6,7,8,9,10]
             all_text = df.iloc[:, col_indix_merge].apply(lambda row: '_'.join(row.values.astype(str)), axis=1).values
 
-            duration_days = list(map(lambda x: re.findall('\d+(?= )', x), all_text)) # digits followed by space
-            duration_days = list(map(lambda x: int(x[0]) if len(x) > 0 else np.NaN, duration_days))
-            start_end_dates = list(map(lambda x: re.findall('\d+/\d+/\d+', x), all_text))
+            duration_days = list(map(lambda x: re.findall(r'\d+(?= )', x), all_text)) # digits followed by space
+            duration_days = list(map(lambda x: int(x[0]) if len(x) > 0 else np.nan, duration_days))
+            start_end_dates = list(map(lambda x: re.findall(r'\d+/\d+/\d+', x), all_text))
 
             start_dates = [x[0] if len(x) > 0 else pd.NaT for x in start_end_dates]
             end_dates = [x[1] if len(x) ==2 else pd.NaT for x in start_end_dates ]
