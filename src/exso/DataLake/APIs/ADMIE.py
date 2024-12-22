@@ -89,12 +89,16 @@ class API(Assistant):
 
         r = requests.get(url, allow_redirects=True)
 
+
         if r.status_code == 200:
 
             content = r.content
             content = content.decode()
+            # avoid newer regex version SyntaxWarning for Invalid escape sequence '\/'
+            content = re.sub(r'\\','',content)
             content = eval(content)
-            links = [re.sub(r'\\','',link_info['file_path']) for link_info in content]
+            links = content.copy()
+            # links = [re.sub(r'\\','',link_info['file_path']) for link_info in content]
 
             return links
         else:
