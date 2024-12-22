@@ -29,7 +29,7 @@ from haggis import string_util as hag
 class Updater:
     """ The main API-class of the exso project to update datasets.
         Check out the __init__.__doc__ for more information """
-    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, which:str|list|None = None, groups:None|list|str = None, publishers: None|list|str = None, countries: None|list|str = None, only_ongoing:bool = False, allow_handshake_connection = True):
+    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, which:str|list|None = None, exclude:str|list|None = None, groups:None|list|str = None, publishers: None|list|str = None, countries: None|list|str = None, only_ongoing:bool = False, allow_handshake_connection = True):
         """
         Constructor parameters for the Updater class:
 
@@ -60,7 +60,7 @@ class Updater:
         self.rp = self.get_pool(reports_pool)
         self.keep_steps = False
         self.mode = None
-        self.report_names = self.derive_reports(self.rp, which, groups, publishers, countries, only_ongoing)
+        self.report_names = self.derive_reports(self.rp, which, exclude, groups, publishers, countries, only_ongoing)
 
 
         self.refresh_requirements_file = Files.files_dir / 'refresh_requirements.txt'
@@ -331,9 +331,10 @@ class Updater:
         self.r = r
 
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
-    def derive_reports(self, rp, which:list|None, groups:str|list|None, publishers:str|list|None, countries:str|list|None, only_ongoing:bool):
+    def derive_reports(self, rp, which:str|list|None, exclude:str|list|None, groups:str|list|None, publishers:str|list|None, countries:str|list|None, only_ongoing:bool):
         # Store the variables for later debugging capabilities
         _which = which if isinstance(which, str) or isinstance(which, type(None)) else which.copy()
+        _exclude = exclude if isinstance(exclude, str) or isinstance(exclude, type(None)) else exclude.copy()
         _groups = groups if isinstance(groups, str) or isinstance(groups, type(None)) else groups.copy()
         _publishers = groups if isinstance(publishers, str) or isinstance(publishers, type(None)) else publishers.copy()
         _countries = countries if isinstance(countries, str) or isinstance(countries, type(None)) else countries.copy()
@@ -370,6 +371,17 @@ class Updater:
             whichh = implemented[implemented.report_name.str.lower().isin(whichh)].report_name.values
             which = list(whichh)
 
+        if not exclude:
+            exclude = []
+        elif isinstance(exclude, str):
+            exclude = implemented[implemented.report_name.str.lower() == exclude.lower()].report_name.squeeze()
+            exclude = [exclude]
+        elif isinstance(exclude, list):
+            excludee = [w.lower() for w in exclude]
+            excludee = implemented[implemented.report_name.str.lower().isin(excludee)].report_name.values
+            exclude = list(excludee)
+
+
         ###############################################################################################################
         # Regardless of whether "which" was specified, apply a intersection-based filtering for groups.
         ###############################################################################################################
@@ -404,6 +416,7 @@ class Updater:
         # Now, find the intersection of all transformed-values for which, groups, publishers and countries
         ###############################################################################################################
         intersect = implemented[((implemented.report_name.isin(which))&
+                                 ~(implemented.report_name.isin(exclude))&
                                  (implemented.group.isin(groups))&
                                  (implemented.publisher.isin(publishers))&
                                  (implemented.country.isin(countries)))]
@@ -426,6 +439,10 @@ class Updater:
             else:
                 raise LookupError("Could not locate any report that matches the input set: which = {}, groups = {}, publishers = {}".format(_which, _groups, _publishers))
 
+        print('\n', '*'*50, '\n')
+        print(f'\nCommencing Update procedure for {len(report_names)} reports:\n')
+        print(hag.format_list(report_names, width=1))
+        print('\n', '*'*50, '\n')
         return report_names
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
     # *******  *******   *******   *******   *******   *******   *******
