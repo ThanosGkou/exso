@@ -60,6 +60,7 @@ class Pool:
 
         self.allmighty_df = self.collapse(dfs_dict)
         self.logger.info("Reports Pool Dataframe: \n\n" + STR.df_to_string(self.allmighty_df))
+        xl.close()
 
     # *******  *******   *******   *******   *******   *******   *******
     def load_config_file(self):
