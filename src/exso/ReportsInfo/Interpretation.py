@@ -317,7 +317,11 @@ class TimeSettings:
         if len(successful_dates):
             self.logger.info('\n\n\t\tMade test api call. Latest dates: \n{}'.format(
                 str(list(map(date_lambda, successful_dates)))))
-            lake_max_date = successful_dates[-1]
+
+            # in cases of scrapers, links arrive in descending order -> so, latest date is first list item
+            # but in other cases, the latest date is the last list item. So, get the max
+            lake_max_date = max(successful_dates)
+            # lake_max_date = successful_dates[-1]
             # lake_max_date = successful_dates[0] # why I was using the first ?
             # if self.publisher == 'entsoe':
             #     lake_max_date = successful_dates[-1]
