@@ -378,9 +378,26 @@ class DayAheadSchedulingUnitAvailabilities(ArchetypeHorizontal):
 
         new_subfields_dfs = {}
 
+
+        # From somepoint in late 2024, admie puts KOMOTINI_POWER and DR unit BELOW the Hydro units.
+        # So, they are mistajkenly parsed as hydro instead of thermal or whatever. The 10 lines below deal with this issue.
+        listed_in_hydro_but_should_be_thermal = ['KOMOTINI_POWER', 'DUF_BZ1_01_IR_PV']
+        listed_in_thermal_but_should_be_hydro = []
+
+        _h = subfields_dfs['Hydro']
+        _t = subfields_dfs['Thermal']
+
+        move_to_thermal = _h[_h.columns[_h.columns.isin(listed_in_hydro_but_should_be_thermal)]]
+        move_to_hydro = _t[_t.columns[_t.columns.isin(listed_in_thermal_but_should_be_hydro)]]
+        _h.drop(columns=listed_in_hydro_but_should_be_thermal, errors='ignore', inplace = True)
+        _t.drop(columns=listed_in_thermal_but_should_be_hydro, errors='ignore', inplace = True)
+        subfields_dfs['Thermal'] = pd.concat([subfields_dfs['Thermal'], move_to_thermal], axis = 1)
+        subfields_dfs['Hydro'] = pd.concat([subfields_dfs['Hydro'], move_to_hydro], axis = 1)
+
         for subfield in ['Thermal', 'Hydro']:
 
             df = subfields_dfs[subfield]
+
 
             for suffix, row_locator in row_content.items():
 
