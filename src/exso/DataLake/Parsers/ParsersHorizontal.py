@@ -241,7 +241,11 @@ class ArchetypeHorizontal(Archetype):
             if df.shape[1] == 1:
                 df.columns = [subfield]
 
-            df = df.fillna(0)
+            try:
+                df = df.astype(float).fillna(0)
+
+            except:
+                df = df.fillna(0)
 
             if self.drop_col_settings:
                 df = self.drop_columns_if(df,
