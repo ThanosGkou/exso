@@ -179,8 +179,8 @@ class Scrapers(Assistant):
         try:
             links, dates, filenames = self.get_links(start_date,end_date)
         except:
-            print(f'\tFailed to connect to henex webpage. It\'s probably the internet connection, or proxy settings.')
-            self.logger.warning("Failed to connect in enex via scraping.")
+            print(f'\tFailed to connect to henex webpage. This could refer to an archived-only report, in which case ignore the warning.')
+            self.logger.warning("Failed to connect in henex via scraping.")
             self.logger.debug(traceback.format_exc())
             self.filenames = []
             self.filepaths = []
