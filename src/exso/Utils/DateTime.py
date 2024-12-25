@@ -130,7 +130,8 @@ class DateTime:
         if time_entity in ['h', 'D', 'W'] or 'min' in time_entity:
             new_timedelta = dt
         elif time_entity == 'M':
-            days_in_month = start_date.days_in_month
+            # days_in_month = start_date.days_in_month
+            days_in_month = pd.to_datetime(start_date).days_in_month
             new_timedelta = '{}D'.format(days_in_month)
         elif time_entity == 'Y':
             if start_date.is_leap_year:
@@ -179,10 +180,10 @@ class DateTime:
         masK_downstream[0] = False # first occurence is 1st of January, not dsf switch
         mask_upstream = np.roll(masK_downstream, -1)  # roll back by one, to see the prior-to-switch datetime
 
-        if return_datetime:
+        if not keep:
+            keep = 'both'
 
-            if not keep:
-                keep == 'both'
+        if return_datetime:
 
             if keep == 'both':
                 datetime_downstream = local_dates[masK_downstream]
