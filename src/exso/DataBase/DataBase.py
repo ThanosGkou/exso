@@ -121,9 +121,9 @@ class Diagnostic:
     def __init__(self):
         pass
     @staticmethod
-    def make_file_report(filepath, timezone_as_read = None, convert_to_timezone = None):
+    def make_file_report(filepath, timezone_as_read = None, convert_to_timezone = None, print_report = False):
         report = {}
-        df = IO.IO.read_file(filepath, timezone_as_read=timezone_as_read, convert_to_timezone=convert_to_timezone)
+        df = IO.read_file(filepath, timezone_as_read=timezone_as_read, convert_to_timezone=convert_to_timezone)
 
         start = df.index[0]
         end = df.index[-1]
@@ -180,7 +180,8 @@ class Diagnostic:
         report['has_missing_records'] = has_missing
         report['n_missing_records']  =total_records_missing
         report['boundaries_of_missing'] = before_after
-
+        if not print_report:
+            return report
         for k, v in report.items():
             print('*' * 50)
             print(k)
