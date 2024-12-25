@@ -284,7 +284,6 @@ class TimeSettings:
                 lake_max_date = self.sniff_api(report_name, publisher, lake_dir)
             else:
                 lake_max_date = datetime.datetime.today().date()
-
         return lake_max_date
 
 
@@ -296,6 +295,13 @@ class TimeSettings:
         today = now.date()
         api = StreamHandler(save_dir=lake_dir)
 
+
+        try:
+            start_date = today - DateTime.disambiguate_timedelta(today, self.period_covered, return_timedelta=True)
+        except:
+            print('Weird error')
+            print(traceback.format_exc())
+            input('-X')
         sys.stdout = None
         try:
             start_date = today - DateTime.disambiguate_timedelta(today, self.period_covered, return_timedelta = True)
