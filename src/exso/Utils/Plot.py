@@ -451,6 +451,64 @@ class Plot:
             fig.show(config=config)
         return fig
 
-###############################################################################################
-###############################################################################################
-###############################################################################################
+    ###############################################################################################
+    ###############################################################################################
+    ###############################################################################################
+    @staticmethod
+    def plot_agg_curves(df, buy_col_name = 'Buy', sell_col_name = 'Sell', quantity_name='QUANTITY', price_name = 'PRICE', xlabel = None, ylabel = None):
+
+        general = pd.DataFrame()
+
+        bn = buy_col_name
+        sn = sell_col_name
+        qn = quantity_name
+        pn = price_name
+        # df = df.rename(columns={'Down': 'Buy', 'Up': 'Sell', 'QUANTITY_MW': 'QUANTITY'})
+
+        prev = 0
+        q_window = max(df[sn, qn].max(), df[bn, qn].max())
+        i = 0
+
+        fig = go.Figure()
+        for market_hour in df.index.get_level_values(level=0).unique():
+            buys = df[bn].loc[market_hour]
+            sells = df[sn].loc[market_hour]
+
+            sells.columns = ['Qsell', 'Psell']
+            buys.columns = ['Qbuy', 'Pbuy']
+            sells['_hoverSell'] = "Q: " + sells['Qsell'].astype(str) + ", P: " + sells['Psell'].astype(str)
+            buys['_hoverBuy'] = "Q: " + buys['Qbuy'].astype(str) + ", P: " + buys['Pbuy'].astype(str)
+
+            sells = sells.sort_values(by='Qsell', ascending=True)
+            buys = buys.sort_values(by='Qbuy', ascending=False)
+            sells['Qsell'] += q_window * i
+            buys['Qbuy'] += q_window * i
+            both = pd.concat([buys, sells], axis=1)
+            general = pd.concat([general, both], axis=0)
+            fig.add_vrect(x0=prev, x1=prev + q_window, name=str(market_hour),
+                          # **bids_fig
+                          )
+            fig.add_trace(go.Scatter(mode='text',
+                                     text=f"{str(market_hour)}",
+                                     x=[(prev + q_window / 2)], y=[4500],
+                                     name=None, showlegend=False))
+            prev += q_window
+            i += 1
+        fig.add_trace(go.Scatter(x=general['Qbuy'], y=general['Pbuy'], hovertext=general['_hoverBuy'],
+                                 mode='lines+markers', name=bn, ),
+                      )
+        fig.add_trace(go.Scatter(x=general['Qsell'], y=general['Psell'],
+                                 mode='lines+markers', name=sn,
+                                 hovertext=general['_hoverSell'],
+                                 ),
+                      )
+        if not xlabel:
+            xlabel = qn
+        if not ylabel:
+            ylabel = pn
+        fig.update_layout({'xaxis_title': xlabel,
+                           'yaxis_title': ylabel})
+        fig.show()
+        return fig
+
+
