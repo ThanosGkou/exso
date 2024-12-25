@@ -1,1 +1,1 @@
-{'start_filter':'[!Activated]', 'end_filter':'*', 'expost_contains':'\d{8}'}
+{'start_filter':'[!Activated]', 'end_filter':'*', 'expost_contains':r'\d{8}'}
