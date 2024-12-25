@@ -397,12 +397,15 @@ class Node(NodeAccessors, NodeConstructors):
         if transformation:
             df = transformation(df)
 
-        if kind == 'area':
-            fig = Plot.area_plot(df=df, show=show, save_path=save_path, title=title, ylabel = ylabel, xlabel=xlabel)
-        elif kind == 'line':
-            fig = Plot.line_plot(df=df, show=show, save_path=save_path, title=title, ylabel = ylabel, xlabel=xlabel)
-        elif kind == 'multi-type':
-            fig = Plot.multi_chart_type(df, show=show, save_path=save_path, title=title, ylabel=ylabel, line_cols=line_cols, area_cols=area_cols, xlabel=xlabel)
+        if self.is_multiindex:
+            fig = Plot.plot_agg_curves(df, xlabel=xlabel, ylabel=ylabel)
+        else:
+            if kind == 'area':
+                fig = Plot.area_plot(df=df, show=show, save_path=save_path, title=title, ylabel = ylabel, xlabel=xlabel)
+            elif kind == 'line':
+                fig = Plot.line_plot(df=df, show=show, save_path=save_path, title=title, ylabel = ylabel, xlabel=xlabel)
+            elif kind == 'multi-type':
+                fig = Plot.multi_chart_type(df, show=show, save_path=save_path, title=title, ylabel=ylabel, line_cols=line_cols, area_cols=area_cols, xlabel=xlabel)
 
         print('\t\tPlotting Completed.')
         return fig
