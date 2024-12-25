@@ -1,7 +1,7 @@
 import re
 import traceback
 
-import entsoe
+# import entsoe
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -260,7 +260,7 @@ class EntsoAssistant:
 ###############################################################################################
 class API(EntsoAssistant):
     crossborder = ['crossborder_flows', 'scheduled_exchanges']
-    entsoe_members = entsoe.Area._member_names_
+    # entsoe_members = entsoe.Area._member_names_
     def __init__(self, save_dir:str, api_token = None):
         self.save_dir = save_dir
         os.makedirs(self.save_dir, exist_ok=True)

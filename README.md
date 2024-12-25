@@ -47,7 +47,8 @@ It was developed as a private project, focusing on the Greek power & gas system.
   ([see more here](#implemented-reports))
   - As of version v1.0.0, there are:
     - 63 implemented reports for the greek power system & power exchange, and;
-    - 5 types of Entso-e reports (Load, Generation per Type, Day-Ahead Prices, Exchange Schedule, Observed Flows) for almost all of the ENTSO-e listed countries
+
+[//]: # (    - 5 types of Entso-e reports &#40;Load, Generation per Type, Day-Ahead Prices, Exchange Schedule, Observed Flows&#41; for almost all of the ENTSO-e listed countries)
 
 
 -----
@@ -266,21 +267,17 @@ Data can be accessed, visualized, manipulated and extracted through Node operati
 #### Optional arguments (**kwargs) 
 They are common accross all node-access operations, and they can modify the returned time-range (from/to), and the returned timezone.
 
-- #####  tz_pipe 
-  string, list, or None
+- #####  tz 
+  string, or None
+  - The whole database is stored in UTC timezone, without explicitly storing the timezone extension (+00:00 UTC)
   - If a string is provided:
-    - The database data will first be localized as UTC, and then returned, converted to the specified timezone.
+    - The database data will be converted to the specified timezone and returned with the explicit timezone extension (e.g. +03:00 EET).
     - It can be combined with the "truncate_tz" argument, in order to first convert to desired timezone, but then truncate the trailing tz information
-  - If a list is provided: [database_timezone, target_timezone, (None)]
-  - The first argument specified the database-timezone, and **must always be UTC**
-  - The second argument be any pytz compatible timezone: Try to stick to wider zones (EET, CET, UTC, GMT) and not country-wide timezones (e.g. Europe/Athens, etc.)
-  - The third argument
-    - **IF provided, must be None**. This means, to truncate the trailing timezone information (e.g. **2022-1-1 00:00+02:00 --> 2022-1-1 00:00**)
-    - **IF not provided** (so, list is of length 2), the returned data will contain the tz-information.
+  - If no value is provided, the result will be in UTC timezone, but timezone-naive (withouth the UTC extension)
 
 - #####  truncate_tz
   bool (default = False)
-  - It only has an effect if tz_pipe is a string
+  - It only has an effect if tz is a string
   - It truncates the trailing tz-information (e.g. 2023-1-1 00:00 **+03:00** will become 2023-1-1 00:00)
 
 - #####  start_date,  end_date 
@@ -301,16 +298,11 @@ Retrieve a node's data:
       
   # retrieve data only for January '22, converted to EET timezone, and truncate the tz-information:
   # data is retrieved from memory
-  node_data_range = node(tz_pipe = ['utc', 'eet', None], start_date = '2022-1-1', end_date = '2022-1-31')
-  # or equivalently:
-  node_data_range = node(tz_pipe = 'eet', start_date = '2022-1-1', end_date = '2022-1-31', truncate_tz = True)
+  node_data_range = node(tz = 'eet', start_date = '2022-1-1', end_date = '2022-1-31', truncate_tz = True)
   
   # the same, but this time, keep the tz-information
-  node_data_range = node(tz_pipe = ['utc', 'eet'], start_date = '2022-1-1', end_date = '2022-1-31')
-  # or, equivalently
-  node_data_range = node(tz_pipe = 'eet', start_date = '2022-1-1', end_date = '2022-1-31')
+  node_data_range = node(tz= 'eet', start_date = '2022-1-1', end_date = '2022-1-31')
   
-
   # retrieve all the node's data, in utc (data is retrieved from memory)
   node_data = node() # node's internal data not affected by an intermediate timezone/timeslicing operation.
   ```
@@ -333,7 +325,7 @@ Plot a node's data (node must be of file- or property-kind):
       
   # example: stacked-area plot, in EET timezone, only for the period after 1st-Jan 2023. Also save the plot somewhere specified.
 
-  node.plot(tz_pipe = 'eet', start_date = '2023-1-1', show = True, save_path = "C:/Users/Desktop/my_plot.html", area = True)
+  node.plot(tz = 'eet', start_date = '2023-1-1', show = True, save_path = "C:/Users/Desktop/my_plot.html", area = True)
   ```
     
 
@@ -405,16 +397,16 @@ isp1 = tree['root.admie.isp1ispresults'] # dot separated, case INsensitive
 # export the whole data in utc timezone
 isp1.export(to_path = "where/to/export/full_data_utc")
 # export custom range in custom timezone, but first truncate the timezone attribute (+03:00 etc.)
-isp1.export(to_path = "where/to/export/sliced_data_eet", tz_pipe = ['utc', 'eet', None], start_date = '2022-1-1 00:00', end_date = '2022-12-31 23:30')
+isp1.export(to_path = "where/to/export/sliced_data_eet", tz = 'eet', start_date = '2022-1-1 00:00', end_date = '2022-12-31 23:30', truncate_tz = True)
 
 # Note: the start_date:end_date filter is applied AFTER the timezone conversion (if given) 
 
 
-# tz_pipe: timezone operations (see Data Access section)
+# tz: timezone operations (see Data Access section)
 
 
 ## IMPORTANT:
-# The optional arguments tz_pipe, start_date, end_date do not persist in memory!!
+# The optional arguments tz, start_date, end_date do not persist in memory!!
 # This means that, the returned dataframe or dict of dataframe will have the requested charasteristics, but the node keeps its original information
 # That is, if to be re-called without arguments, it will immediately return its raw content: UTC, tz-unaware, full available range
 
@@ -441,7 +433,7 @@ combo = tree.combine(("henex.dam_results.results.results.mcp",
                      
 # handle_synonommity = 'auto' or a list of suffixes
 
-combo.plot(tz_pipe = 'EET', start_date = '2023-6-1')
+combo.plot(tz = 'EET', start_date = '2023-6-1')
 
 ```
 ![combine_nodes_viz.png](resources/combine_nodes_viz.png)
@@ -457,9 +449,9 @@ Graphs can be zoomed in/out, rescaled, columns can be toggled-on/off in real tim
 
 ```sh
 isp1_thermal_gen = t['root.admie.isp1ispresults.isp_schedule.thermal']
-fig = isp1_thermal_gen.plot(area = True, start_date = '2022-1-1', end_date = '2022-1-10', tz_pipe = 'EET', show = True, save_path = None)
+fig = isp1_thermal_gen.plot(area = True, start_date = '2022-1-1', end_date = '2022-1-10', tz = 'EET', show = True, save_path = None)
 
-# by default:  tz_pipe = 'EET', start_date = None, end_date = None,  area = False, show = True, save_path = Non
+# by default:  tz = 'EET', start_date = None, end_date = None,  area = False, show = True, save_path = Non
 
 # the returned figure is of type "plotly.graph_objs._figure.Figure", meaning, you can set "show"=False, and update the layout with normal plotly usage before displaying it.
 # Some very basic modification-options (title, x&y labels) will be supported directly through the exso.Node object
@@ -469,7 +461,7 @@ fig = isp1_thermal_gen.plot(area = True, start_date = '2022-1-1', end_date = '20
 #### When calling the .plot() method of a Node:
 - Any columns containing only NaN or only zero & nan values are **dropped**, in order to get a cleaner graph.
 - The area = True/False argument, modifies whether the plot will be a stacked area, or a line plot
-- start/end_dates, tz_pipe work exactly as in the __call__ method (node())
+- start/end_dates, tz work exactly as in the __call__ method (node())
 - show = True/False argument, controls whether to automatically display the graph when its rendered (in both cases, a figure object is returned)
 - The save_path argument accepts a Path-like entry (.html), to locally save the graph (regardless of whether show=True/False)
 
@@ -603,16 +595,16 @@ If ***ExSO*** assists you in making the "publicly available" data, actually valu
 
 #### APA
 
-  - Natsikas, T. (2023). ExSO: Market Exchange and System Operation analytical framework (Version 1.0.0) [Computer software]. https://github.com/ThanosGkou/exso
+  - Natsikas, T. (2024). ExSO: Market Exchange and System Operation analytical framework (Version 1.0.0) [Computer software]. https://github.com/ThanosGkou/exso
 
 #### BibTeX
-- @software{Natsikas_ExSO_Market_Exchange_2023,
+- @software{Natsikas_ExSO_Market_Exchange_2024,
 author = {Natsikas, Thanos},
 month = apr,
 title = {{ExSO: Market Exchange and System Operation analytical framework}},
 url = {https://github.com/ThanosGkou/exso},
 version = {1.0.0},
-year = {2023}
+year = {2024}
 }
 
 
