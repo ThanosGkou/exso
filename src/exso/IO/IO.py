@@ -70,7 +70,7 @@ class IO:
 
             frame.index = pd.to_datetime(frame.index, format=exso._dt_format)
 
-        if mode == 'a':
+        if mode == 'a' and filepath.exists():
             header = False
         else:
             header = True

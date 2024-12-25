@@ -99,7 +99,7 @@ class SingleValidation(Updater):
         field_node = self.base.tree.get_nodes_whose('name',equals=self.field, collapse_if_single=False)
         field_node = [fn for fn in field_node if fn.kind == 'field'][0]
 
-        parsed_data = field_node(tz_pipe = ['utc', None])
+        parsed_data = field_node()
         base_df = parsed_data[self.subfields[0]]
         for i in range(1, len(self.subfields)):
             base_df = pd.concat([base_df, pd.DataFrame({' ': np.full(len(base_df), np.nan)}, index=base_df.index),

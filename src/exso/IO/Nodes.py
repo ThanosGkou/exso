@@ -212,9 +212,10 @@ class Node(NodeAccessors, NodeConstructors):
 
             Arguments: tz_pipe, start_date, end_date
 
-            tz_pipe:
-                - None --> returns UTC, but tz-unaware
-                - ['UTC'] --> returns UTC, but tz-aware
+            tz_pipe [str|list|None]:
+                - None --> returns UTC, tz-unaware
+                - str or [str]: returns data to this timezone (with the process: to_utc --> to_timezone
+                - list: if list, the first argument MUST be UTC. Then, will apply tz conversions: to_utc --> to_timezone1 --> to_timezone2
                 - ['UTC', 'some timezone'] --> returns data converted in "some timezone", tz-aware
                 - ['UTC', 'some timezone', None] --> returns data converted in 'some timezone', tz-unaware
 
@@ -303,7 +304,7 @@ class Node(NodeAccessors, NodeConstructors):
             raise Warning("Cannot call a node of kind: '{}'.".format(self.kind))
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def __call__(self, tz_pipe = None, start_date = None, end_date = None, truncate_tz = False, drop_trivial = True) -> pd.DataFrame | dict:
+    def __call__(self, tz:str|None = None, start_date = None, end_date = None, truncate_tz = False, drop_trivial = True) -> pd.DataFrame | dict:
 
         if isinstance(self.fruit, type(None)):
             self.first_call()
@@ -315,11 +316,11 @@ class Node(NodeAccessors, NodeConstructors):
             df = {}
             for c in self.children:
                 # print('\t\tCalling child ', c)
-                df[c.name] = c(tz_pipe, start_date, end_date, truncate_tz, drop_trivial)
+                df[c.name] = c(tz, start_date, end_date, truncate_tz, drop_trivial)
 
         elif self.kind == 'file':
             df = self.fruit.copy()
-            df = self.apply_tz_pipe(df, tz_pipe, truncate_tz)
+            df = self.apply_tz_pipe(df, tz, truncate_tz)
             df = self.apply_date_filter(df, start_date, end_date, self.is_multiindex)
             # if drop_trivial:
             #     df = df.dropna(axis = 'columns', how='all')
@@ -334,7 +335,7 @@ class Node(NodeAccessors, NodeConstructors):
             if not isinstance(self.parent.fruit, type(None)):
                 df = self.parent.fruit.loc[:, self.name].to_frame()
             else:
-                parent_df = self.parent(tz_pipe, start_date, end_date, truncate_tz, drop_trivial)
+                parent_df = self.parent(tz, start_date, end_date, truncate_tz, drop_trivial)
                 df = parent_df.loc[:, self.name].to_frame()# this is a view
 
         else:
@@ -368,7 +369,7 @@ class Node(NodeAccessors, NodeConstructors):
         return dff
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def plot(self, tz_pipe=None, start_date=None, end_date=None, kind='area', show = True, save_path = None, title = None, ylabel = None, xlabel = None, df = None, line_cols = None, area_cols = None, transformation = None):
+    def plot(self, tz:str|None=None, start_date=None, end_date=None, kind='area', show = True, save_path = None, title = None, ylabel = None, xlabel = None, df = None, line_cols = None, area_cols = None, transformation = None):
         '''
         save_path : str|Path (directory or path/that/ends/with.html)
         '''
@@ -388,11 +389,11 @@ class Node(NodeAccessors, NodeConstructors):
             else:
                 save_path = (save_path / self.name).with_suffix('.html')
 
-        if not title:
+        if not isinstance(title, type(None)):
             title = self.parent.name + "." + self.name
 
         if isinstance(df, type(None)):
-            df = self(tz_pipe, start_date, end_date)
+            df = self(tz, start_date, end_date)
         if transformation:
             df = transformation(df)
 
@@ -407,7 +408,7 @@ class Node(NodeAccessors, NodeConstructors):
         return fig
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def derive_if_multiindex(self):
+    def derive_if_file_is_multiindex(self):
         try:
             head = pd.read_csv(self.path, nrows=1, index_col=0, encoding='utf-8', sep=exso._list_sep, decimal=exso._decimal_sep)
             self.encoding = 'utf-8'
@@ -420,13 +421,13 @@ class Node(NodeAccessors, NodeConstructors):
         self.is_multiindex = is_multiindex
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def reader(self, is_multiindex, tz_pipe:list|str|None=None):
+    def reader(self, is_multiindex, tz: str | None=None):
         ''' Caution: If I read something once, with a specific tz_pipe,
             then, I fI re-call this, it won't be read again, because it stays as a fruit.
         '''
         
         if is_multiindex:
-            df = self.read_multiindex(self.path, header=[0, 1], index_col=[0, 1], tz_pipe=tz_pipe)
+            df = self.read_multiindex(self.path, header=[0, 1], index_col=[0, 1], tz=tz)
         else:
             try:
                 df = pd.read_csv(self.path, index_col=0, header=0, encoding='utf-8', sep=exso._list_sep, decimal=exso._decimal_sep)
@@ -446,29 +447,42 @@ class Node(NodeAccessors, NodeConstructors):
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     @staticmethod
-    def apply_tz_pipe(df, tz_pipe, truncate_tz = False):
+    def apply_tz_pipe(df, tz: str | None, truncate_tz = False):
+        ''' if tz is None, dont apply any transformation.
+            If tz = 'utc', then make it tz-naive (so, localize to utc)
+            if tz = other, then, localize to UTC, and then convert to other.
+            If truncate_tz, then after any conversions applied, localize to None (NOT convert to None)
+        '''
+        if not tz:
+            return df
 
-        if isinstance(tz_pipe, str):
-            tz_pipe = ['utc', tz_pipe]
-            if truncate_tz:
-                tz_pipe = tz_pipe + [None]
+        if isinstance(tz, list):
+            raise ValueError("tz (former tz_pipe) is a string or None argument. The tz_pipe list-based entry is no longer provided. Just enter the timezone you want to convert to, and optionally use the 'truncate_tz' argument.")
+
+
+
+        localize_to = 'utc'
+        if tz.lower() == 'utc':
+            convert_to = None
+        else:
+            convert_to = tz
 
         if isinstance(df.index, pd.MultiIndex):
             extra = {'level':0}
         else:
             extra = {}
 
-        if tz_pipe:
-            df = df.tz_localize(tz_pipe[0], **extra)
-            if len(tz_pipe) >= 2:
-                df = df.tz_convert(tz_pipe[1], **extra)
-            if len(tz_pipe) == 3:
-                df = df.tz_localize(tz_pipe[2], **extra)
+        df = df.tz_localize(localize_to, **extra)
+        if convert_to:
+            df = df.tz_convert(convert_to, **extra)
+
+        if truncate_tz:
+            df = df.tz_localize(None)
 
         return df
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def read_multiindex(self, filepath, header=[0,1], index_col = [0,1], nrows = None, tz_pipe=None):
+    def read_multiindex(self, filepath, header=[0,1], index_col = [0,1], nrows = None, tz:str|None=None):
 
         df = pd.read_csv(filepath, header=header, index_col=index_col, nrows=nrows, encoding='utf-8', sep=exso._list_sep, decimal=exso._decimal_sep)
 
@@ -482,12 +496,12 @@ class Node(NodeAccessors, NodeConstructors):
             return pd.Timestamp(x)
 
         df.index = df.index.set_levels([pd.to_datetime(df.index.levels[0]), df.index.levels[1]])
-        df = Node.apply_tz_pipe(df, tz_pipe)
+        df = Node.apply_tz_pipe(df, tz)
 
         return df
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def export(self, to_path, tz_pipe = None, start_date = None, end_date = None, truncate_tz=False):
+    def export(self, to_path, tz:str|None = None, start_date = None, end_date = None, truncate_tz=False):
         '''
         to_path: str or Path
             if the node is a file, the "to_path" can be either a filepath, or a directory (in which, a fille called <self.name>.csv will be created)
@@ -501,7 +515,7 @@ class Node(NodeAccessors, NodeConstructors):
             to_path = Path(to_path)
 
         if self.kind == 'file':
-            df = self(tz_pipe = tz_pipe, start_date = start_date, end_date=end_date, truncate_tz=truncate_tz)
+            df = self(tz= tz, start_date = start_date, end_date=end_date, truncate_tz=truncate_tz)
 
             # user entered a custom path, and directly called for a file export. so, respect that
             if to_path.suffix == '.csv':
@@ -523,7 +537,7 @@ class Node(NodeAccessors, NodeConstructors):
             to_path.mkdir(exist_ok=True, parents = True)
             for child in self.children:
                 child_dir = to_path / child.name
-                child.export(child_dir, tz_pipe, start_date, end_date, truncate_tz)
+                child.export(child_dir, tz, start_date, end_date, truncate_tz)
 
 
 # ********   *********   *********   *********   *********   *********   *********   *********
