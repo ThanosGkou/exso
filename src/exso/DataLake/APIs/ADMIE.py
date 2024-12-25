@@ -98,7 +98,8 @@ class API(Assistant):
             content = re.sub(r'\\','',content)
             content = eval(content)
             links = content.copy()
-            # links = [re.sub(r'\\','',link_info['file_path']) for link_info in content]
+            # I still need the below line, to convert the response from list of dicts, to list of links[str]
+            links = [re.sub(r'\\','',link_info['file_path']) for link_info in content]
 
             return links
         else:
