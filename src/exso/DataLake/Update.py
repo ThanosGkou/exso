@@ -126,7 +126,7 @@ class Update:
             if type(start_date) != type(self.status.dates.min.potential.date):
                 start_date = pd.Timestamp(start_date).to_pydatetime().date()
                 min_potential = pd.Timestamp(self.status.dates.min.potential.date).date()
-                self.status.min.potential.date = min_potential
+                self.status.dates.min.potential.date = min_potential
 
             if start_date < self.status.dates.min.potential.date:
                 start = self.status.dates.min.potential.date

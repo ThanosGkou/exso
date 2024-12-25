@@ -112,7 +112,7 @@ class Update:
 
             df = self.__cleaning_pipeline(df, drop_trivial_cols = False)
 
-            IO.write_file(fn.path, df, mode='w')
+            IO.write_file(fn.path, df, mode='a')
 
     # *******  *******   *******   *******   *******   *******   *******
     def __slow_update(self, basetree, lobbytree ):
