@@ -8,7 +8,8 @@ from exso.IO.Tree import Tree
 import pandas as pd
 import re
 from colorama import Fore
-
+import warnings
+warnings.filterwarnings(action='ignore', category=DeprecationWarning)
 
 pd.set_option('frame_repr',False)
 pd.options.display.max_rows = None
