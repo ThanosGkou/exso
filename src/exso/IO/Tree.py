@@ -18,7 +18,8 @@ from exso.IO.Search import Search
 # Add the len() method to pathlib (get depth of a directory/file, counting from "C:/"
 def pathlength(self):
     p = str(self)
-    depth = len(re.split('[\\\]', p))
+    # depth = len(re.split('[\\\]', p))
+    depth = len(self.parts)
     return depth
 
 # Add the add() method (+ operator)
