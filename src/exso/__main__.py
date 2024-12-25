@@ -17,7 +17,8 @@ def main():
 
     p.add_argument('--which', nargs='+', default="all",
                    help="--which argument can be either 'all' (default), or a list of valid report-names (space-separated)")
-    p.add_argument('--publishers', nargs='+', default='admie',choices=['admie', 'henex', 'entsoe'])
+    p.add_argument('--exclude', nargs='+', default = None,  help= 'specify report name(s) to exclude from the update process')
+    p.add_argument('--publishers', nargs='+', default = None, choices=['admie', 'henex', 'entsoe'])
     p.add_argument('--groups', nargs='+', default=None, choices=['ISPResults',
                                                                  'ISPForecasts',
                                                                  'ISPRequirements',
@@ -90,6 +91,7 @@ def main():
         upd = exso.Updater(root_lake=arguments.root_lake,
                            root_base=arguments.root_base,
                            which = arguments.which,
+                           exclude = arguments.exclude,
                            groups = arguments.groups,
                            publishers = arguments.publishers
                            )
@@ -104,9 +106,9 @@ def main():
 
 
         if arguments.query_tz:
-            tz_pipe = ['UTC', arguments.query_tz, None]
+            tz = arguments.query_tz
         else:
-            tz_pipe = None
+            tz = None
 
         save_dir = arguments.query_output_dir
         node = tree[arguments.query_locator]
@@ -118,12 +120,12 @@ def main():
                 sys.exit()
 
             node.export(to_path = save_dir,
-                        tz_pipe = tz_pipe,
+                        tz= tz,
                         start_date = arguments.query_from,
                         end_date = arguments.query_until)
 
         if arguments.query_plot:
-            node.plot(tz_pipe=tz_pipe,
+            node.plot(tz=tz,
                       start_date=arguments.query_from,
                       end_date=arguments.query_until,
                       save_path=save_dir,
