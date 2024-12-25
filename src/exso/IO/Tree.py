@@ -5,6 +5,7 @@ import sys
 import traceback
 from pathlib import Path
 
+import haggis.string_util
 import numpy as np
 import pandas as pd
 import seedir
@@ -82,8 +83,10 @@ class TreeAccessors:
             return target_nodes[0]
 
         elif len(target_nodes)==0:
+            propose = self.search(equals, n_best = 3)
+            raise ValueError("\n\nCould not locate node whose attribute:{} equals: {}. \n\n\tDid you mean any of the options below?\n"
+                          "{}".format(attribute, equals, haggis.string_util.align(propose.dna, alignment = 'left', width = 1)))
 
-            raise IOError("Could not locate node whose attribute:{} equals: {}".format(attribute, equals))
 
     # *******  *******   *******   *******   *******   *******   *******
     def get_node(self, locator: None| str | Path | DNA | Node = None):
