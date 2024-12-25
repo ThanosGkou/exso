@@ -12,7 +12,6 @@ import colorama
 from colorama import Fore
 
 import pandas as pd
-import rich
 from exso import Files
 from exso.DataBase import DataBase
 from exso.DataLake import DataLake
@@ -171,11 +170,10 @@ class Updater:
         self.mode = 'debugging'
 
     # *******  *******   *******   *******   *******   *******   *******
-    def run(self, use_lake_version = 'latest', retroactive_update = False):
+    def run(self, use_lake_version = 'latest', warnings_verbose = 0, retroactive_update = False):
 
         self.refresh_requirements_fulfilled = []
         self.log_split = LogSplitter(root_logfile=Files.root_log, save_at_dir=Files.latest_logs_dir)
-
         self.logger.info('\n\n\n\n\n')
         self.logger.info("Running Update Kernel")
         self.failed = {}
@@ -200,7 +198,7 @@ class Updater:
                 if self.refresh_requirements[report_name] == True:
                     self.refresh_requirements_fulfilled.append(report_name)
                     self.update_fulfilled_refreshes()
-                print(Fore.CYAN + hag.align('\n\t' + report_name + ' --> Succeeded\n\n\n', alignment = 'right', width = 10))
+                print(Fore.CYAN + hag.align('\n\t' + report_name + ' --> Succeeded', alignment = 'right', width = 10))
                 self.update_summary[report_name] = {'Status':'Success'}
 
             except Exception as ex:
@@ -228,7 +226,11 @@ class Updater:
             self.logger.info('\n\n++PerformedAt:{}'.format(now))
             self.logger.info('\n\n++Elapsed: {:.3f} sec'.format(time.perf_counter()-t))
             self.logger.info('\n' + '</{}>'.format(report_name))
-            self.log_split.extract(report_name)
+            warnings = self.log_split.extract(report_name)
+            if warnings_verbose == 1 and warnings:
+                print(Fore.CYAN + "\t\twarnings: ")
+                print('\t\t\t' + hag.align(warnings, alignment = 'right', width = 1))
+            print('\n\n\n')
             self.log_split.export(report_name)
 
         self.logger.info("\n\n\n\n\nTotal Time: {}".format(time.perf_counter() - t0))
@@ -291,6 +293,7 @@ class Updater:
     def single(self, report_name, use_lake_version, retroactive_update, keep_raw = False, refresh_database = False):
         self.logger.info('\n\n\n\t\tAssessing report type: {}'.format(report_name))
 
+        # print(f'Instantiating Report')
         r = Report.Report(self.rp, report_name, self.root_lake, self.root_base, api_allowed=self.allow_handshake)
 
         if self.refresh_requirements[report_name]:
@@ -298,6 +301,7 @@ class Updater:
             print('\tIt seems like you upgraded to the latest exso version, which brought some changes to the specific report ({}). \n\tThis report\'s data(base), just for this time, will be fully refreshed instead of just updated.'.format(report_name))
             shutil.rmtree(r.database_path, ignore_errors=True)
 
+        # print(f'Instantiating lake')
         lake = DataLake.DataLake(r, use_lake_version=use_lake_version, retroactive_update = retroactive_update)
 
         if self.mode == 'debugging':
@@ -306,7 +310,7 @@ class Updater:
         else:
             start_date = None
             end_date = None
-
+        # print(f'Calling lake.update with {start_date = }, {end_date = }')
         lake.update(start_date, end_date)
         base = DataBase.DataBase(r, db_timezone='UTC')
         requirements = base.get_update_requirements()
@@ -504,14 +508,12 @@ class LogSplitter:
         [facts.update(self.events_cleaner(fact)) for fact in facts_raw]
 
         _warnings = re.findall('WARNING.*', report_log)
-        if _warnings:
-            print('*')
 
         self.report_logs[report_name] = {'facts': facts,
                                         'log': report_log,
                                          'warnings':_warnings}
 
-
+        return _warnings
     # *******  *******   *******   *******   *******   *******   *******
     def export(self, report_name, save_at_dir = None):
         if report_name not in list(self.report_logs.keys()):
