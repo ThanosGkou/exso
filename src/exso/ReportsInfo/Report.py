@@ -197,7 +197,14 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
 
 
         self.make_bidirectional_mapping()
-        self.available_until = self._TimeSettings__interpret_available_until(self.report_name, self.publisher, self.datalake_path, self.available_until, api_allowed=api_allowed)
+        reports_info_avail_until = pd.to_datetime(self.df['available_until'].squeeze(), dayfirst=True)
+
+        if isinstance(reports_info_avail_until, type(None)):
+            # this means that no end-date is specified in ReportsInfo.xlsx, so, the report is ongoing, and its most recent date is yet to be determined
+            self.available_until = self._TimeSettings__interpret_available_until(self.report_name, self.publisher, self.datalake_path, self.available_until, api_allowed=api_allowed)
+        else:
+            self.available_until = pd.to_datetime(self.df['available_until'].squeeze(), dayfirst=True).date()
+
         self.database_min_potential_datetime, self.database_max_potential_datetime = self.get_database_min_max_datetimes(self.available_from, self.available_until)
 
     # *******  *******   *******   *******   *******   *******   *******
@@ -209,8 +216,8 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
         available_reports = [ar.lower() for ar in available_reports_as_defined]
         if report_name.lower() not in available_reports:
 
-            print('\n\t--> The requested report ("{}") either does not exist, or is not supported'.format(report_name))
-            self.logger.error("Fatal: The requested report-type ('{}') either does not exist, or is not supported".format(report_name))
+            print('\n\t--> The requested report ("{}") does not exist'.format(report_name))
+            self.logger.error("Fatal: The requested report-type ('{}') does not exist".format(report_name))
 
             n_best = 3
             best = Similarity.find_best_match(lookup_list=available_reports,
@@ -222,6 +229,14 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
             [print('\t\t\t'+ available_reports_as_defined[i] + ': ' + f"{similarity:.0%}") for i, similarity in best]
             input('Hit Enter to exit.')
             sys.exit()
+        elif self.rp.allmighty_df[self.rp.allmighty_df.report_name.str.lower() == report_name.lower()]['is_implemented'].squeeze() == False:
+            print('\n\t--> The requested report ("{}") is not implemented'.format(report_name))
+            self.logger.error(
+                "Fatal: The requested report-type ('{}') either does not exist, or is not supported".format(
+                    report_name))
+            input('\n\n Hit Enter to exit.')
+            sys.exit()
+
         else:
             self.logger.info("The requested report type exists in the reports pool dataframe. Proceeding.")
 
