@@ -173,7 +173,8 @@ class Status:
         filepaths = glob.glob(rule)
 
         if len(filepaths) == 0:
-            warnings.warn("Possibly there is a problem with the glob rule. No files were found in the datalake.")
+            if len(list(_dir.glob('*'))) > 0:
+                warnings.warn("Possibly there is a problem with the glob rule. No files were found in the datalake.")
 
         self.logger.info('\t\tUsed filtering rule --> ' + rule)
         self.logger.info("Initially perceived number of eligible files: {}".format(len(filepaths)))
