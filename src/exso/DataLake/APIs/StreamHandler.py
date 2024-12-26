@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from exso.DataLake.APIs import ADMIE, HEnEx, Entsoe
+from exso.DataLake.APIs import ADMIE, HEnEx
 from exso.DataLake.APIs import HEnExArchives
 from exso.Utils.DateTime import DateTime
 from exso.Utils.Misc import Misc
