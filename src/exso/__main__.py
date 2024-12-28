@@ -99,7 +99,6 @@ def main():
 
     elif arguments.mode == 'query':
         tree = exso.Tree(root_path = arguments.root_base)
-        tree.make_tree()
         if not arguments.query_locator:
             print("The mode was 'query' but you didn't provide a query locator.")
             sys.exit()
@@ -125,11 +124,15 @@ def main():
                         end_date = arguments.query_until)
 
         if arguments.query_plot:
+            kind = 'line'
+            if arguments.plot_stacked:
+                kind = 'area'
+
             node.plot(tz=tz,
                       start_date=arguments.query_from,
                       end_date=arguments.query_until,
                       save_path=save_dir,
-                      area=arguments.plot_stacked)
+                      kind=kind)
 
 
     elif arguments.mode == 'validate':
