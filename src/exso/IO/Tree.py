@@ -298,8 +298,15 @@ class Tree(Search, TreeConstructors, TreeAccessors):
     # ********   *********   *********   *********   *********   *********   *********   *********
     def compile_input(self, root_path, root_dict, depth_mapping, ignore_if_startswith, root_name, ignore_fruits):
 
+        # make sure root_path is Path
         if isinstance(root_path, str):
             root_path = Path(root_path)
+
+        elif isinstance(root_path, type(None)) and isinstance(root_dict, type(None)):
+            # now, assume defalt database path
+            root_path = exso.fp_default_database
+        else:
+            assert isinstance(root_dict, dict)
 
         if isinstance(root_path, Path):
             start_depth = len(root_path)
