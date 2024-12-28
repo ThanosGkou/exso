@@ -12,6 +12,7 @@ import colorama
 from colorama import Fore
 
 import pandas as pd
+import exso
 from exso import Files
 from exso.DataBase import DataBase
 from exso.DataLake import DataLake
@@ -28,7 +29,7 @@ from haggis import string_util as hag
 class Updater:
     """ The main API-class of the exso project to update datasets.
         Check out the __init__.__doc__ for more information """
-    def __init__(self, root_lake:str|Path='datalake', root_base:str|Path='database', reports_pool:Report.Pool|None = None, which:str|list|None = None, exclude:str|list|None = None, groups:None|list|str = None, publishers: None|list|str = None, countries: None|list|str = None, only_ongoing:bool = False, allow_handshake_connection = True):
+    def __init__(self, root_lake:str|Path|None=None, root_base:str|Path|None=None, reports_pool:Report.Pool|None = None, which:str|list|None = None, exclude:str|list|None = None, groups:None|list|str = None, publishers: None|list|str = None, countries: None|list|str = None, only_ongoing:bool = False, allow_handshake_connection = True):
         """
         Constructor parameters for the Updater class:
 
@@ -71,8 +72,14 @@ class Updater:
     def set_dirs(self, root_lake, root_base):
         if isinstance(root_lake, str):
             root_lake = Path(root_lake)
+
+        elif isinstance(root_lake, type(None)):
+            root_lake = exso.fp_default_datalake
+
         if isinstance(root_base, str):
             root_base = Path(root_base)
+        elif isinstance(root_base, type(None)):
+            root_base = exso.fp_default_database
 
         self.ensure_intention(root_lake, root_base)
 
