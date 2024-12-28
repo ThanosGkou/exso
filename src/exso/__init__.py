@@ -1,4 +1,5 @@
 import json
+import pathlib
 import logging
 from exso import Files
 from exso.ReportsInfo import Report
@@ -7,6 +8,7 @@ from exso.HighLevel.Validation import Validation
 from exso.IO.Tree import Tree
 import pandas as pd
 import re
+import os
 from colorama import Fore
 import warnings
 warnings.filterwarnings(action='ignore', category=DeprecationWarning)
@@ -54,3 +56,8 @@ def _set_system_formats(decimal_sep='.', list_sep=','):
                    'list_sep':list_sep}
 
         json.dump(formats,f)
+
+
+user_root_windows = pathlib.Path(os.environ['USERPROFILE'])
+fp_default_datalake = user_root_windows / 'Desktop' / 'exso_data' / 'datalake'
+fp_default_database = user_root_windows / 'Desktop' / 'exso_data' / 'database'
