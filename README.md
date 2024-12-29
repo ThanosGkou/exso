@@ -1,3 +1,6 @@
+
+![museo_moderno.png](figs/logos/museo_moderno.png)
+
 # ExSO
 
 An analytical framework for the Greek and European Power&Gas, System Operation ("SO") & Market Exchange ("Ex").
@@ -43,6 +46,11 @@ It was developed as a private project, focusing on the Greek power & gas system.
 - Interactive **Visualization**
 - **Time-slicing** operations (timezone change, from/to time slicing)
 - **Exporting/Extracting** visualizations and/or time-sliced data to a "sandbox" location (data in the database should not be modified in any way)
+
+-----
+## What's New
+
+Checkout new features [here](https://exso.readthedocs.io/en/latest/whats_new.html)
 
 -----
 ## Documentation

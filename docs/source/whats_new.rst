@@ -18,7 +18,7 @@ Reports
 
 Documentation
 *************
-- Dedicated documentation page in `Read the Docs <https://docs.readthedocs.io/en/stable/>`_
+- Dedicated documentation page in `Read the Docs <(https://exso.readthedocs.io/en/latest/)>`_
 
 API
 ***
