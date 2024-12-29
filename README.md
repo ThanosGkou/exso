@@ -44,6 +44,10 @@ It was developed as a private project, focusing on the Greek power & gas system.
 - **Time-slicing** operations (timezone change, from/to time slicing)
 - **Exporting/Extracting** visualizations and/or time-sliced data to a "sandbox" location (data in the database should not be modified in any way)
 
+-----
+## Documentation
+
+ExSO documentation is available in [ReadTheDocs](https://exso.readthedocs.io/en/latest/)
 
 -----
 
