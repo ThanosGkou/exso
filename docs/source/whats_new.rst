@@ -37,7 +37,7 @@ General Usage
 
 
 DataBase Tree Access
-"""""""""""""""
+""""""""""""""""""""""
 * exso Database initialization made simpler::
 
     #old:
@@ -72,15 +72,15 @@ DataBase Tree Access
         tree['your_custom_folder_name.your_custom_file_paths'].plot(***kwargs)
 
 DataBase Node Manipulation
-""""""""""""""""""""
-- .plot() and .export() methods of Node objects *to_path* argument can be either a directory or a file:
+"""""""""""""""""""""""""""
+* .plot() and .export() methods of Node objects *to_path* argument can be either a directory or a file:
   If directory, the proper file names will be auto-created. If filepath, the given filepath will be used
 
-- Added optional arguments in the Node.plot() method:
-    - You can now enter a string for the chart’s title and ylabel
-    - By default, a plot's title will be: <node.parent>.<node.name>
+* Added optional arguments in the Node.plot() method:
+    * You can now enter a string for the chart’s title and ylabel
+    * By default, a plot's title will be: <node.parent>.<node.name>
 
-- Improved timezone handling input arguments:
+* Improved timezone handling input arguments:
     Now, all you need to do is leave the tz = None, or specify a string-timezone.
     ::
         #old
@@ -89,7 +89,10 @@ DataBase Node Manipulation
         #new
         node(start_date, end_date, tz='EET', truncate_tz=True)
 
-- Plotting a node as a line or area chart, input argument simplification::
+* :ref:`Plotting <node_plot_api>` enhancements
+
+    * Line or area chart, input argument simplification
+::
 
         #old
         node.plot(*args, **kwargs, area=bool)
@@ -97,7 +100,9 @@ DataBase Node Manipulation
         #new
         node.plot(*args, **kwargs, kind = 'line'|'area')
 
-- Support for plotting demand-supply market bids:
+    * node.plot allows for a transformation function input, to be applied prior to plotting
+
+* Support for plotting demand-supply market bids:
 .. figure:: figs/exso_demand_supply_plot.png
    :scale: 50 %
 

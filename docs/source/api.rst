@@ -161,6 +161,7 @@ All node methods used for retrieving/exporting/visualizing data use a common set
 
 These common arguments will be referred to as: **common_kwargs in the sections below
 
+.. _node_plot_api:
 Node.plot()
 -----------------
 ::
