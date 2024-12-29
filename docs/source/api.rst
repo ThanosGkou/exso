@@ -5,6 +5,8 @@ API
 ===
 
 
+.. include:: substitutions.rst
+
 .. _python_api:
 Python API
 """""""""""
@@ -117,8 +119,8 @@ exso.Node class
 Command Line API
 """"""""""""""""""
 In order to use exso through the command line:
-- Launch a terminal and activate the virtual environment where exso is installed
-- Use the Command-Line API options:
+* Launch a terminal and activate the virtual environment where exso is installed
+* Use the Command-Line API options:
 
 >>> (venv) python -m exso [--args]
 
