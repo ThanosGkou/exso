@@ -305,7 +305,7 @@ class Tree(Search, TreeConstructors, TreeAccessors):
         elif isinstance(root_path, type(None)) and isinstance(root_dict, type(None)):
             # now, assume defalt database path
             root_path = exso.fp_default_database
-        else:
+        elif isinstance(root_path, type(None)):
             assert isinstance(root_dict, dict)
 
         if isinstance(root_path, Path):

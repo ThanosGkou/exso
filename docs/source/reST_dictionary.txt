@@ -1,0 +1,20 @@
+# INlinde code	
+By default, inline code such as :code:`1 + 2` just displays without
+highlighting.
+	
+|today|, |version|, |release| are default substitutions and not required to be defined!!
+
+
+
+# for code with python syntax highlighting
+.. role:: python(code)
+   :language: python
+
+In Python, :python:`1 + 2` is equal to :python:`3`.
+
+
+#Math
+Since Pythagoras, we know that :math:`a^2 + b^2 = c^2`.
+	
+# ommand line
+This will be shown as a terminal :command:`robocopy malakas to_malakas /mir`
