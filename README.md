@@ -1,5 +1,9 @@
+<picture align="center">
+  <source media="(prefers-color-scheme: light)" srcset=docs/source/figs/logos/museo_moderno.svg>
+  <img alt="ExSO Logo" src="docs/source/figs/logos/museo_moderno.svg">
+</picture>
 
-![museo_moderno.png](docs/source/figs/logos/museo_moderno.png)
+[//]: # (![museo_moderno.png]&#40;docs/source/figs/logos/museo_moderno.png&#41;)
 
 # ExSO
 
