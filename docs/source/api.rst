@@ -184,6 +184,6 @@ As of version 1.0.0, you can use exso through an excel-based gui |xlsm|, for bas
 * Launch an update mode or query through buttons and option boxes
 
 
-.. figure:: figs\exso_xlsm_2.png
+.. figure:: figs/exso_xlsm_2.png
    :scale: 50 %
    :class: with-border
