@@ -21,6 +21,7 @@ Recommended for users:
 * that are not familiar with virtual environments,
 * that want to make a quick and effortless review of the tool.
 
+.. _install_with_xlsm:
 Process
 """"""""
 
