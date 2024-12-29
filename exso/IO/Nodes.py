@@ -520,6 +520,7 @@ class Node(NodeAccessors, NodeConstructors):
         if self.kind == 'file':
             df = self(tz= tz, start_date = start_date, end_date=end_date, truncate_tz=truncate_tz)
 
+
             # user entered a custom path, and directly called for a file export. so, respect that
             if to_path.suffix == '.csv':
                 target = to_path

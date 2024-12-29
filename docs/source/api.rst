@@ -105,14 +105,95 @@ The main method to access nodes of the database through node-locators. Checkout 
 
 exso.Node class
 -----------------
+
+
+
+Node.__call__(), Node.plot(), Node.export()
+
+
 ::
-    .__call__()
 
-    .plot()
+    # First, instantiate a tree and a node
 
-    .export()
+    tree = exso.Tree("path/to/database")
+    node = tree["d.n.a.of.node"]
+
+All node methods used for retrieving/exporting/visualizing data use a common set of slicing parameters::
+
+        node(start_date, end_data, tz, truncate_tz, **call_kwargs)
+        node.plot(start_date, end_data, tz, truncate_tz, **plot_kwargs)
+        node.export(start_date, end_data, tz, truncate_tz, **export_kwargs)
+
+        # Common Arguments
+        param start_date: str|None
+            Format: 'YYYY-MM-DD' ['HH:MM']
+            if given, the retrieved data will be given from that date(time) onwards
+            The start_date will be perceived to the timezone given (or, if no timezone is given, to UTC)
+        param end_date: str|None
+            Format: 'YYYY-MM-DD' ['HH:MM']
+            if given, the retrieved data will be given until that date(time).
+            Can be combines with start_date
+            The end_date will be perceived to the timezone given (or, if no timezone is given, to UTC)
+        tz: str|None
+            usual options: ['eet', 'utc', 'cet'], but any valid timezone can be given
+            If given, the retrieved data will be converted/localized to the given timezone
+            If given, the start_date and/or end_date will be perceived to refer to the timezone given.
+                e.g. if start_date = '2024-01-01 00:00', and tz = 'EET', it is assumed that the start_date given refers to the timezone-converted data.
+
+These common arguments will be referred to as: **common_kwargs in the sections below
+
+Node.plot()
+""""""""""""""""
+::
+
+    node.plot(**common_kwargs,
+              kind='area',
+              show = True,
+              save_path = None,
+              title = None, ylabel = None, xlabel = None,
+              df = None,
+              line_cols = None, area_cols = None,
+              transformation = None) --> plotly.Figure
+
+    kind: options = ['area', 'line']
+        Indicates whether to do a staacked-area plot or a line plot
+
+    show: bool
+        Indicates whether to show the plot or just plot and return it/save it.
+
+    save_path: Path|str|None
+        If given, saves the plot to this path.
+        Can be given either the desired filepath (ending in .html), or a desired directory
+
+    title, ylabel, xlabel: self-explanatory
+
+    df: pd.DataFrame|None
+        If given, then the given dataframe will be plotted instead of the node where the .plot method was called from
+
+    line_cols, area_cols: specify columns to plot as line plots, and columns to plot as area plots in a combo-chart.
+        This is in beta stage and may not work very well currently
+
+    transformation: func|None
+        If a function is given, it must def func(df:pd.DataFrame): --> pd.DataFrame
+            If given, this function will be applied AFTER performing the slicing with start_date, end_date, tz to the data in hand
+            df = transformation(df)
 
 
+    The node.plot() method returns a plotly Figure object, which you can further transform on your own.
+
+Node.export()
+""""""""""""""
+This method allows to export and transform data from the database to another location for further custom processing.
+It can be applied not only to files but to any kind of node (even to the whole database)
+::
+
+    node.export(to_path: str|Path,
+                **common_kwargs)
+
+
+    to_path: str|Path
+        it can be a filepath or a directory path, existing or non-existing
+        If the node to export is a directory (not a file) but to_path is a filepath, an error will occur
 
 
 .. _cli_api:

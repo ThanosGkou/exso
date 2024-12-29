@@ -20,8 +20,11 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   api
-   Installation and more <installation>
-   Usage <usage>
    What's New <whats_new>
+   Installation and Upgrade <installation>
+   Usage <usage>
+   api
+
+
+
 
