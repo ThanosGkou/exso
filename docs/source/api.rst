@@ -115,7 +115,7 @@ exso.Node class
 
 
 
-.. _cli:
+.. _cli_api:
 Command Line API
 """"""""""""""""""
 In order to use exso through the command line:
@@ -173,6 +173,7 @@ Below lies the list with all options for the command-line api of exso, which is 
       --list_sep LIST_SEP
 
 
+.. _xlsm_api:
 ExSO.xlsm API
 --------------
 
