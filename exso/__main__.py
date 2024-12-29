@@ -12,8 +12,8 @@ def main():
     args = sys.argv[1:]
     p = argparse.ArgumentParser(prog="py -m exso")
     p.add_argument("mode", choices=["info", "update", "validate", "query", "set_system_formats"])
-    p.add_argument("-rl", "--root_lake", default='./datalake')
-    p.add_argument("-rb", "--root_base", default='./database')
+    p.add_argument("-rl", "--root_lake", default=None)
+    p.add_argument("-rb", "--root_base", default=None)
 
     p.add_argument('--which', nargs='+', default="all",
                    help="--which argument can be either 'all' (default), or a list of valid report-names (space-separated)")

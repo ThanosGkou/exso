@@ -56,10 +56,13 @@ The class for locating specific nodes from the database (and more).
 
     tree = exso.Tree(root_path:Path|str|None)
 
-Useful methods:
+Tree.combine
+------------
+Allows for combining multiple nodes to a single node. Applies only for 'file'-kind Nodes
+
+
 ::
 
-    # Tree.combine
     synthetic_node = tree.combine(*locators,
                                    with_name:str|None = None,
                                    handle_synonymity:str|list = 'auto',
@@ -73,17 +76,29 @@ Useful methods:
     # param resolution: How to handle nodes with different datetime resolutions. Not really suggested to put anything other than 'auto'
 
 
+Tree.visualize
+---------------
+Displays a visual representation of the database structure
+
 ::
 
-    # Tree.visualize --> Displays a visual representation of the database structure
     tree.visualize()
 
 
+Tree.__getitem__
+-----------------
+The main method to access nodes of the database through node-locators. Checkout Locators and how to use them :ref:`here <node_locators>`
+
 
 ::
 
-    # Tree.__getitem__   Access a node from the database
     node = tree[locator]
+
+    # e.g.
+    node = tree['root.henex.dam_results.dam_results.results']
+
+    # or:
+    node = tree['dam_results.>>']
 
 
 exso.Node class
@@ -101,5 +116,61 @@ exso.Node class
 .. _cli:
 Command Line API
 """"""""""""""""""
+In order to use exso through the command line:
+- Launch a terminal and activate the virtual environment where exso is installed
+- Use the Command-Line API options:
 
+>>> (venv) python -m exso [--args]
+
+- Example for update mode:
+>>> (venv) python -m exso update -rl "path/to/datalake" -rb "path/to/database" --which ISP1ISPResults
+
+- Default database and datalake locations are:
+    - datalake: Desktop\exso_data\datalake
+    - database: Desktop\exso_data\database
+
+Below lies the list with all options for the command-line api of exso, which is accessible through:
+
+>>> (venv) python -m exso --help
+
+::
+
+
+    positional arguments:
+      {info,update,validate,query,set_system_formats}
+
+    options:
+      -h, --help            show this help message and exit
+      -rl, --root_lake ROOT_LAKE
+      -rb, --root_base ROOT_BASE
+      --which WHICH [WHICH ...]
+                            --which argument can be either 'all' (default), or a list of valid report-names (space-separated)
+      --exclude EXCLUDE [EXCLUDE ...]
+                            specify report name(s) to exclude from the update process
+      --publishers {admie,henex,entsoe} [{admie,henex,entsoe}]
+
+      --groups
+      -loc, --query_locator QUERY_LOCATOR
+                            'locator' means a unique identifier of database objects. example: root.admie.isp1ispresults, will extract the whole database of this report and transform it / slice it
+                            depending on the rest of the options you set.
+      -output_dir, --query_output_dir QUERY_OUTPUT_DIR
+                            If specified, it will be used to save the generated plot (if -plot), and/or the extracted timeslice (if -extract).
+
+      -tz, --query_tz QUERY_TZ
+
+      -from, --query_from QUERY_FROM
+                            Start date(time) of query (YYYY-M-D [H:M])
+      -until, --query_until QUERY_UNTIL
+                            End date(time) of query (YYYY-M-D [H:M])
+      -extract, --query_extract
+                            If added, it means you wish to EXTRACT the specified query (among possible other actions)
+      -plot, --query_plot   If added, it means you wish to PLOT the upstream query (among possible other actions)
+      -stacked, --plot_stacked
+                            If added, it means you wish the PLOT specified, to be a stacked-area plot
+      --decimal_sep DECIMAL_SEP
+      --list_sep LIST_SEP
+
+
+ExSO.xlsm API |xlsm|
+--------------------
 
