@@ -1,4 +1,7 @@
 # Configuration file for the Sphinx documentation builder.
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../src'))
 
 # -- Project information
 
@@ -6,9 +9,9 @@ project = 'ExSO'
 copyright = '2023, T. Natsikas'
 author = 'T. Natsikas'
 
-release = '1.0'
-version = '1.0.0'
-
+import exso
+version = exso.__version__
+release = version
 # -- General configuration
 
 extensions = [

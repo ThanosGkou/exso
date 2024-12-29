@@ -9,35 +9,24 @@ API
 Python API
 """""""""""
 
-Update Mode
------------
-The below script will download and insert to the database all (63) currently supported reports. For more information continue reading.
-
-::
-
-    import exso
-    # define desired datalake and database locationsto be stored in the disk
-    # root_lake and root_base can also be pathlib.Path objects
-    root_lake = r"path\to\desired\datalake\directory" # e.g. r"C:\Users\your_username\exsodata\datalake"
-    root_base = r"path\to\desired\database\directory" # e.g. r"C:\Users\your_username\exsodata\database"
-
-    upd = exso.Updater(root_lake, root_base)
-    upd.run()
-
 exso.Updater class
 ------------------
 The class for performing datalake/database updates.
 
 ::
 
-    exso.Updater(root_lake, root_base,
+    exso.Updater(root_lake:str|Path|None=None,
+                 root_base:str|Path|None=None,
                  which:str|list|None = None,
                  exclude:str|list|None=None,
                  groups:str|list|None = None,
                  publishers:str|list|None = None)
 
-    # param root_lake: [str|Path] The desired path to use as the datalake directory
-    # param root_base: [str|Path] the desired path to use as the database directory
+    # param root_lake: [str|Path|None] The desired path to use as the datalake directory
+    #   If None, default path for windows is: C:\Users\<username>\Desktop\exso_data\datalake
+    # param root_base: [str|Path|None] the desired path to use as the database directory
+    #   If None, default path for windows is: C:\Users\<username>\Desktop\exso_data\database
+
 
     # param which (optional): If given, will update only these report name(s) *
     # param exclude (optional): If given, will NOT update these report groups *
@@ -45,6 +34,17 @@ The class for performing datalake/database updates.
     # param groups (optional): If given, will update only these report group(s) *
 
 * **The Parameters: which, exclude, groups, publishers are intersectional filters.**
+
+
+::
+
+    # Example
+    import exso
+    root_lake = r"path\to\desired\datalake\directory" # e.g. r"C:\Users\your_username\exsodata\datalake"
+    root_base = r"path\to\desired\database\directory" # e.g. r"C:\Users\your_username\exsodata\database"
+
+    upd = exso.Updater(root_lake, root_base)
+    upd.run()
 
 
 exso.Tree class
