@@ -173,13 +173,16 @@ Below lies the list with all options for the command-line api of exso, which is 
       --list_sep LIST_SEP
 
 
-|xlsm| API
------------
+ExSO.xlsm API
+--------------
 
-As of version 1.0.0, you can use exso through an excel-based gui, for basic exso-functionality:
+As of version 1.0.0, you can use exso through an excel-based gui |xlsm|, for basic exso-functionality:
 
 * You can :ref:`Download and Install exso directly from ExSO.xlsm <install_with_xlsm>`
 * You can specify the reports to update in the "Reports Selection" Sheet.
 * Launch an update mode or query through buttons and option boxes
 
-:fig:`figs\exso_xlsm_2.png`
+
+.. figure:: figs/exso_xlsm_2.png
+   :scale: 50 %
+   :class: with-border
