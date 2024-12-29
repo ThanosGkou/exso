@@ -1,5 +1,5 @@
 
-![museo_moderno.png](figs/logos/museo_moderno.png)
+![museo_moderno.png](docs/source/figs/logos/museo_moderno.png)
 
 # ExSO
 
