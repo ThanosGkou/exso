@@ -11,6 +11,14 @@ API
 Python API
 """""""""""
 
+.. _ssf_api:
+exso._set_system_formats method
+---------------------------------
+:code:`exso._set_system_formats(list_sep=',', decimals_sep = '.')`
+
+
+
+
 exso.Updater class
 ------------------
 The class for performing datalake/database updates.
@@ -48,6 +56,13 @@ The class for performing datalake/database updates.
     upd = exso.Updater(root_lake, root_base)
     upd.run()
 
+    # progress bar per-report will be shown in console
+
+.. figure:: figs/progress_bar_example.png
+   :scale: 50 %
+
+
+
 
 exso.Tree class
 ------------------
@@ -77,6 +92,9 @@ Allows for combining multiple nodes to a single node. Applies only for 'file'-ki
         Else, you can provide a list of suffixes to be applied for each locator, which will only be applied if such conflict arises
     # param resolution: How to handle nodes with different datetime resolutions. Not really suggested to put anything other than 'auto'
 
+.. figure:: figs/combine_nodes_viz.png
+   :scale: 50 %
+
 
 Tree.visualize
 ---------------
@@ -85,6 +103,9 @@ Displays a visual representation of the database structure
 ::
 
     tree.visualize()
+
+.. figure:: figs/database_Viz.png
+   :scale: 50 %
 
 
 Tree.__getitem__
@@ -105,8 +126,6 @@ The main method to access nodes of the database through node-locators. Checkout 
 
 exso.Node class
 -----------------
-
-
 
 Node.__call__(), Node.plot(), Node.export()
 
@@ -143,7 +162,7 @@ All node methods used for retrieving/exporting/visualizing data use a common set
 These common arguments will be referred to as: **common_kwargs in the sections below
 
 Node.plot()
-""""""""""""""""
+-----------------
 ::
 
     node.plot(**common_kwargs,
@@ -182,7 +201,7 @@ Node.plot()
     The node.plot() method returns a plotly Figure object, which you can further transform on your own.
 
 Node.export()
-""""""""""""""
+-----------------
 This method allows to export and transform data from the database to another location for further custom processing.
 It can be applied not only to files but to any kind of node (even to the whole database)
 ::
@@ -194,6 +213,55 @@ It can be applied not only to files but to any kind of node (even to the whole d
     to_path: str|Path
         it can be a filepath or a directory path, existing or non-existing
         If the node to export is a directory (not a file) but to_path is a filepath, an error will occur
+
+Node Attributes
+-----------------
+The text below serves both a descriptive and a definitive purpose.
+So, from now on, the term "kind" will have the meaning defined in this section
+
+* .name
+
+  * a (descriptive) string. Sometimes, names are automatically given from the raw files, while other times there are some alterations. Names are generally non-unique accross the tree, but unique within the children of one node.
+
+* .path
+  * physical path in the disk (directory or file)
+
+* .dna
+  * a concatenation of all the node's parents, dot-separated, and **case insensitive** (e.g. "root.henex.DaM_ReSuLtS")
+
+* .kind
+  * In the ***exso*** database, nodes can be of one of the 6 following kinds:
+    - "root" (parent of all nodes)
+    - "publisher" (parent of all reports, published by that publisher)
+    - "report" (the name of the report, e.g. "ISP1ISPResults")
+    - "field" (the name of the sheet of the original report-excel, e.g. ISP_Schedule. *with some exceptions)
+    - "file" (a csv file containing some or all of the sheet (field)-data e.g. "Load")
+    - "property" (a column of the csv file, e.g. "Net Load")
+
+* .parent, .children, .siblings, .ascendants, .descendants
+    Pretty much self-explanatory. They refer to Node objects, or Groups of Node objects (e.g. node.children returns a Group object, but can be accessed as a Node, e.g. node.children.dna, will return a list of dnas of that node's children)
+
+Report Object
+--------------
+In order to review the available reports or decide which ones fit your needs and update only those, a Report.Pool object can be useful::
+
+    from exso import Report
+
+    # Instantiate a report Pool object
+    rp = Report.Pool()
+    description = rp.get_text_description() # returns a dictionary of available reports. e.g. {report_name1: report1_description, report_name2: report2_description}
+
+    # to get the description of a specific report
+    report_name = "select a valid report name"
+    print(description[report_name])
+
+    # The .get_available() method, returns dataframe with available reports, and their basic metadata
+    # To get only a list of names, set only_names <- False
+    metadata = rp.get_available(only_names = False)
+
+.. figure:: figs/get_available().png
+   :scale: 50 %
+
 
 
 .. _cli_api:
