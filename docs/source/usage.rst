@@ -19,7 +19,7 @@ Core Functionalities
 
 There are three potentially complementary ways of using ExSO:
 
-* Through |xlsm|
+* Through :ref:`ExSO.xlsm <|xlsm|>`
 * Through an :ref:`IDE <python_api>`
 * Through the :ref:`command line <cli>`
 
