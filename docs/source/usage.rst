@@ -50,6 +50,16 @@ Datalake
    :scale: 50 %
    :class: with-border
 
+
+The datalake consists of raw excel (.xls, or .xlsx, or .zip of .xls*) reports, as published by the publishing parties.
+
+* Each report is published (is available) over a specific date range (some reports may be no longer actively updated but still useful for historical analysis)
+* Each report is published on a specific frequency (e.g. each day, each week, each month, etc.)
+* Each report file content, spans over various horizons (e.g. one day-long, one week-long, one month-long, etc.)
+* Each report file consists of one or more excel sheets
+* Each report is expressed in a specific timezone (EET, UTC or CET) and may or may not have well-defined daylight-saving switches.
+
+
 Database
 ---------
 * The database is a local directory created by **exso**, containing a high-quality, continuous version of the raw report files

@@ -1,16 +1,6 @@
 ![image alt ><](/docs/source/figs/logos/museo_moderno.png)
 
 
-
-
-
-
-
-
-
-
-
-
 # ExSO
 
 An analytical framework for the Greek and European Power&Gas, System Operation ("SO") & Market Exchange ("Ex").
@@ -37,6 +27,12 @@ It was developed as a private project, focusing on the Greek power & gas system.
   - No local/remote database server required (portability)
   - No significant loss of speed (good enough efficiency)
 
+
+-----
+## What's New
+
+Checkout [new features](https://exso.readthedocs.io/en/latest/whats_new.html) and  [ExSO Official Documentation](https://exso.readthedocs.io/en/latest/)
+
 -----
 ## Rationale
 **Publicly-available does not always mean publicly-accessible**
@@ -58,70 +54,59 @@ It was developed as a private project, focusing on the Greek power & gas system.
 - **Exporting/Extracting** visualizations and/or time-sliced data to a "sandbox" location (data in the database should not be modified in any way)
 
 -----
-## What's New
+## Basic Usage
 
-Checkout new features [here](https://exso.readthedocs.io/en/latest/whats_new.html)
-
------
-## Documentation
-
-ExSO documentation is available in [ReadTheDocs](https://exso.readthedocs.io/en/latest/)
+For more info on installation and usage, please review the [ExSO Official Documentation](https://exso.readthedocs.io/en/latest/)
 
 -----
+## Installation
+Installation can be now done semi-automatically through the [Excel-based GUI](https://github.com/ThanosGkou/exso/ExSO.xlsm)
 
-## Visualization
-***exso*** utilizes the (extremely helpful and interactive) package [plotly](https://plotly.com/python) for data visualization.
-The visualization of a Node object is as simple as calling its .plot() method:
-
-Graphs can be zoomed in/out, rescaled, columns can be toggled-on/off in real time.
-
-&rarr; By default, ***exso*** will **omit to plot any columns that are Zero or NaN** over the whole selected timerange, in order to make the plot lighter, both compuatationally and on the eyes.
 
 ```sh
-isp1_thermal_gen = t['root.admie.isp1ispresults.isp_schedule.thermal']
-fig = isp1_thermal_gen.plot(area = True, start_date = '2022-1-1', end_date = '2022-1-10', tz = 'EET', show = True, save_path = None)
-
-# by default:  tz = 'EET', start_date = None, end_date = None,  area = False, show = True, save_path = Non
-
-# the returned figure is of type "plotly.graph_objs._figure.Figure", meaning, you can set "show"=False, and update the layout with normal plotly usage before displaying it.
-# Some very basic modification-options (title, x&y labels) will be supported directly through the exso.Node object
+# install exso
+(venv) pip install exso
 ```
+
+```sh
+import exso
+
+root_datalake = "path/to/datalake"
+root_database = "path/to/database"
+
+# Run the update functionality
+
+reports_to_update = ['ISP1ISPResults', 'DAM_ResultsSummary']
+updater = exso.Updater(root_datalake, root_database, which = reports_to_update)
+updater.run()
+
+# Access & Combine nodes
+isp1_thermal_schedule = t['isp1ispresults.isp_schedule.thermal']
+
+combo_node = t.combine(('isp1ispresults.isp_schedule.thermal',
+                        'dam_resultssummary.buy.mcp'))
+                        
+# Plot, Retrieve, Export
+start_date = '2022-6-1'
+end_date = '2022-6-10'
+tz = 'EET'
+
+fig = isp1_thermal_schedule.plot(start_date=start_date, end_date=end_date, tz = tz,
+                                 kind = 'area')
+
+
+combo_node.export(to_path = "some/directory/or/filepath",
+                  tz = tz,
+                  truncate_tz = True)
+                  
+```
+
 ![plotly_viz.png](resources/plotly_viz.png)
 
-----
-## Features under active Development
-### Data Documentation
-Another aspect that creates difficulties in utilizing the published data (after one overcomes the sparsity of data), is the lack of detailed documentation per report, field, or property.
-(e.g. The term "Net Load" may mean System Load minus pumping load, or Consumption minus RES, or Consumption minus RES minus pumping load, etc.)
-At this stage, the Data Documentation provided in the ***exso*** package is far from perfect: Data Documentation is currently only on the report-level, providing high-level insights but not detailed disambiguations.
-
-- A custom-made documentation, built as a light non-relational database is currently being developed and will be launched with one of the next versions of ***exso***.
-
-### Analytics API
-The current setup is oriented around *reports*. An Analytics API currently under development, will facilitate:
-- Seaming properties from different reports of different timeframws (e.g. System Marginal Price to Market Clearing Price)
-- Dedicated reporting and visualization (e.g. Daily System Snapshot of market prices, imports, loads, reserves, balancing, generation mix, etc.)
-- Advanced analytics methods (e.g. Unit Unavailabilities statistics, comparisons, correlations)
-
-### Support for more Reports
-One of the following version, will contain some improvements on existing reports, and the addition of Water declaration and NTC reports.
-
-Also, **ENTSO-E** will be added to the **supported publishers**, for across-europe data collection, integrated in the same local database.
-
-### Support for Linux
-Support for Linux-based systems is not foreseen at the moment, but feel free to submit a request if needed.
-
-----
-## Tests
-- ***ExSO*** is fairly tested for the envisaged usage, but since the project is not (at least yet) intended for collaborative development, tests are not published.
-
-- The design philosophy is not to catch all errors imagineable, but rather that basic users will stick to basic/documented usage, and that advanced users know what they're doing
-- From the user's perspective, the [Validation module](#data-validation) is available to assist in validating/trusting that the database accurately reflects the raw datalaek files. 
 ----
 ## Issues
 - Feel free to submit any issues [here](https://github.com/ThanosGkou/exso/issues) or via e-mail
 - Use of ***ExSO*** (update mode) with conda environments, was reported to present encoding issues during printing coloured text in the console, and despite otherwise being functional, the print statement after each report's success causes an encoding error. Try to use pip environments instead.
-
 
 
 ----
@@ -155,7 +140,7 @@ If ***ExSO*** assists you in making the "publicly available" data, actually valu
 #### BibTeX
 - @software{Natsikas_ExSO_Market_Exchange_2024,
 author = {Natsikas, Thanos},
-month = apr,
+month = dec,
 title = {{ExSO: Market Exchange and System Operation analytical framework}},
 url = {https://github.com/ThanosGkou/exso},
 version = {1.0.0},

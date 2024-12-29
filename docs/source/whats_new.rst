@@ -89,7 +89,7 @@ DataBase Node Manipulation
         #new
         node(start_date, end_date, tz='EET', truncate_tz=True)
 
-* :ref:`Plotting <node_plot_api>` enhancements
+* :ref:`Plotting <node_plot_api>` enhancements:
 
     * Line or area chart, input argument simplification
 ::
