@@ -67,6 +67,7 @@ The class for performing datalake/database updates.
 exso.Tree class
 ------------------
 The class for locating specific nodes from the database (and more).
+
 * Docs on what are :ref:`Locators and how to use them <node_locators>`
 
 ::
@@ -88,8 +89,8 @@ Allows for combining multiple nodes to a single node. Applies only for 'file'-ki
     # param *locators: a list|tuple of the node locators you want to combine (locator1, locator2, ..., locatorN). Locators must be of the kind 'file'
     # param with_name: the name of the new synthetic node.
     # param handle_synonymity: when combining nodes, it's possible to end up with naming conflicts (property1 of locator1 having the same name as propertyN of locatorM).
-        if 'auto', and if such conflict emerges, the returned node will have properties with suffixes (prop_locator1, prop_locatorN)
-        Else, you can provide a list of suffixes to be applied for each locator, which will only be applied if such conflict arises
+        # if 'auto', and if such conflict emerges, the returned node will have properties with suffixes (prop_locator1, prop_locatorN)
+        # Else, you can provide a list of suffixes to be applied for each locator, which will only be applied if such conflict arises
     # param resolution: How to handle nodes with different datetime resolutions. Not really suggested to put anything other than 'auto'
 
 .. figure:: figs/combine_nodes_viz.png
@@ -127,7 +128,6 @@ The main method to access nodes of the database through node-locators. Checkout 
 exso.Node class
 -----------------
 
-Node.__call__(), Node.plot(), Node.export()
 
 
 ::
@@ -161,9 +161,27 @@ All node methods used for retrieving/exporting/visualizing data use a common set
 
 These common arguments will be referred to as: **common_kwargs in the sections below
 
+:code:`Node.__call__()`
+------------------------
+
+* Calling a node will return its contents as a pd.DataFrame, or dict (of dicts) of pd.DataFrames depending on the node's :code:`.kind`, after applying the provided **kwargs.
+* Any call to a node does not incur changes to the underlying node's data, nor the database files.
+
+::
+    # return a file-node's data starting from 01-Jan-2025, in UTC
+    df = node(start_date = '2025-1-1)
+
+    # return a report's whole data for all available period, in EET
+    dict_of_dicts_of_dataframes = node(tz = 'EET')
+
+
+
+
+
 .. _node_plot_api:
-Node.plot()
------------------
+
+:code:`Node.plot()`
+--------------------
 ::
 
     node.plot(**common_kwargs,
@@ -201,8 +219,8 @@ Node.plot()
 
     The node.plot() method returns a plotly Figure object, which you can further transform on your own.
 
-Node.export()
------------------
+:code:`Node.export()`
+----------------------
 This method allows to export and transform data from the database to another location for further custom processing.
 It can be applied not only to files but to any kind of node (even to the whole database)
 ::
@@ -225,12 +243,15 @@ So, from now on, the term "kind" will have the meaning defined in this section
   * a (descriptive) string. Sometimes, names are automatically given from the raw files, while other times there are some alterations. Names are generally non-unique accross the tree, but unique within the children of one node.
 
 * .path
+
   * physical path in the disk (directory or file)
 
 * .dna
+
   * a concatenation of all the node's parents, dot-separated, and **case insensitive** (e.g. "root.henex.DaM_ReSuLtS")
 
 * .kind
+
   * In the ***exso*** database, nodes can be of one of the 6 following kinds:
     - "root" (parent of all nodes)
     - "publisher" (parent of all reports, published by that publisher)
@@ -269,6 +290,7 @@ In order to review the available reports or decide which ones fit your needs and
 Command Line API
 """"""""""""""""""
 In order to use exso through the command line:
+
 * Launch a terminal and activate the virtual environment where exso is installed
 * Use the Command-Line API options:
 
@@ -278,8 +300,8 @@ In order to use exso through the command line:
 >>> (venv) python -m exso update -rl "path/to/datalake" -rb "path/to/database" --which ISP1ISPResults
 
 - Default database and datalake locations are:
-    - datalake: Desktop\exso_data\datalake
-    - database: Desktop\exso_data\database
+    - datalake: Desktop/exso_data/datalake
+    - database: Desktop/exso_data/database
 
 Below lies the list with all options for the command-line api of exso, which is accessible through:
 
@@ -325,7 +347,7 @@ Below lies the list with all options for the command-line api of exso, which is 
 
 .. _xlsm_api:
 ExSO.xlsm API
-"""""""""""
+""""""""""""""
 
 As of version 1.0.0, you can use exso through an excel-based gui |xlsm|, for basic exso-functionality:
 

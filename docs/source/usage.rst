@@ -72,7 +72,7 @@ Database
 Nodes
 ------
 Every object of the database is handled by **exso** as a **Node** object. So, the whole database is a Node, but a column of a file of a field of a report of a publisher is also a Node!
-Nodes have some useful attributes that can be further invetigated in the python_api_, but two key concepts are the :code:`.kind` and :code:`.dna` attributes:
+Nodes have some useful attributes that can be further invetigated in the :ref:`python_api`, but two key concepts are the :code:`.kind` and :code:`.dna` attributes:
 
 * :code:`.kind`:
     * Can be: 'root', 'publisher', 'report', 'field', 'file', 'property'

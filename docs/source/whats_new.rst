@@ -25,7 +25,7 @@ API
 
 General Usage
 """""""""""""
-* Provision of the |xlsm| high-level api, which is an excel-based GUI to install and exso
+* Provision of the |xlsm| high-level api, which is an excel-based GUI to install and use exso
 * Reports Selection and Filtering:
     * More intuitive and powerful filtering
     * You can combine multiple filters to select which reports to include, which to exclude, from which publishers, and which groups, in an intersectional manner::
