@@ -132,16 +132,16 @@ If ***ExSO*** assists you in making the "publicly available" data, actually valu
 
 #### APA
 
-  - Natsikas, T. (2024). ExSO: Market Exchange and System Operation analytical framework (Version 1.0.0) [Computer software]. https://github.com/ThanosGkou/exso
+  - Natsikas, T. (2025). ExSO: Market Exchange and System Operation analytical framework (Version 1.0.0) [Computer software]. https://github.com/ThanosGkou/exso
 
 #### BibTeX
-- @software{Natsikas_ExSO_Market_Exchange_2024,
+- @software{Natsikas_ExSO_Market_Exchange_2025,
 author = {Natsikas, Thanos},
 month = dec,
 title = {{ExSO: Market Exchange and System Operation analytical framework}},
 url = {https://github.com/ThanosGkou/exso},
 version = {1.0.0},
-year = {2024}
+year = {2025}
 }
 
 

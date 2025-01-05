@@ -5,7 +5,7 @@ import sys
 # -- Project information
 
 project = 'ExSO'
-copyright = '2024, T. Natsikas'
+copyright = '2025, T. Natsikas'
 author = 'T. Natsikas'
 
 version = '1.0.0'
