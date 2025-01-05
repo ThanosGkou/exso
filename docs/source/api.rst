@@ -353,7 +353,7 @@ As of version 1.0.0, you can use exso through an excel-based gui |xlsm|, for bas
 
 * You can :ref:`Download and Install exso directly from ExSO.xlsm <install_with_xlsm>`
 * You can specify the reports to update in the "Reports Selection" Sheet.
-* Launch an update mode or query through buttons and option boxes
+* Launch an update or query through buttons and option boxes
 
 .. figure:: figs/exso_xlsm_2.png
    :scale: 50 %
