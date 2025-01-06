@@ -107,6 +107,37 @@ combo_node.export(to_path = "some/directory/or/filepath",
 
 
 ----
+## Roadmap
+
+**ExSO remains the only available high-quality, free and open-source data framework for the greek power market and system operation.**
+
+
+The first milestone, which will require a fair amount of refactoring is the June of 2025, when, the Market Time Unit for the SDAC countries will beecome 15-minute (from 1 hour currently)
+
+But, with relatively small effort - small relative to its impact -, exso can become much larger:
+- Incorporate all entsoe countries
+- Incorporate data for the greek natural gas system
+- Introduce a free /freemium online platform to serve the data, while still remaining open source
+
+
+----
+## Support ExSO
+You can support the project through a number of ways:
+1. Put a star on the [project's page](https://github.com/ThanosGkou/exso) on the top right corner! (You can sign-in even with a google account)
+2. Share and [cite](#citation) the project where and when applicable
+4. Become a [sponsor](https://github.com/sponsors/ThanosGkou) to acccelerate the [Roadmap](#roadmap), or to request custom features
+5. Issue reporting: It's always helpful to report any bugs and issues.
+6. Collaboration: ExSO could benefit from various collaborations, less or more technical:
+   - Documentation and project appearance
+   - Data Documentation
+   - Co-development of a publicly available data server
+   - Expand the Reporting/Analytic capabilities of ExSO
+   - Make the exso.DataBase a unique module (exsoDB)
+
+    Feel free to reach out for questions and requests!
+
+
+----
 ## License
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0)</a>

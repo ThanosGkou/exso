@@ -58,7 +58,7 @@ Important
     - Decimal point: '.'
 - If your system formats are different, declare it before starting using ExSO:
     - Through ExSO.xlsm (one click)
-    - Through the Command-Line or the exso API (see :ref:`usage` section)
+    - Through the Command-Line or the exso API (see :ref:`core_concepts` and :ref:`api` section)
 
 Migration to ExSo |version|
 ----------------------------

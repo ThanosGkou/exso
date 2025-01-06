@@ -1,21 +1,21 @@
-.. _usage:
-
-Usage
-=====
+.. _core_concepts:
+Core Concepts
+"""""""""""""""
 
 .. include:: substitutions.rst
 
-.. _core_functionalities:
-Core Functionalities
-"""""""""""""""""""""
-* Build a local database for the greek system (update mode)
+
+ExSO is a robust framework that aimed at enhancing data-transparency for the greek power market and system operation. The core functionalities include:
+
+* Capability to build and maintain a local (csv-based) database for the greek system ("update" mode)
 .. figure:: figs/database_Viz.png
    :scale: 50 %
 
-* Access, combine, transform, visualize, extract data from the database (query mode)
+* Access, combine, transform, visualize, extract data from the database ("query" mode)
 .. figure:: figs/plotly_viz.png
    :scale: 50 %
    :class: with-border
+
 
 There are three potentially complementary ways of using ExSO:
 
@@ -25,13 +25,7 @@ There are three potentially complementary ways of using ExSO:
 
 
 
-.. _core_concepts:
-Core Concepts
-"""""""""""""""
-
-Publisher
-----------
-* Publishers are the entities that publish the Reports. They may include AMIDE (IPTO), HEnEx, ENTSO-e, DESFA, etc.
+**This section summarizes the core concepts of exso, relevant for all three interaction apis**
 
 
 Report
@@ -40,6 +34,11 @@ Report
 * For each report type, report files are published on a corresponding frequency (daily, weekly, annually, ad-hoc)
 * Report Files may be excel or text files containing data for the specific report type, for a specific time period
     * In case of excel files, they may contain several Sheets.
+
+
+Publisher
+----------
+* Publishers are the entities that publish the Reports. They may include AMIDE (IPTO), HEnEx, ENTSO-e, DESFA, etc.
 
 Datalake
 ---------
