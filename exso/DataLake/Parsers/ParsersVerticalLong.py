@@ -31,6 +31,7 @@ class ArchetypeLong(Archetype):
         self.mode = "collapsed"
         self.drop_col_settings = {'error_action':'ignore', 'col_names':[""],
                                   'startswith':None}
+        self.side_indicator_col = None
 
     # *******  *******   *******   *******   *******   *******   *******
     def param_updater(self):
