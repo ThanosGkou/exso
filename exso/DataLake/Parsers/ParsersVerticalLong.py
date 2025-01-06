@@ -434,11 +434,18 @@ class IDM_XBID_Results(_UsualParams):
             df = self._swap_values_of_eigen_cols_where(df, where=self.swap_eigenvalues['where'], isin=self.swap_eigenvalues['isin'])
 
         df = self._make_eigen_col(df)
+        return df
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def split_cue_points(self, df):
+
         df = pd.pivot_table(df, index=self.index_cols, columns=self.eigen_cols, values=self.payload_cols)
 
         df =  df.reset_index(level=self.index_cols, drop=False).sort_index(axis = 1)
 
-        return df
+        return {self.field: df}
+
+    # *******  *******   *******   *******   *******   *******   *******
 
 ###############################################################################################
 ###############################################################################################
