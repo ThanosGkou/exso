@@ -1,4 +1,4 @@
-![image alt ><](/docs/source/figs/logos/museo_moderno.png)
+![image alt ><](/docs/source/figs/logos/geodetic.png)
 
 
 # ExSO
