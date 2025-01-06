@@ -382,3 +382,11 @@ As of version 1.0.0, you can use exso through an excel-based gui |xlsm|, for bas
 
 .. figure:: figs/exso_xlsm_2.png
    :scale: 50 %
+
+* ExSO.xlsm will only work for Python 3.13 !!
+    * If you don't have python 3.13 installed, hit the "Download Python" Button
+    * If you already have python 3.13 installed, just hit "Install ExSO"
+        * If you have a current installation of python 3.13, but forgot to hit the "Add Python to PATH" during installation, you will probably need to uninstall and re-install (or search how to add PYTHON to PATH online)
+    * By hitting "install ExSO", a new virtual environment will be created here:  "C:/Users/yourusername/AppData/Local/exso/venv3.13"
+    * If the exact virtual environment already exists, the process will fail. You will need to delete it manually and then relaunch.
+

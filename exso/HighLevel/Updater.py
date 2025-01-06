@@ -313,7 +313,7 @@ class Updater:
         r = Report.Report(self.rp, report_name, self.root_lake, self.root_base, api_allowed=self.allow_handshake)
 
         if self.refresh_requirements[report_name]:
-            r.database_path.with_stem('.bak').mkdir(exist_ok=True)
+            r.database_path.with_stem('.bak').mkdir(exist_ok=True, parents=True)
             move_old_db_to = r.database_path.parent / '.bak' / r.database_path.name
             if r.database_path.exists():
                 shutil.move(r.database_path, move_old_db_to)
