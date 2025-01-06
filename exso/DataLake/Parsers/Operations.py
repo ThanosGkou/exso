@@ -171,7 +171,7 @@ class Operations:
                     self.warnings["warning {}".format(self.wc)] = {'type':"PartialNaNColumns",
                                                                   'date':self.date,
                                                                   'msg':'Tried to drop columns based on if they startwith "{}". '
-                                                                        '\But df contained some ({} out of {}) nan column-names. Ignored them, and applied to the rest.'.format(startswith, n_nan_cols, df.shape[1])}
+                                                                        '\nBut df contained some ({} out of {}) nan column-names. Ignored them, and applied to the rest.'.format(startswith, n_nan_cols, df.shape[1])}
                     self.wc += 1
                     cols_to_apply_to = non_nan_cols
 
@@ -284,7 +284,7 @@ class Operations:
             if end_locator.empty: # this shouldn't happen. I am returning the last index anyway
                 self.warnings["warning {}".format(self.wc)] = {'type':'QueNotFound',
                                                   'date':self.date,
-                                                  'msg':"End-locator given was: None, but no NaNs were be found in indicator array: {}\--> Returned the last index as end_index".format(df['indicator'].values)}
+                                                  'msg':"End-locator given was: None, but no NaNs were be found in indicator array: {}\n--> Returned the last index as end_index".format(df['indicator'].values)}
                 self.wc += 1
                 id_end = df.index[-1]
 

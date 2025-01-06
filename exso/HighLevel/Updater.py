@@ -264,6 +264,13 @@ class Updater:
             for k,v in summary.items():
                 print('\t{}: {}'.format(k, v))
 
+        print('\n\n\n')
+        print(hag.make_box('Thanks for using exso!'))
+        print('\nYou can support the project through a number of ways:'
+              '\n\t1. Visit the github page (https://github.com/ThanosGkou/exso) and put a star to the project (on the top right corner). You can sign-in even with a google account.'
+              '\n\t2. Share the project with your colleagues'
+              '\n\t3. Cite the project when it contributes to your work'
+              '\n\t4. Become a sponsor: https://github.com/sponsors/ThanosGkou')
 
     # *******  *******   *******   *******   *******   *******   *******
     def update_fulfilled_refreshes(self):
@@ -310,7 +317,7 @@ class Updater:
             self.logger.info("Refresh requirement = True. Moved existing database to : {}".format(move_old_db_to))
             print('\tIt seems like you upgraded to a newer exso version, which brought some changes to the specific report ({}).'
                   ' \n\tThis report\'s data(base), just for this time, will be fully rebuilt instead of just updated.\n'
-                  'The old database of this report is stored here: {} in case you want to keep it'.format(report_name, move_old_db_to))
+                  '\t\tThe old database of this report is stored here: {} in case you want to keep it'.format(report_name, move_old_db_to))
             # shutil.rmtree(r.database_path, ignore_errors=True)
 
         # print(f'Instantiating lake')

@@ -96,6 +96,31 @@ Allows for combining multiple nodes to a single node. Applies only for 'file'-ki
 .. figure:: figs/combine_nodes_viz.png
    :scale: 50 %
 
+::
+
+    # example for combining MCPs across all markets historically
+    t = exso.Tree(root_base)
+
+    # Since all properties are named "MCP", we provide a custom list to handle this synonymity
+    mcps = t.combine(('dam_results.results.results.mcp',
+                      'idm_lida1_results.results.results.mcp',
+                      'idm_lida2_results.results.results.mcp',
+                      'idm_lida3_results.results.results.mcp',
+                      'idm_crida1_results.results.results.mcp',
+                      'idm_crida2_results.results.results.mcp',
+                      'idm_crida3_results.results.results.mcp',
+                      'idm_ida1_results.results.results.mcp',
+                      'idm_ida2_results.results.results.mcp',
+                      'idm_ida3_results.results.results.mcp',
+                      ),
+                     with_name="MCP",
+                     handle_synonymity=['_DAM', '_LIDA1', '_LIDA2', '_LIDA3',
+                                        '_CRIDA1', '_CRIDA2', '_CRIDA3',
+                                        '_IDA1','_IDA2', '_IDA3'])
+    mcps.plot(tz = 'EET', kind=  'line', ylabel='(e)/MWh', title="MCP Across Markets",)
+
+.. figure:: figs/combine_nodes_viz_mcp.png
+   :scale: 50 %
 
 Tree.visualize
 ---------------

@@ -179,6 +179,7 @@ class Validation(Updater):
 
     '''
     def __init__(self, report_name:str, dates:str|list, root_lake:str|Path, fields:str|list|None = None, reports_pool = None):
+        raise NotImplementedError("\n\n\nThe Validation Module is not available in this release, but will be available in the next release.")
         self.logger = logging.getLogger(__name__ + '.' + self.__class__.__name__)
 
         if not reports_pool:
