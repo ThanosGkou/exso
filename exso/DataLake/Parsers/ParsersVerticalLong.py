@@ -54,8 +54,6 @@ class ArchetypeLong(Archetype):
 
         df = self._make_eigen_col(df)
 
-        df = pd.pivot_table(df, index=self.index_cols, columns=self.eigen_cols, values=self.payload_cols)
-        df = self._clean_pivot(df)
         return df
 
     # *******  *******   *******   *******   *******   *******   *******
@@ -93,6 +91,7 @@ class ArchetypeLong(Archetype):
         df = self._handle_extreme_stupidity(df)
 
         return df
+
     # *******  *******   *******   *******   *******   *******   *******
     def _handle_extreme_stupidity(self, df):
 
@@ -148,9 +147,13 @@ class ArchetypeLong(Archetype):
                 sys.exit()
 
         return df
+
     # *******  *******   *******   *******   *******   *******   *******
     def split_cue_points(self, df):
+        df = pd.pivot_table(df, index=self.index_cols, columns=self.eigen_cols, values=self.payload_cols)
+        df = self._clean_pivot(df)
         return {self.field: df}
+
 
     # *******  *******   *******   *******   *******   *******   *******
     def rolling_post_proc(self, subfields_dfs):
