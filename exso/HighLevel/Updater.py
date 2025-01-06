@@ -1,3 +1,4 @@
+import ast
 import datetime
 import json
 import logging
@@ -121,6 +122,7 @@ class Updater:
     def read_textfile(filepath):
         with open(filepath, 'r') as f:
             return json.loads(f.read())
+
     # *******  *******   *******   *******   *******   *******   *******
     def read_refresh_requirements(self):
 
@@ -129,7 +131,7 @@ class Updater:
 
         reqs = self.read_textfile(self.refresh_requirements_file)
 
-        reqs['already_done'] = eval(reqs['already_done'])
+        reqs['already_done'] = ast.literal_eval(reqs['already_done'])
 
         all_reports = self.rp.get_available()['report_name'].values
         requirements = {report_name: False for report_name in all_reports}
