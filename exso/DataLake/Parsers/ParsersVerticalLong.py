@@ -428,7 +428,7 @@ class IDM_XBID_Results(_UsualParams):
     # *******  *******   *******   *******   *******   *******   *******
     def pre_proc(self, df):
 
-        df.columns = df.columns.str.replace('\s', '', regex = True)
+        df.columns = df.columns.str.replace(r'\s', '', regex = True)
         df.columns = df.columns.str.replace('/', '_', regex = True)
         if self.swap_eigenvalues:
             df = self._swap_values_of_eigen_cols_where(df, where=self.swap_eigenvalues['where'], isin=self.swap_eigenvalues['isin'])
