@@ -296,7 +296,16 @@ class ArchetypeLong(Archetype):
         return new_dfs
 
     # *******  *******   *******   *******   *******   *******   *******
+
     # *******  *******   *******   *******   *******   *******   *******
+
+class _UsualParams(ArchetypeLong):
+    def param_updater(self):
+        self.side_indicator_col = 'SIDE_DESCR'
+        self.swap_eigenvalues = {'where': 'CLASSIFICATION', 'isin': ['Imports', 'Exports']}
+        self.replacer_mapping = {'Import': 'Imports', 'Export': 'Exports'}
+        # self.drop_cols_settings.update({'startswith': "Unnamed",'col_names':[""]})
+
 
 ###############################################################################################
 ###############################################################################################
@@ -343,7 +352,7 @@ class IDM_IDA3_Results(DAM_Results):
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
-class IDM_XBID_Results(DAM_Results):
+class IDM_XBID_Results(_UsualParams):
 
     def param_updater(self):
         super().param_updater() # required because inherinting from DAM Results, not Archetype directly
@@ -371,17 +380,18 @@ class IDM_XBID_Results(DAM_Results):
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
-class DAM_PhysicalDeliveriesOfftakes(DAM_Results):
+class DAM_PhysicalDeliveriesOfftakes(_UsualParams):
     def param_updater(self):
         super().param_updater() # required because inherinting from DAM Results, not Archetype directly
         self.index_cols = ['SORT', 'DELIVERY_MTU']
         self.payload_cols = ['TOTAL_ORDERS']
 
+    # *******  *******   *******   *******   *******   *******   *******
 
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
-class DAM_BlockOrders(DAM_Results):
+class DAM_BlockOrders(_UsualParams):
     def param_updater(self):
         super().param_updater() # required because inherinting from DAM Results, not Archetype directly
         self.index_cols = ['SORT', 'DELIVERY_MTU']
@@ -390,12 +400,14 @@ class DAM_BlockOrders(DAM_Results):
         self.payload_cols = ['TOTAL_ORDERS', 'TOTAL_QUANTITY','MATCHED_ORDERS', 'MATCHED_QUANTITY']
         self.mode = 'expanded'
         self.drop_col_settings = {'startswith': "Unnamed",'col_names':["", np.nan]}
+    # *******  *******   *******   *******   *******   *******   *******
 
 
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
 class DAM_GasVTP(ArchetypeLong):
+    # *******  *******   *******   *******   *******   *******   *******
     def param_updater(self):
         self.index_cols = ['Trading Date']
         self.index_cols_to_keep = []
@@ -404,6 +416,7 @@ class DAM_GasVTP(ArchetypeLong):
                              'Number of Orders', 'Number of Trades', 'Traded Quanity (No of Contracts)', 'Traded Volume (MWh)', 'VWAP',
                              'Traded Volume Pre Agreed (MWh)', 'VWAP MWh Pre Agreed', 'HGSIDA', 'HGSIWD', 'HGMBI', 'HGMSI']
         self.mode = "expanded"
+
     # *******  *******   *******   *******   *******   *******   *******
     def pre_proc(self, df: pd.DataFrame) -> pd.DataFrame:
 
@@ -587,19 +600,18 @@ class ISPCapacityOffers(ISPEnergyOffers):
         return fields_dfs
 
     # *******  *******   *******   *******   *******   *******   *******
-    pass
+
 
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
 
-class DAM_MarketCoupling(DAM_Results):
-    #todo: make the DAM_Results operations more generic, so as to be usable also for aMarket COupling
+class DAM_MarketCoupling(_UsualParams):
     def param_updater(self):
         super().param_updater() # required because inherinting from DAM Results, not Archetype directly
         self.mode = 'collapsed'
         self.drop_col_settings.update({'col_names':['CBS_FLOW', '']})
-    # *******  *******   *******   *******   *******   *******   *******
+
     # *******  *******   *******   *******   *******   *******   *******
     def pre_proc(self, df):
 
