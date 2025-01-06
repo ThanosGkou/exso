@@ -463,7 +463,7 @@ class DAM_PhysicalDeliveriesOfftakes(_UsualParams):
 ###############################################################################################
 class DAM_BlockOrders(_UsualParams):
     def param_updater(self):
-        super().param_updater() # required because inherinting from DAM Results, not Archetype directly
+        super().param_updater() # required because inheriting from DAM Results, not Archetype directly
         self.index_cols = ['SORT', 'DELIVERY_MTU']
         self.index_cols_to_keep = []
         self.eigen_cols = ['SIDE_DESCR', 'CLASSIFICATION']
