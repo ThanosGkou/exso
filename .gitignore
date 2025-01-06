@@ -7,3 +7,4 @@ main.py
 logs/
 tree.txt
 .idea/
+.pypirc
