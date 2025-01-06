@@ -315,12 +315,12 @@ class Updater:
         if self.refresh_requirements[report_name]:
             r.database_path.with_stem('.bak').mkdir(exist_ok=True)
             move_old_db_to = r.database_path.parent / '.bak' / r.database_path.name
-            shutil.move(r.database_path, move_old_db_to)
-            self.logger.info("Refresh requirement = True. Moved existing database to : {}".format(move_old_db_to))
-            print('\tIt seems like you upgraded to a newer exso version, which brought some changes to the specific report ({}).'
-                  ' \n\tThis report\'s data(base), just for this time, will be fully rebuilt instead of just updated.\n'
-                  '\t\tThe old database of this report is stored here: {} in case you want to keep it'.format(report_name, move_old_db_to))
-            # shutil.rmtree(r.database_path, ignore_errors=True)
+            if r.database_path.exists():
+                shutil.move(r.database_path, move_old_db_to)
+                self.logger.info("Refresh requirement = True. Moved existing database to : {}".format(move_old_db_to))
+                print('\tIt seems like you upgraded to a newer exso version, which brought some changes to the specific report ({}).'
+                      ' \n\tThis report\'s data(base), just for this time, will be fully rebuilt instead of just updated.\n'
+                      '\t\tThe old database of this report is stored here: {} in case you want to keep it'.format(report_name, move_old_db_to))
 
         # print(f'Instantiating lake')
         lake = DataLake.DataLake(r, use_lake_version=use_lake_version, retroactive_update = retroactive_update)
