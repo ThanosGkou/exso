@@ -374,7 +374,7 @@ Below lies the list with all options for the command-line api of exso, which is 
 ExSO.xlsm API
 """"""""""""""
 
-As of version 1.0.0, you can use exso through an excel-based gui |xlsm|, for basic exso-functionality:
+As of version 1.0.1, you can use exso through an excel-based gui |xlsm|, for basic exso-functionality:
 
 * You can :ref:`Download and Install exso directly from ExSO.xlsm <install_with_xlsm>`
 * You can specify the reports to update in the "Reports Selection" Sheet.
