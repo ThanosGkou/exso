@@ -310,17 +310,80 @@ class _UsualParams(ArchetypeLong):
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
-class DAM_Results(ArchetypeLong):
-    # *******  *******   *******   *******   *******   *******   *******
-    def param_updater(self):
-        self.index_cols = ['SORT', 'DELIVERY_MTU', 'MCP']
-        self.index_cols_to_keep = ['MCP']
-        self.eigen_cols = ['ASSET_DESCR', 'CLASSIFICATION']
-        self.payload_cols = ['TOTAL_TRADES']
+class DAM_Results(_UsualParams):
 
-        self.swap_eigenvalues = {'where':'CLASSIFICATION', 'isin':['Imports', 'Exports']}
-        self.replacer_mapping = {'Import':'Imports', 'Export':'Exports'}
-        # self.drop_cols_settings.update({'startswith': "Unnamed",'col_names':[""]})
+    def split_cue_points(self, df):
+
+        side_col = self.side_indicator_col
+        unique_sides = df[side_col].sort_values().unique()
+
+        assert unique_sides[0].lower() == 'buy'
+        assert unique_sides[1].lower() == 'sell'
+
+        dfs = {}
+        for side in unique_sides:
+            dfside = df[df[self.side_indicator_col] == side]
+            dfside = pd.pivot_table(dfside, index=self.index_cols, columns=self.eigen_cols, values=self.payload_cols)
+            dfside = self._clean_pivot(dfside)
+            dfs[side] = dfside
+        return dfs
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def rolling_post_proc(self, subfields_dfs):
+        subfields_dfs = super().rolling_post_proc(subfields_dfs)
+        gen_columns = ['RES', 'Lignite', 'Natural Gas', 'Big Hydro',
+                       'CRETE CONVENTIONAL', 'CRETE RENEWABLES']
+        load_columns = ['HV', 'MV', 'LV', 'LOSSES', 'PUMP', 'CRETE LOAD']
+        demand_columns = [_ for _ in load_columns if _ != 'PUMP']
+        netdf = pd.DataFrame()
+        _sell = subfields_dfs['Sell'].copy()
+        _buy = subfields_dfs['Buy'].copy()
+        for asset in gen_columns:
+
+            if asset in _sell.columns and asset in _buy.columns:
+                netdf[asset] = _sell[asset] - _buy[asset]
+
+            elif asset in _sell.columns:
+                netdf[asset] = _sell[asset]
+
+            elif asset in _buy.columns:
+                netdf[asset] = -_buy[asset]
+
+        for asset in load_columns:
+
+            if asset in _sell.columns and asset in _buy.columns:
+                netdf[asset] = _buy[asset] - _sell[asset]
+
+            elif asset in _buy.columns:
+                netdf[asset] = _buy[asset]
+
+            elif asset in _sell.columns:
+                netdf[asset] = -_sell[asset]
+
+
+
+        importing_cols = _sell.columns[_sell.columns.str.endswith('-GR')]
+        imports = _sell[importing_cols]
+        imports.columns = list(map(lambda col: "-".join(col.split('-')[::-1]), imports.columns))
+        imports *= -1
+
+        exporting_cols = _buy.columns[_buy.columns.str.startswith('GR')]
+
+        net_exchanges = _buy[exporting_cols] + imports
+
+        netdf = pd.concat([netdf, net_exchanges], axis = 1)
+
+        netdf['Demand'] = netdf[netdf.columns[netdf.columns.isin(demand_columns)]].sum(axis = 1)
+        netdf['Generation'] = netdf[netdf.columns[netdf.columns.isin(gen_columns)]].sum(axis = 1)
+        netdf['NetMarketSchedule'] = net_exchanges.sum(axis = 1)
+
+
+
+
+        subfields_dfs['Net'] = netdf.copy()
+
+
+        return subfields_dfs
 
 ###############################################################################################
 class IDM_LIDA1_Results(DAM_Results):
