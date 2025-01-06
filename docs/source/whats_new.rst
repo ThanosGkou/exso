@@ -2,19 +2,23 @@
 .. include:: substitutions.rst
 
 What's New
-=====
+===========
 
 
 
 Python
-******
+*******
 - Support for Python >=3.10 (including 3.13.0)
 
 
 Reports
-******
-- IPTO: ISP Results and ISP Unit Availabilities upgrade
-- HEnEx: Support for Intraday IDA Reports
+********
+
+* IPTO: ISP Results, ISP Unit Availabilities upgrade
+* HEnEx:
+    * Support for Intraday IDA Reports
+    * Bug fix in XXX_Results (DAM, LIDA, CRIDA) when both Buy & Sell orders present from Renewables
+
 
 Documentation
 *************
