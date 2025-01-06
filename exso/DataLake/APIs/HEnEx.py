@@ -56,8 +56,9 @@ class API(Assistant):
         candidate_links = self.get_links(report_name, start_date, end_date) #
 
         candidate_filenames = list(map(lambda x: Path(x).name, candidate_links))
-        valid_indices = self.get_non_trivial_mask(candidate_filenames=candidate_filenames)
+        valid_indices, trivial_indices = self.get_non_trivial_mask(candidate_filenames=candidate_filenames)
         links = self.get_indexed_slice(valid_indices, candidate_links)
+        trivial_links = self.get_indexed_slice(trivial_indices, candidate_links)
         #new
         if dry_run:
             self.save_dir = self.save_dir / '.temp'
@@ -65,16 +66,23 @@ class API(Assistant):
             # self.save_dir = os.path.join(self.save_dir, '.temp')
 
         filepaths, filenames, dates = self.extract_filepaths_filenames_dates(links)
+        triv_filepaths, triv_filenames, triv_dates = self.extract_filepaths_filenames_dates(trivial_links)
 
         print("\n\tDownloading from Henex API")
+        self.logger.info("Sending links to the .download() function. First 5 links: {}".format(links[:5]))
+
         validation = self.download(links, filepaths, n_threads)
         valid_indices = [i for i, valid in enumerate(validation) if valid]
         links, filepaths, filenames, dates = self.get_indexed_slice(valid_indices, links, filepaths, filenames, dates)
 
-        self.filenames = filenames
-        self.filepaths = filepaths
-        self.link_dates = dates
-        self.n_links = len(dates)
+        # print(filenames, triv_filenames)
+        # print(filepaths, triv_filepaths)
+        # print(dates, triv_dates)
+
+        self.filenames = triv_filenames + filenames
+        self.filepaths = triv_filepaths + filepaths
+        self.link_dates = triv_dates + dates
+        self.n_links = len(dates + triv_dates)
 
         if dry_run:
             shutil.rmtree(self.save_dir)
@@ -189,7 +197,7 @@ class Scrapers(Assistant):
             return
 
 
-        valid_indices = self.get_non_trivial_mask(filenames)  # ignore if already in lake
+        valid_indices, trivial_indices = self.get_non_trivial_mask(filenames)  # ignore if already in lake
         links, dates, filenames = self.get_indexed_slice(valid_indices, links, dates, filenames)
         filepaths = list(map(lambda x: os.path.join(self.save_dir, x), filenames))
         self.filenames = filenames

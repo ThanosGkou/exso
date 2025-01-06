@@ -158,8 +158,10 @@ class Assistant:
 
         cached_filenames = os.listdir(self.save_dir)
         dnld_indices = [i for i, fn in enumerate(candidate_filenames) if fn not in cached_filenames]
+        trivial_indices = [i for i,fn in enumerate(candidate_filenames) if fn in cached_filenames]
+        self.logger.info("Derived {} NON-trivial links out of {} links provided".format(len(dnld_indices), len(candidate_filenames)))
 
-        return dnld_indices
+        return dnld_indices, trivial_indices
 
     # *******  *******   *******   *******   *******   *******   *******
     def get_indexed_slice(self, slicer, *lists, return_as_type_list = True):

@@ -50,7 +50,7 @@ class API(Assistant):
         self.logger.info("Got {} candidate links".format(len(candidate_links)))
 
         candidate_filenames = list(map(lambda x: Path(x).name, candidate_links))
-        valid_indices = self.get_non_trivial_mask(candidate_filenames=candidate_filenames)
+        valid_indices, trivial_indices = self.get_non_trivial_mask(candidate_filenames=candidate_filenames)
         links = self.get_indexed_slice(valid_indices, candidate_links)
 
         self.logger.info("Non-trivial links (links that their corresponding filepaths does not exist in directory: {}) : {}".format(self.save_dir, len(links)))
