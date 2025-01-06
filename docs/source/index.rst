@@ -13,7 +13,7 @@ how to :ref:`install <installation>`  the project.
 .. note::
 
    This project documentation has recently changed, from a simple README, to a dedicated documentation page, which, although complete, may leave some questions unanswered, especially to newcomers.
-    In such a case, feel free to consult with the :ref:`Old readme file <README_v0.0.md>`
+    In such a case, feel free to consult with the :ref:`Old readme file <https://github.com/ThanosGkou/exso/blob/main/README_v0.0.0.md>`
 
 
 Contents

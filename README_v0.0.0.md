@@ -1,3 +1,6 @@
+# Note
+This is the README file of exso-0.0.0, included only to assist in cases, and for as long, the new [documentation](https://exso.readthedocs.io/en/latest/) is on the laconic side.
+
 # ExSO
 An analytical framework for the Greek Power&Gas System Operation ("SO") and Market Exchange ("Ex") Data.
 
