@@ -58,7 +58,7 @@ Checkout [new features](https://exso.readthedocs.io/en/latest/whats_new.html) an
 
 For more info on installation and usage, please review the [ExSO Official Documentation](https://exso.readthedocs.io/en/latest/)
 
-Installation can be now done semi-automatically through the [Excel-based GUI](https://github.com/ThanosGkou/exso/ExSO.xlsm)
+Installation can be now done semi-automatically through the [Excel-based GUI](https://github.com/ThanosGkou/exso/tree/main/ExSO.xlsm)
 
 ```sh
 # install exso
