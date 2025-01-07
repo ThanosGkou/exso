@@ -1,0 +1,412 @@
+Function config() As Collection
+
+    Dim config_dict As New Collection
+    Dim item As Variant
+    Dim key As String
+    
+    Dim ref_config As Range
+    Set ref_config = Range("C3")
+    
+    key = "pythonExe"
+    item = ref_config.Value
+    config_dict.Add item, key
+        
+    key = "root_lake"
+    lake_dir = Range("C4").Value
+    item = lake_dir
+    config_dict.Add item, key
+    
+    key = "root_base"
+    base_dir = Range("C5").Value
+    item = base_dir
+    config_dict.Add item, key
+    
+    Set config = config_dict
+    
+    
+End Function
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Sub AskConfirmation()
+    answer = VBA.MsgBox("Are you sure?", vbQuestion + vbOKCancel)
+    
+    If answer = vbCancel Then
+        End
+    End If
+        
+End Sub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Public Sub FolderPicker(destination)
+    Dim get_path As String
+    With Application.FileDialog(msoFileDialogFolderPicker)
+        
+        If .Show <> 0 Then
+            get_path = .SelectedItems(1)
+        End If
+    
+        get_path = Chr(34) & get_path & Chr(34)
+        destination.Value = get_path
+    
+    End With
+    
+End Sub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Public Sub FilePicker(destination)
+    Dim get_path As String
+    With Application.FileDialog(msoFileDialogFilePicker)
+        
+        If .Show <> 0 Then
+            get_path = .SelectedItems(1)
+        End If
+    
+        get_path = Chr(34) & get_path & Chr(34)
+        destination.Value = get_path
+    
+    End With
+    
+End Sub
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Private Sub browse_database_Click()
+        
+    Dim destination As Range
+    Set destination = Range("C5")
+    Call FolderPicker(destination)
+
+End Sub
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Private Sub browse_datalake_Click()
+        
+    Dim destination As Range
+    Set destination = Range("C4")
+    Call FolderPicker(destination)
+
+End Sub
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Private Sub browse_file_locator_Click()
+    Dim destination As Range
+    Set destination = Range("K4")
+    If file_or_folder.Value = "file" Then
+    
+        Call FilePicker(destination)
+    Else
+        Call FolderPicker(destination)
+    End If
+    
+
+End Sub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Private Sub browse_python_exe_Click()
+    
+    Dim destination As Range
+    Set destination = Range("C3")
+    Call FilePicker(destination)
+    
+End Sub
+
+
+
+
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+Private Sub download_and_launch_python_Click()
+    Dim FileUrl As String
+     Dim objXmlHttpReq As Object
+     Dim objStream As Object
+        
+    python_version = "3.13.0"
+    'python_version = "3.11.0"
+    VBA.MsgBox ("Downloading Python " & python_version)
+    
+    'FileUrl = "https://www.python.org/ftp/python/3.11.0/python-3.11.0-amd64.exe"
+    FileUrl = "https://www.python.org/ftp/python/3.13.0/python-3.13.0-amd64.exe"
+    dnld_path = Environ$("USERPROFILE") & "\Downloads" & "\python-" & python_version & "-amd64.exe"
+     strFileExists = Dir(dnld_path)
+     
+     If strFileExists = "" Then
+     
+         
+         Set objXmlHttpReq = CreateObject("Microsoft.XMLHTTP")
+         objXmlHttpReq.Open "GET", FileUrl, False, "username", "password"
+         objXmlHttpReq.Send
+        
+         
+         If objXmlHttpReq.Status = 200 Then
+              Set objStream = CreateObject("ADODB.Stream")
+              objStream.Open
+              
+              objStream.Type = 1
+              objStream.Write objXmlHttpReq.responseBody
+              objStream.SaveToFile dnld_path
+              objStream.Close
+         End If
+         VBA.MsgBox ("Python " & python_version & " downloaded successfully. ")
+     End If
+     
+    VBA.MsgBox ("Launching Python Installer. Hit the 'Add Python to PATH' option when installing")
+    
+    Dim objShell As Object
+    Set objShell = VBA.CreateObject("Wscript.Shell")
+    objShell.Run dnld_path
+     
+End Sub
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+Private Sub install_exso_Click()
+
+    user_dir = Environ$("USERPROFILE")
+    
+  
+    python_version = "3.13"
+    'python_version = "3.11.0"
+    venv_dir = user_dir & "\AppData\Local\exso\venv" & python_version
+    'venv_dir = user_dir & "\Desktop\exso\venv" & python_version
+    python_exe = venv_dir & "\Scripts\python.exe"
+    VBA.MsgBox ("Installing exso to a new virtual environment: " & venv_dir & " It is considered a fact that Python 3.13 is already installed")
+    
+    Range("C3").Value = """" & python_exe & """"
+    
+    'activation_script_path = venv_dir & "\Scripts\activate.bat"
+    Dim objShell As Object
+    Set objShell = VBA.CreateObject("Wscript.Shell")
+    
+    Shell "cmd.exe /K " & "py -" & python_version & " -m venv " & venv_dir & " && " & python_exe & " -m pip install exso" & " && " & " echo ExSo installed successfully"
+    'Shell "cmd.exe /K " & "py -3.11 -m venv " & venv_dir & " && " & python_exe & " -m pip install exso" & " && " & " echo ExSo installed successfully"
+    
+    Range("C4").Value = """" & user_dir & "\Desktop\exso_data\datalake" & """"
+    Range("C5").Value = """" & user_dir & "\Desktop\exso_data\database" & """"
+
+    
+End Sub
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Private Sub save_query_as_Click()
+    Dim destination As Range
+    Set destination = Range("K8")
+    Call FolderPicker(destination)
+    
+
+End Sub
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Sub CheckFileExists(str_filepath)
+
+'Dim str_filepath As String
+Dim strFileExists As String
+
+    'strFileName = "C:\Users\Nikola\Desktop\VBA articles\Test File Exists.xlsx"
+    strFileExists = Dir(strFileName)
+
+   If strFileExists = "" Then
+        CheckFileExists = False
+        'MsgBox "The selected file doesn't exist"
+    Else
+        CheckFileExists = False
+        'MsgBox "The selected file exists"
+    End If
+
+End Sub
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Private Sub run_updater_Click()
+    Debug.Print ("new run" & Chr(10))
+    Call pre_run
+    Call AskConfirmation
+    
+    Dim objShell As Object
+    Set objShell = VBA.CreateObject("Wscript.Shell")
+     
+    run_mode = "update"
+    command_text = config.item("pythonExe") & " " _
+                 & "-m exso" & " " _
+                 & run_mode & " " _
+                 & "-rl " & config.item("root_lake") & " " _
+                 & "-rb " & config.item("root_base")
+    
+    If which_list.Value = "all" Then
+        placeholder = 999
+    Else
+        which = get_reports_selection()
+        
+        command_text = command_text & " --which " & which
+    End If
+    
+    VBA.MsgBox (which)
+    
+    If groups_list.Value = "" Then
+        placeholder = 999
+    Else
+        command_text = command_text & " --groups " & groups_list.Value
+    End If
+    objShell.Run command_text
+    Range("J15").Value = command_text
+End Sub
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Function get_reports_selection()
+
+    which = ""
+    For i = 1 To 62
+        
+        report = Worksheets(3).Range("A" & i).Value
+        update_flag = Worksheets(3).Range("D" & i).Value
+        
+        If update_flag = True Then
+            which = which & report & " "
+        End If
+        
+        Next
+    
+    
+    get_reports_selection = which
+    
+    
+End Function
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Private Sub run_query_Click()
+    Debug.Print ("new run" & Chr(10))
+    Call pre_run
+    Call AskConfirmation
+    
+    Dim objShell As Object
+    Set objShell = VBA.CreateObject("Wscript.Shell")
+     
+    run_mode = "query"
+    locator = Range("K4").Value
+    From = Range("K5").Value
+    till = Range("K6").Value
+    tz = Range("K7").Value
+    save_as = Range("K8").Value
+    extract_ = extract_flag.Value
+    plot_ = plot_flag.Value
+    stacked_ = stacked_flag.Value
+    
+    
+    command_text = config.item("pythonExe") & " " _
+                 & "-m exso" & " " _
+                 & run_mode & " " _
+                 & "-rb " & config.item("root_base") & " " _
+                 & "-loc " & locator
+                 
+    If From <> "" Then
+        command_text = command_text & " -from " & From
+    End If
+    
+    If till <> "" Then
+        command_text = command_text & " -until " & till
+    End If
+    
+    If tz <> "" Then
+        command_text = command_text & " -tz " & tz
+    End If
+    
+    If save_as <> "" Then
+        command_text = command_text & " -output_dir " & save_as
+    End If
+    
+    If extract_ = True Then
+        command_text = command_text & " -extract"
+    End If
+    
+    If plot_ = True Then
+        command_text = command_text & " -plot"
+    End If
+    
+    If stacked_ = True Then
+        command_text = command_text & " -stacked"
+    End If
+    
+    
+    Range("J15").Value = command_text
+    objShell.Run command_text
+    
+End Sub
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Private Sub pre_run()
+    'FilePath = ThisWorkbook.FullName
+    'total_workbooks = Application.Workbooks.Count
+    Application.DisplayAlerts = False
+    Workbooks(ThisWorkbook.Name).Save
+    Application.DisplayAlerts = True
+
+End Sub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Public Function change_last_path_component(orig_path, new_name)
+
+    components = Split(orig_path, "\")
+    max_depth = UBound(components)
+    parent_dir = ""
+    For i = 0 To max_depth - 1
+        parent_dir = parent_dir & components(i) & "\"
+        Next
+    parent_dir = parent_dir & new_name
+    parent_dir = parent_dir & """"
+           
+    change_last_path_component = parent_dir
+    
+End Function
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+
+
+Private Sub set_system_formats_Click()
+
+    Debug.Print ("new run" & Chr(10))
+    Call pre_run
+    Call AskConfirmation
+    
+    Dim objShell As Object
+    Set objShell = VBA.CreateObject("Wscript.Shell")
+     
+    run_mode = "set_system_formats"
+    command_text = config.item("pythonExe") & " " _
+                 & "-m exso" & " " _
+                 & run_mode & " " _
+                 & "--list_sep " & list_sep_choice.Value & " " _
+                 & "--decimal_sep " & decimal_sep_choice.Value
+    
+    
+    objShell.Run command_text
+    
+
+End Sub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+
+
+
+
+
+Private Sub stacked_flag_Click()
+
+End Sub
