@@ -316,6 +316,11 @@ class Updater:
             r.database_path.with_stem('.bak').mkdir(exist_ok=True, parents=True)
             move_old_db_to = r.database_path.parent / '.bak' / r.database_path.name
             if r.database_path.exists():
+                i = 1
+                while move_old_db_to.exists():
+                    move_old_db_to = move_old_db_to.with_suffix(f'.{i}')
+                    i += 1
+
                 shutil.move(r.database_path, move_old_db_to)
                 self.logger.info("Refresh requirement = True. Moved existing database to : {}".format(move_old_db_to))
                 print('\tIt seems like you upgraded to a newer exso version, which brought some changes to the specific report ({}).'
