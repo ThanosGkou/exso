@@ -1,6 +1,9 @@
 import sys, os
 import argparse
 import traceback
+
+import haggis.string_util
+
 import exso
 from pathlib import Path
 
@@ -148,7 +151,15 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-        input('\n\nSuccessful.')
+        print()
+        print('\n\nSuccessful.')
+        print(haggis.string_util.make_box('Thanks for using exso!', vertical_padding=2, horizontal_padding=3))
+        print('\nYou can support the project through a number of ways:'
+              '\n\t1. Visit the github page (https://github.com/ThanosGkou/exso) and put a star to the project (on the top right corner). You can sign-in even with a google account.'
+              '\n\t2. Share the project with your colleagues'
+              '\n\t3. Cite the project when it contributes to your work'
+              '\n\t4. Become a sponsor: https://github.com/sponsors/ThanosGkou')
+        input('\nHit any key to continue...')
     except SystemExit as ex: # --help mode
         pass
     except:
