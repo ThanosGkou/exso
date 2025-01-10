@@ -204,6 +204,7 @@ class TreeConstructors:
         ''' By default ignores any file that is not a csv.
             But also ignores the start-pattern specified in the __init__'''
         for path in root.path.iterdir():
+
             if any(list(map(lambda x: path.name.startswith(x), self.ignore_if_startswith))):
                 continue
             depth = root.depth + 1

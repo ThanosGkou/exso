@@ -398,6 +398,7 @@ class Node(NodeAccessors, NodeConstructors):
             df = transformation(df)
 
         if self.is_multiindex:
+            print('\n\tCaution: If printing more than 2 or 3 days, the plot may become too slow.')
             fig = Plot.plot_agg_curves(df, xlabel=xlabel, ylabel=ylabel)
         else:
             if kind == 'area':
