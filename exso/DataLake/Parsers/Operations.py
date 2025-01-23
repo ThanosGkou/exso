@@ -179,7 +179,7 @@ class Operations:
                     self.warnings["warning {}".format(self.wc)] = {'type': "FullyNaNColumns",
                                                                   'date': self.date,
                                                                   'msg': 'Tried to drop columns based on if they startwith "{}". '
-                                                                         '\But df contained all nan column-names. Returned the original df.'.format( startswith)}
+                                                                         '\nBut df contained all nan column-names. Returned the original df.'.format( startswith)}
                     self.wc += 1
                     return df
             else:
