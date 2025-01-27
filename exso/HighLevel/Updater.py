@@ -61,7 +61,9 @@ class Updater:
         self.rp = self.get_pool(reports_pool)
         self.keep_steps = False
         self.mode = None
-        self.report_names = self.derive_reports(self.rp, which, exclude, groups, publishers, countries, only_ongoing)
+        self.report_names = self.derive_reports(self.rp, which=which, exclude=exclude,
+                                                groups=groups, publishers=publishers,
+                                                countries=countries, only_ongoing=only_ongoing)
 
 
         self.refresh_requirements_file = Files.files_dir / 'refresh_requirements.txt'
@@ -366,9 +368,8 @@ class Updater:
         _which = which if isinstance(which, str) or isinstance(which, type(None)) else which.copy()
         _exclude = exclude if isinstance(exclude, str) or isinstance(exclude, type(None)) else exclude.copy()
         _groups = groups if isinstance(groups, str) or isinstance(groups, type(None)) else groups.copy()
-        _publishers = groups if isinstance(publishers, str) or isinstance(publishers, type(None)) else publishers.copy()
+        _publishers = publishers if isinstance(publishers, str) or isinstance(publishers, type(None)) else publishers.copy()
         _countries = countries if isinstance(countries, str) or isinstance(countries, type(None)) else countries.copy()
-
 
         self.logger.info("Assessing what kind of update was requested.")
         self.logger.info(f"Provided arguments: {which = }, {groups = }, {only_ongoing = }")
