@@ -438,6 +438,7 @@ class Node(NodeAccessors, NodeConstructors):
             except:
                 df = pd.read_csv(self.path, index_col=0, header=0, encoding='utf-16', sep=exso._list_sep, decimal=exso._decimal_sep)
 
+
             try:
                 df.index = pd.to_datetime(df.index, format = exso._dt_format)
             except:
