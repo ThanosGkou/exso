@@ -375,7 +375,9 @@ class Updater:
         self.logger.info(f"Provided arguments: {which = }, {groups = }, {only_ongoing = }")
 
         selected = None
-        implemented = rp.get_available()
+        implemented = rp.get_available().copy()
+        orig = implemented[['report_name', 'group', 'publisher', 'country']].copy()
+        implemented[['report_name', 'group', 'publisher', 'country']] = implemented[['report_name', 'group', 'publisher', 'country']].apply(lambda x: x.str.lower())
 
         ###############################################################################################################
         # A report object is given. Skip any further checks and return
@@ -389,28 +391,26 @@ class Updater:
         ###############################################################################################################
         if not which: # which = None --> all reports
             # no specific mentions were given (neither string or list). Go to the next filtering
-            which = list(implemented.report_name.values)
+            which = implemented.report_name.to_list()
 
         elif isinstance(which, str):
             # a string was given. Make a case0insensitive search, and, if anything is matched, wrap it in a list
-            which = implemented[implemented.report_name.str.lower() == which.lower()].report_name.squeeze()
+            which = implemented[implemented.report_name == which.lower()].report_name.squeeze()
             which = [which]
 
         elif isinstance(which, list):
             # a list was passed. Make a case-insensitive search, and match every list element to a report
             whichh = [w.lower() for w in which]
-            whichh = implemented[implemented.report_name.str.lower().isin(whichh)].report_name.values
-            which = list(whichh)
+            which = implemented[implemented.report_name.isin(whichh)].report_name.to_list()
 
         if not exclude:
             exclude = []
         elif isinstance(exclude, str):
-            exclude = implemented[implemented.report_name.str.lower() == exclude.lower()].report_name.squeeze()
+            exclude = implemented[implemented.report_name == exclude.lower()].report_name.squeeze()
             exclude = [exclude]
         elif isinstance(exclude, list):
             excludee = [w.lower() for w in exclude]
-            excludee = implemented[implemented.report_name.str.lower().isin(excludee)].report_name.values
-            exclude = list(excludee)
+            exclude = implemented[implemented.report_name.isin(excludee)].report_name.to_list()
 
 
         ###############################################################################################################
@@ -456,6 +456,7 @@ class Updater:
         if only_ongoing:
             intersect = intersect[intersect.available_until.isna() == True].copy()
 
+        intersect.loc[:, 'report_name'] = orig.loc[intersect.index, 'report_name']
         report_names = intersect['report_name'].to_list()
 
         self.logger.info("Will update datasets based on argument '{}'".format(selected))
