@@ -105,10 +105,10 @@ class Update:
                 lobby_df = self.force_timezone_to(lobby_df, timezone=None)
 
             if self.status.exists and (self.is_multiindex is False):
-                mock_df_columns = basetree[fn.dna].children.name
-                # base_df_mock = pd.DataFrame(columns=list(mock_df_columns))
-                # df = pd.concat([base_df_mock, lobby_df], axis=0)
-                df = lobby_df[[mock_df_columns] + lobby_df.drop(columns=mock_df_columns, errors='ignore').columns.to_list()]
+                head = IO.read_file(basetree[fn.dna].path, nrows = 2)
+
+                base_df_mock = pd.DataFrame(columns = head.columns)
+                df, _ = lobby_df.align(base_df_mock, join = 'outer', axis = 1)
             else:
                 df = lobby_df
 
