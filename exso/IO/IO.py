@@ -14,7 +14,7 @@ class IO:
 
     # *******  *******   *******   *******   *******   *******   *******
     @staticmethod
-    def read_file(filepath, usecols = None, timezone_as_read = None, convert_to_timezone = None, logger = None):
+    def read_file(filepath, usecols = None, timezone_as_read = None, convert_to_timezone = None, logger = None, nrows = None):
         #TODO: Not only here, but also in the export/update: consistent datetime format, not by luck, but purposedly
 
         if logger:
@@ -26,10 +26,11 @@ class IO:
         try:
             if 'SupplyCurves' in filepath.name:
                 warnings.simplefilter('ignore')
-            df = pd.read_csv(filepath, index_col=0, header=0, encoding='utf-8', sep= exso._list_sep, decimal=exso._decimal_sep)
+            df = pd.read_csv(filepath, index_col=0, header=0, encoding='utf-8', sep= exso._list_sep, decimal=exso._decimal_sep, nrows=nrows)
         except:
             df = pd.read_csv(filepath, index_col=0, header=0, encoding='utf-16', sep= exso._list_sep, decimal=exso._decimal_sep)
-
+        if nrows:
+            return df
         if usecols:
             df = df[usecols]
         try:
