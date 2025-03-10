@@ -1,4 +1,5 @@
 import datetime
+import numpy as np
 import tqdm
 import logging
 import traceback
@@ -89,6 +90,24 @@ class Update:
             elif mode == 'slow':
                 self.__slow_update(self.tree, lobbytree)
 
+    # *******  *******   *******   *******   *******   *******   *******
+    @staticmethod
+    def custom_df_align(host: list | pd.DataFrame, new):
+        if isinstance(host, pd.DataFrame):
+            host = host.columns.to_list()
+        else:
+            assert isinstance(host, list)
+
+        cols_of_new_not_in_host = new.columns[~new.columns.isin(host)].to_list()
+        cols_of_host_not_in_new = [host_col for host_col in host if host_col not in new.columns]
+        aligned = pd.DataFrame(columns=host + cols_of_new_not_in_host)
+        for c in aligned.columns:
+            if c in cols_of_host_not_in_new:
+                aligned[c] = np.nan
+            else:
+                aligned[c] = new[c].values
+        aligned.index = new.index
+        return aligned
 
     # *******  *******   *******   *******   *******   *******   *******
     def __fast_update(self, basetree, lobbytree):
@@ -106,9 +125,7 @@ class Update:
 
             if self.status.exists and (self.is_multiindex is False):
                 head = IO.read_file(basetree[fn.dna].path, nrows = 2)
-
-                base_df_mock = pd.DataFrame(columns = head.columns)
-                df, _ = lobby_df.align(base_df_mock, join = 'outer', axis = 1)
+                df = self.custom_df_align(host=head, new=lobby_df)
             else:
                 df = lobby_df
 
