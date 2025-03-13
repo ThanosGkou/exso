@@ -45,6 +45,14 @@ class Readers:
             df_sheets = Readers.imbabe_reader(kwargs, filepath)
             return df_sheets
 
+        if isinstance(kwargs['header'], dict):
+            xl = pd.ExcelFile(filepath)
+            _kwargs = kwargs.copy()
+            _kwargs.pop('header')
+            _kwargs.pop('sheet_name')
+            df_sheets = {sheet: xl.parse(sheet_name=sheet, header=kwargs['header'][sheet], **_kwargs) for sheet in kwargs['header'].keys()}
+            return df_sheets
+
         try:
             df_sheets = pd.read_excel(filepath, **kwargs) # at later pandas maybe this will sometimes break instead of warn
         except:

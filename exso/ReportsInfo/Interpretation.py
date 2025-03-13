@@ -76,7 +76,18 @@ class ReadingSettings:
         else:
             self.sheet_tags = self.__list_parser(self.sheet_tags)
 
-        self.header = 0 if not self.header else int(self.header)
+        if not self.header:
+            self.header = 0
+        else:
+            try:
+                self.header = int(self.header)
+            except:
+                try:
+                    header = ast.literal_eval(self.header)
+                    self.header = {sh:int(h) for sh,h in header.items()}
+                except:
+                    raise ValueError
+        # self.header = 0 if not self.header else int(self.header)
         self.use_cols = self.__interpret_use_cols(self.use_cols)
 
     # *******  *******   *******   *******   *******   *******   *******
