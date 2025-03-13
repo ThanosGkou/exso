@@ -1,0 +1,13 @@
+$Overview
+Overview: ['LOAD FORECAST OF CRETE SYSTEM', last]
+
+$Schedule
+Overview: ['LOAD FORECAST', 'Thermal Unit / Hour')
+Thermal: ('Thermal Unit / Hour', 'THERMAL PRODUCTION']
+
+$Reserves
+Reserves: ('Thermal Unit / Hour', last]
+
+$UnitAvailabilities
+UnitAvailabilities: ('Thermal Unit / Hour', last]
+;
