@@ -100,13 +100,13 @@ class Update:
 
         cols_of_new_not_in_host = new.columns[~new.columns.isin(host)].to_list()
         cols_of_host_not_in_new = [host_col for host_col in host if host_col not in new.columns]
-        aligned = pd.DataFrame(columns=host + cols_of_new_not_in_host)
+        aligned = pd.DataFrame(columns=host + cols_of_new_not_in_host,
+                               index = new.index)
         for c in aligned.columns:
             if c in cols_of_host_not_in_new:
                 aligned[c] = np.nan
             else:
                 aligned[c] = new[c].values
-        aligned.index = new.index
         return aligned
 
     # *******  *******   *******   *******   *******   *******   *******
