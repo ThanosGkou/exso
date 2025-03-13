@@ -271,6 +271,16 @@ class ArchetypeHorizontal(Archetype):
         return fields_dfs
     # *********************************************
 
+class DailyDispatchOfCreteElectricalSystem(ArchetypeHorizontal):
+
+    def pre_proc(self, df):
+        df = super().pre_proc(df)
+
+        # it has combination of string and float index, and if not rest, it would break in eval(id_start id_end comparison)
+        df = df.reset_index(drop = True)
+
+        return df
+
 
 ###############################################################################################
 ###############################################################################################
