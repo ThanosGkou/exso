@@ -320,6 +320,72 @@ class MonthlyNTC(ArchetypeWide):
             subfields_dfs[subfield] = df
         return subfields_dfs
 
+class DailyAuctionsSpecificationsATC(ArchetypeWide):
+    @staticmethod
+    def parse_ATC(lake, dates):
+
+        all_files = list(lake.status.dir.glob('[!~]*.xls*'))
+        all_dates_str = [f.name.split('_')[0] for f in all_files]
+
+        counts = pd.Series(all_dates_str).value_counts(sort=False)
+        _files_df = pd.DataFrame(data={'dates_str': all_dates_str,
+                                       'filepath': all_files})
+
+        # In general, each str-date has 2 file versions, which actually are one for imports one for exports
+        # For some dates (e.g. 2020-07-15) there may be not 2 but 4 file versions
+        # I dont care: while looping, the last-dates will overwrite the first ones in the dict
+        try:
+            assert all(counts == 2)
+        except:
+            logging.warning(msg='More than two versions for ATC files:')
+            problematic_str_date = counts[counts > 2].index
+            logging.warning(_files_df[_files_df.dates_str.isin(problematic_str_date)]['filepath'].values)
+
+        dfs = {'Imports': {},
+               'Exports': {}}
+        for d in dates:
+            str_date = DateTime.make_string_date(d, sep='')
+            datetime = DateTime.date_magician(str_date, return_stamp=True)
+            candidates = _files_df[_files_df.dates_str == str_date]
+            d_datetime = pd.date_range(datetime, datetime + pd.Timedelta('23h'), freq='h', tz='CET')
+
+            if candidates.empty:
+                dfs['Imports'][str_date] = pd.DataFrame(index=d_datetime)
+                dfs['Exports'][str_date] = pd.DataFrame(index=d_datetime)
+
+                continue
+
+            for fp in candidates['filepath'].values:
+                df = pd.read_excel(fp, header=0)
+                description = df.columns[0]
+
+                df.columns = df.iloc[1, :].values
+                df = df.iloc[2:, 1:].reset_index(drop=True).dropna(axis='rows', how='all')
+
+                try:
+                    df.index = d_datetime
+
+                except:
+                    print('\n\n')
+                    print(f'Failed to assign df index at: {str_date}\n'
+                          f'{description = }')
+                    input('??')
+                if 'IMP' in description:
+                    dfs['Imports'][str_date] = df
+                elif 'EXP' in description:
+
+                    dfs['Exports'][str_date] = df
+
+        final = {}
+        for direction, dicts in dfs.items():
+            direction_df = pd.DataFrame()
+            for str_date, df in dicts.items():
+                direction_df = pd.concat([direction_df, df], axis=0)
+
+            final[direction] = direction_df
+
+        final = {'ATC': final}
+        return final
 
 ###############################################################################################
 ###############################################################################################
