@@ -83,9 +83,15 @@ class TreeAccessors:
             return target_nodes[0]
 
         elif len(target_nodes)==0:
-            propose = self.search(equals, n_best = 3)
-            raise ValueError("\n\nCould not locate node whose attribute:{} equals: {}. \n\n\tDid you mean any of the options below?\n"
-                          "{}".format(attribute, equals, haggis.string_util.align(propose.dna, alignment = 'left', width = 1)))
+            try:
+                propose = self.search(equals, n_best = 3)
+                raise ValueError(
+                    "\n\nCould not locate node whose attribute:{} equals: {}. \n\n\tDid you mean any of the options below?\n"
+                    "{}".format(attribute, equals, haggis.string_util.align(propose.dna, alignment='left', width=1)))
+            except:
+                raise ValueError(
+                    f"\n\nCould not locate node whose {attribute} = {equals}")
+
 
 
     # *******  *******   *******   *******   *******   *******   *******
