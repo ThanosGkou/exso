@@ -84,11 +84,19 @@ class Update:
             self.__fast_update(self.tree, lobbytree)
 
         else:
-            dirsize = sum(d.stat().st_size for d in basenode.path.rglob('*') if d.is_file()) * 1e-06
-            if mode == 'fast' or dirsize >= dirsize_thresh_MB:
+            big_report_hints = ['AggDemandSupplyCurves', 'Offers']
+            if mode  == 'fast' or any([big_hint in self.r.report_name for big_hint in big_report_hints]):
+                # print(f'\n\ndoing fast update for: {self.r.report_name}')
+                # print(self.r.report_name)
                 self.__fast_update(self.tree, lobbytree)
-            elif mode == 'slow':
+            else:
                 self.__slow_update(self.tree, lobbytree)
+
+            # dirsize = sum(d.stat().st_size for d in basenode.path.rglob('*') if d.is_file()) * 1e-06
+            # if mode == 'fast' or dirsize >= dirsize_thresh_MB:
+            #     self.__fast_update(self.tree, lobbytree)
+            # elif mode == 'slow':
+            #     self.__slow_update(self.tree, lobbytree)
 
     # *******  *******   *******   *******   *******   *******   *******
     @staticmethod
