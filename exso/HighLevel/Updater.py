@@ -347,8 +347,11 @@ class Updater:
             requirements = self._modify_requirements(requirements, lake)
 
         if requirements:
-
-            data = lake.query(dates_iterable=requirements['range']['date'], keep_raw=keep_raw)
+            if report_name == 'DailyAuctionsSpecificationsATC':
+                from exso.DataLake.Parsers.ParsersVerticalWide import DailyAuctionsSpecificationsATC
+                data = DailyAuctionsSpecificationsATC.parse_ATC(lake, requirements['range']['date'])
+            else:
+                data = lake.query(dates_iterable=requirements['range']['date'], keep_raw=keep_raw)
 
             # I only want the   s t r u c t u r e   of data:dict, not the actual dataframes.
             # The dataframes belong to the newly-parsed lake, not to the pre-existing database. So: ignore_fruits = True
@@ -599,3 +602,4 @@ class LogSplitter:
         event = {event[0]:event[1]}
         return event
     # *******  *******   *******   *******   *******   *******   *******
+
