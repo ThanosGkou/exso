@@ -428,7 +428,7 @@ class Tree(Search, TreeConstructors, TreeAccessors):
         seedir.seedir(self.root.path, sticky_formatter=True, style='emoji')
 
     # ********   *********   *********   *********   *********   *********   *********   *********
-    def combine(self, *locators, with_name:str|None = None, handle_synonymity:str|list = 'auto', resolution = 'auto'):
+    def combine(self, *locators, with_name:str|None = None, handle_synonymity:str|list = 'auto', resolution = 'auto', rename:dict|list=None):
         nodes = list(map(self.get_node, *locators))
 
         if handle_synonymity == 'auto':
@@ -492,6 +492,8 @@ class Tree(Search, TreeConstructors, TreeAccessors):
         if not with_name:
             with_name = "_".join(Group(nodes).name)
 
+        if  isinstance(rename, list):
+            df.columns= rename
 
         node = Node(with_name, path = self.root.path / ".virtual" / with_name, depth = 2, kind = 'file', parent = self.root, fruit = df)
 
