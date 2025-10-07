@@ -2,6 +2,7 @@ import datetime
 import logging
 import re
 import sys
+import time
 
 import numpy as np
 import pandas as pd
@@ -207,6 +208,21 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
             self.available_until = pd.to_datetime(self.df['available_until'].squeeze(), dayfirst=True).date()
 
         self.database_min_potential_datetime, self.database_max_potential_datetime = self.get_database_min_max_datetimes(self.available_from, self.available_until)
+
+        from colorama import Fore
+        if 'aggdemand' in report_name.lower():
+
+            print(Fore.LIGHTRED_EX + '\n' + '*'*50)
+            print(Fore.LIGHTRED_EX + '*'*50 + '\t Only 60-min bids will be assimilated to the database.')
+            print(Fore.LIGHTRED_EX + '*'*50 + '\n')
+            time.sleep(3)
+        elif 'xbid' in report_name.lower():
+            print(Fore.LIGHTRED_EX + '\n' + '*'*50)
+            print(Fore.LIGHTRED_EX + '*'*50 + '\t Only 15-min duration bids will be assimilated to the database after 01-Oct-2025.')
+            print(Fore.LIGHTRED_EX + '*'*50 + '\n')
+            time.sleep(3)
+
+
 
     # *******  *******   *******   *******   *******   *******   *******
     def check_existence(self, report_name = None):
