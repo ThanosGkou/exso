@@ -47,7 +47,7 @@ class Pool:
         self.logger.info("Reports Pool File: {}".format(self.config_file))
 
         self.display_columns = ['report_name', 'publisher', 'group', 'country', 'available_from', 'available_until',
-                                'is_implemented', 'official_comment', 'resolution',]
+                                'is_implemented', 'official_comment', 'resolution', 'resolution2']
 
         self.initialize()
 
@@ -135,6 +135,7 @@ class Pool:
     # *******  *******   *******   *******   *******   *******   *******
     def get_all(self):
         return self.allmighty_df[self.display_columns].copy()
+
     # *******  *******   *******   *******   *******   *******   *******
     def get_available(self, only_names = False):
         df = self.get_filtered(col = 'is_implemented', val = True)
@@ -243,6 +244,7 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
     # *******  *******   *******   *******   *******   *******   *******
     def get_text_description(self):
         return {'report_name':self.report_name, 'description':self.json['official_comment']}
+
     # *******  *******   *******   *******   *******   *******   *******
     def get_report_data(self, report_name = None):
         if not report_name:
