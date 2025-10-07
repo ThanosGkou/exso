@@ -66,9 +66,23 @@ class ArchetypeWide(Archetype):
 
     # *******  *******   *******   *******   *******   *******   *******
     def rolling_post_proc(self, subfields_dfs):
-        for subfield, df in subfields_dfs.items():
 
-            df = self.apply_datetime_index(df, self.period_dates)
+        orig_dates = self.period_dates.copy()
+        orig_timedelta = orig_dates[2] - orig_dates[1]
+        dates_r2 = pd.date_range(self.period_dates[0],
+                                 self.period_dates[-1] + orig_timedelta - pd.Timedelta(self.r2),
+                                 freq=self.r2)
+
+        for subfield, df in subfields_dfs.items():
+            if self.period_dates.size + 20 < df.shape[0]:
+                if isinstance(self.r2, str):
+                    apply_dates = dates_r2
+                else:
+                    raise ValueError
+            else:
+                apply_dates = orig_dates
+
+            df = self.apply_datetime_index(df, apply_dates)
 
             if self.renamer_mapping:
                 self.col_renamer(df, renamer_mapping = self.renamer_mapping, field = self.field, subfield = subfield)
