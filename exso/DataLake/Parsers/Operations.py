@@ -142,7 +142,12 @@ class Operations:
         first_row = df.iloc[guide_row].values.astype(str)
         mask = np.array(list(map(lambda x: bool(re.search(last_column_trigger, x)), first_row)))
 
-        last_col_index = np.argwhere(mask == True)[-1][0] + 1
+        arg_where_match = np.argwhere(mask == True)
+        if arg_where_match.size:
+            last_col_index = np.argwhere(mask == True)[-1][0] + 1
+        else:
+            last_col_index = df.shape[1]
+
         if drop_last:
             last_col_index = last_col_index - 1
 
