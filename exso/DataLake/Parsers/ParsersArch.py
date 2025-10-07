@@ -98,7 +98,7 @@ class Archetype(Operations):
     # *******  *******   *******   *******   *******   *******   *******
     # *******  *******   *******   *******   *******   *******   *******
     @error_handler
-    def pipe(self, field:str, df: pd.DataFrame, period_dates: pd.DatetimeIndex)-> dict:
+    def pipe(self, field:str, df: pd.DataFrame, period_dates: pd.DatetimeIndex, r2=None )-> dict:
         '''
         This function, takes a raw dataframe, resulted from raw-reading an excel SHEET ("field"), and returns
         a dict of dataframes, one for each "cue-point"/subfield.
@@ -116,6 +116,7 @@ class Archetype(Operations):
 
         self.field = field
         self.period_dates = period_dates
+        self.r2 = r2
         self.date = period_dates[0].date()
         self.str_date = date_lambda(self.date)
 
