@@ -4,20 +4,24 @@
 What's New
 ===========
 
+Reports
+********
+* 15-min products partial support
+    * Reports not yet supported: XXX_ResultsSummary, XXX_MarketCoupling, DAM_PreMarketSummary, ISPx Load and RES Forecasts
+    * Demand-Supply Curves parsing only utilizes 60-min duration bids and offers
+    * XBID parsing only utilizes 15-min duration bids and offers post 01-Oct-25
+
+* IPTO: ISP Results, ISP Unit Availabilities upgrade
+* HEnEx:
+    * Support for Intraday IDA Reports
+    * Bug fix in XXX_Results (DAM, LIDA, CRIDA) when both Buy & Sell orders present from Renewables
+
 
 
 Python
 *******
 - Support for Python >=3.10 (including 3.13.0)
 
-
-Reports
-********
-
-* IPTO: ISP Results, ISP Unit Availabilities upgrade
-* HEnEx:
-    * Support for Intraday IDA Reports
-    * Bug fix in XXX_Results (DAM, LIDA, CRIDA) when both Buy & Sell orders present from Renewables
 
 
 Documentation
