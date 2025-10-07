@@ -6,6 +6,7 @@ import os
 import re
 import time
 
+import haggis.string_util
 import numpy as np
 import pandas as pd
 from exso.DataLake.Parsers.ParsersArch import Archetype
@@ -222,6 +223,14 @@ class ArchetypeHorizontal(Archetype):
     # *********************************************
     @logging_sampler
     def rolling_post_proc(self, subfields_dfs):
+        orig_dates = self.period_dates.copy()
+        if len(orig_dates) > 1:
+            orig_timedelta = orig_dates[2] - orig_dates[1]
+            dates_r2 = pd.date_range(self.period_dates[0],
+                                        self.period_dates[-1] + orig_timedelta - pd.Timedelta(self.r2),
+                                        freq=self.r2)
+
+
         for subfield, df in subfields_dfs.items():
 
             if df.empty:
@@ -233,7 +242,15 @@ class ArchetypeHorizontal(Archetype):
                                                field = self.field,
                                                subfield = subfield)
 
-            df = self.apply_datetime_index(df, self.period_dates)
+            if len(self.period_dates) + 20 < df.shape[0]:
+                if isinstance(self.r2, str):
+                    apply_dates = dates_r2
+                else:
+                    raise ValueError
+            else:
+                apply_dates = orig_dates
+
+            df = self.apply_datetime_index(df, apply_dates)
 
             if self.renamer_mapping:
                 df = self.col_renamer(df, renamer_mapping = self.renamer_mapping, field = self.field, subfield = subfield)
@@ -289,14 +306,18 @@ class ISP1ISPResults(ArchetypeHorizontal):
 
     # *******  *******   *******   *******   *******   *******   *******
     def param_updater(self):
-        self.last_column_trigger = '23:30:00'
+        # self.last_column_trigger = '23:30:00'
+        self.last_column_trigger = 'TOTAL'
+        self.drop_last = True
         self.drop_col_settings.update(startswith='MOCK')
+        self.dropna_settings = {'how': 'all', 'axis': 'columns', 'thresh': None}
 
     # *******  *******   *******   *******   *******   *******   *******
     def rolling_post_proc(self, subfields_dfs):
         ''' post-processing within sheet'''
         # todo: watch out for inherintance, maybe postproc is called not just once, but N times.......
 
+        apply_dates = self.period_dates.copy()
         if self.field != 'CCGT_Schedule':
             subfields_dfs = super().rolling_post_proc(subfields_dfs)
 
@@ -311,8 +332,13 @@ class ISP1ISPResults(ArchetypeHorizontal):
             suffix = ['_GT','_ST','_MW']
             new_cols = [cols[3*divmod(i,3)[0]] + suffix[divmod(i,3)[1]] for i in range(len(cols)) ]
             df.columns = new_cols
+            if self.period_dates.size + 20 < df.shape[0]:
+                if isinstance(self.r2, str):
+                    apply_dates = pd.date_range(self.period_dates[0],
+                                                self.period_dates[-1] + pd.Timedelta('30min') - pd.Timedelta(self.r2),
+                                                freq=self.r2)
 
-            df = self.apply_datetime_index(df,self.period_dates)
+            df = self.apply_datetime_index(df, apply_dates)
 
             for plant_name in plant_names:
                 df[plant_name + '_mode'] = df[plant_name + '_GT'] + "+" + df[plant_name + '_ST']
@@ -353,11 +379,16 @@ class AdhocISPResults(ISP1ISPResults):
 
         # first row is: "Non Dispatchable Load, 27/11/2022  15:30:00, 27/11/2022  16:00:00, 27/11/2022  16:30:00, ansd so on
         start_datetime = df.iloc[0].values[1]
-        flat_dates = self.period_dates.tz_localize(None)
+        dates = self.period_dates.copy()
+        if isinstance(self.r2, str):
+            dates = pd.date_range(self.period_dates[0],
+                          self.period_dates[-1] + pd.Timedelta('30min') - pd.Timedelta(self.r2),
+                          freq=self.r2)
+        flat_dates = dates.tz_localize(None)
         matching_points = [i for i, flat_date in enumerate(flat_dates) if flat_date == start_datetime]
         matching_point = matching_points[0]
 
-        self.period_dates = self.period_dates[matching_point:]
+        self.period_dates = dates[matching_point:]
 
         df = super().pre_proc(df)
         return df
