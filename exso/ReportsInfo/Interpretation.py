@@ -199,6 +199,7 @@ class TimeSettings:
         self.inherent_tz = json['inherent_tz']
         self.start_hour = json['start_hour']
         self.resolution = json['resolution']
+        self.resolution2 = json['resolution2']
         self.time_lag_days = json['time_lag_days']
 
         TimeSettings.interpret(self)
@@ -295,6 +296,7 @@ class TimeSettings:
                 lake_max_date = self.sniff_api(report_name, publisher, lake_dir)
             else:
                 lake_max_date = datetime.datetime.today().date()
+
         return lake_max_date
 
 
