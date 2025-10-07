@@ -272,7 +272,7 @@ class Parser:
             for sheet_tag, sheet_df in content.items():
                 if sheet_tag not in joined_data.keys():
                     joined_data[sheet_tag] = {}
-                sheet_subdfs = self.parser.pipe(sheet_tag, sheet_df, self.dates_per_period[ str_date])  # parse_property_sheet(df_sheet, property=property)
+                sheet_subdfs = self.parser.pipe(sheet_tag, sheet_df, self.dates_per_period[ str_date], r2 = self.r.resolution2)  # parse_property_sheet(df_sheet, property=property)
 
 
                 for subfield, df in sheet_subdfs.items():
@@ -306,7 +306,7 @@ class Parser:
             data[str_date] = {}
 
             for sheet_tag, sheet_df in content.items():
-                sheet_subdfs = self.parser.pipe(sheet_tag, sheet_df, self.dates_per_period[str_date])  # parse_property_sheet(df_sheet, property=property)
+                sheet_subdfs = self.parser.pipe(sheet_tag, sheet_df, self.dates_per_period[str_date], r2=self.r.resolution2)  # parse_property_sheet(df_sheet, property=property)
                 data[str_date][sheet_tag] = sheet_subdfs
 
             data[str_date] = self.parser.expost(data[str_date])  # this is probably in-place dictionary append. to confirm
@@ -315,6 +315,7 @@ class Parser:
         self.logger.info("--> Parsing completed. Parsed {} files in: {:,} sec".format(self.file_df.shape[0], round(tot_time, 2)))
 
         self.data = data
+        # _test = data[str_date]
         return data
     
     # *******  *******   *******   *******   *******   *******   *******
@@ -391,7 +392,9 @@ class Joiner:
                     **exso._pbar_settings)
 
         for field, subfield in pbar:
-            dfs = [self.data[d][field][subfield] for d in self.file_df.index]
+            # dfs = [self.data[d][field][subfield] for d in self.file_df.index]
+            # fix for blockorders. The issue was, between 10 and 30 Sep 2025, there was no 'Buy' subfield.
+            dfs = [self.data[d][field][subfield] if subfield in self.data[d][field] else pd.DataFrame() for d in self.file_df.index]
             joined_data[field][subfield] = pd.concat([*dfs], axis = 0)
             pbar.set_postfix_str(s=field)
 
