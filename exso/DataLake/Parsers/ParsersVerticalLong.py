@@ -261,9 +261,25 @@ class ArchetypeLong(Archetype):
     # *******  *******   *******   *******   *******   *******   *******
     def expost(self, fields_dfs):
 
+        orig_dates = self.period_dates.copy()
+        orig_timedelta = orig_dates[2] - orig_dates[1]
+        dates_r2 = pd.date_range(self.period_dates[0],
+                                 self.period_dates[-1] + orig_timedelta - pd.Timedelta(self.r2),
+                                 freq=self.r2)
         for field, subfields_dfs in fields_dfs.items():
             for subfield, df in subfields_dfs.items():
-                fields_dfs[field][subfield] = self.apply_datetime_index(df, period_dates=self.period_dates)
+                # check if the period_dates are reaaaaly shorter than the df
+
+                if self.period_dates.size + 20 < df.shape[0]:
+                    if isinstance(self.r2, str):
+                        apply_dates = dates_r2
+                    else:
+                        raise ValueError
+                else:
+                    apply_dates = orig_dates
+
+
+                fields_dfs[field][subfield] = self.apply_datetime_index(df, period_dates=apply_dates)
                 # df = fields_dfs[field][subfield]
 
         if self.mode == 'collapsed':
@@ -430,9 +446,12 @@ class IDM_XBID_Results(_UsualParams):
 
     # *******  *******   *******   *******   *******   *******   *******
     def pre_proc(self, df):
-
+        # stupid henex has spaces at the end of some columns
         df.columns = df.columns.str.replace(r'\s', '', regex = True)
         df.columns = df.columns.str.replace('/', '_', regex = True)
+        if df['DELIVERY_DURATION'].unique().size > 1:
+            df = df[df['DELIVERY_DURATION'] == 15].copy()
+
         if self.swap_eigenvalues:
             df = self._swap_values_of_eigen_cols_where(df, where=self.swap_eigenvalues['where'], isin=self.swap_eigenvalues['isin'])
 
@@ -528,7 +547,7 @@ class DAM_AggDemandSupplyCurves(ArchetypeLong):
 
     # *******  *******   *******   *******   *******   *******   *******
     def pre_proc(self, df: pd.DataFrame) -> pd.DataFrame:
-
+        df = df[df['DELIVERY_DURATION'] == 60]
         df = pd.pivot_table(df, index=self.index_cols, columns=self.eigen_cols, values=self.payload_cols)
         # df = df.reset_index(level=self.index_cols, drop=False)
         df.columns = df.columns.remove_unused_levels()
@@ -537,9 +556,20 @@ class DAM_AggDemandSupplyCurves(ArchetypeLong):
 
         df = df.droplevel(level='SORT', axis = 0)
         index_ = df.index
-        period_dates_utc = self.period_dates.tz_convert(self.database_tzone).tz_localize(None)
+        _dates = self.period_dates.copy()
+        # if isinstance(self.r2, str):
+        #     if df.shape[0] > len(self.period_dates) + 20:
+        #         _dates = pd.date_range(self.period_dates[0],
+        #                                self.period_dates[-1],
+        #                                freq=self.r2)
+        #     else:
+        #         raise ValueError
+        # else:
+        #     _dates = self.period_dates.copy()
+
+        period_dates_utc = _dates.tz_convert(self.database_tzone).tz_localize(None)
         index_ = index_.set_levels(period_dates_utc, level='DELIVERY_MTU')
-        index_ = index_.rename({'DELIVERY_MTU':''})
+        index_ = index_.rename({'DELIVERY_MTU': ''})
         df.index = index_
 
         return df
@@ -719,6 +749,9 @@ class DAM_MarketCoupling(_UsualParams):
             df = pd.pivot_table(df, index=self.index_cols, columns=self.eigen_cols, values=self.payload_cols)
             df = self._clean_pivot(df)
 
+        print('\n\nInside .pre_proc')
+        print(df)
+        print()
         return df
 
     # *******  *******   *******   *******   *******   *******   *******
