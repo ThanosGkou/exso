@@ -250,11 +250,12 @@ class Updater:
         elapsed = time.perf_counter() - t0
 
         successful = [report for report, content in self.update_summary.items() if content['Status'] == 'Success']
-
+        unsuccessful = [r for r in self.report_names if r not in successful]
         self.update_summary['Totals'] = {'Total Time Elapsed (sec)': round(elapsed,3),
                                          '#Successful': len(successful),
                                          '#Failed': len(self.report_names) - len(successful),
-                                         '#Total': len(self.report_names)}
+                                         '#Total': len(self.report_names),
+                                         'Failed Report names': str(unsuccessful)}
 
         colorama.init(autoreset=True)
         with open(Files._logs_dir / 'update_summary.log', 'w') as f:
