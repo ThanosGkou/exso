@@ -10,6 +10,7 @@ Installation
 Installation / Upgrade to ExSO |version|
 ========================================
 It's best to create a dedicated **virtual environment** to install and launch exso.
+See :ref:`migration` guide for more info on custom-controls on migrating to latest version.
 
 
 Auto-Mode

@@ -23,6 +23,7 @@ Contents
    :maxdepth: 2
 
    What's New <whats_new>
+   Migration to newest version <migration>
    Installation and Upgrade <installation>
    Core Concepts <core_concepts>
    api

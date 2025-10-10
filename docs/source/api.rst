@@ -14,7 +14,7 @@ Python API
 .. _ssf_api:
 exso._set_system_formats method
 ---------------------------------
-:code:`exso._set_system_formats(list_sep=',', decimals_sep = '.')`
+:code:`exso.settings.set_system_formats(list_sep=',', decimals_sep = '.')`
 
 
 
