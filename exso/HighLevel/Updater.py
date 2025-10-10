@@ -195,6 +195,8 @@ class Updater:
 
         self._post_run(t0)
 
+        return self
+
     # *******  *******   *******   *******   *******   *******   *******
     def _print_error(self, report_name, exc, trace):
 
@@ -288,8 +290,14 @@ class Updater:
 
         for rname in report_names:
             r = Report.Report(self.rp, rname, self.root_lake, self.root_base, api_allowed=self.allow_handshake)
+
             lake = DataLake.DataLake(r)
+            if ('DAM' in rname) or ('ISP' in rname):
+                lake.status.up_to_date = False
+                lake.status.dates.max.potential.date = datetime.datetime.today()
+
             lake.update()
+            self.update_summary[rname]['Status'] = 'Success'
 
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
     def single(self, report_name, use_lake_version, keep_raw = False):

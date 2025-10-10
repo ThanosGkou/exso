@@ -43,7 +43,29 @@ IDM_LIDA1_Results, IDM_LIDA2_Results, IDM_LIDA3_Results
 IDM_CRIDA1_ResultsSummary, IDM_CRIDA2_ResultsSummary, IDM_CRIDA3_ResultsSummary
 IDM_LIDA1_ResultsSummary, IDM_LIDA2_ResultsSummary, IDM_LIDA3_ResultsSummary
 DailyAuctionsSpecificationsATC, DailyDispatchOfCreteElectricalSystem
-DayAheadLoadForecast, DayAheadRESForecast, DayAheadSchedulingUnitAvailabilities, HVCUSTCONS
+DayAheadLoadForecast, DayAheadRESForecast, DayAheadSchedulingUnitAvailabilities, HVCUSTCONS,
+DAS
+
+Code::
+
+    text = '''
+    IDM_CRIDA1_AggDemandSupplyCurves, IDM_CRIDA2_AggDemandSupplyCurves, IDM_CRIDA3_AggDemandSupplyCurves,
+    IDM_LIDA1_AggDemandSupplyCurves, IDM_LIDA2_AggDemandSupplyCurves, IDM_LIDA3_AggDemandSupplyCurves,
+    IDM_CRIDA1_MarketCoupling, IDM_CRIDA2_MarketCoupling, IDM_CRIDA3_MarketCoupling
+    IDM_LIDA1_MarketCoupling, IDM_LIDA2_MarketCoupling, IDM_LIDA3_MarketCoupling
+    IDM_CRIDA1_Results, IDM_CRIDA2_Results, IDM_CRIDA3_Results
+    IDM_LIDA1_Results, IDM_LIDA2_Results, IDM_LIDA3_Results
+    IDM_CRIDA1_ResultsSummary, IDM_CRIDA2_ResultsSummary, IDM_CRIDA3_ResultsSummary
+    IDM_LIDA1_ResultsSummary, IDM_LIDA2_ResultsSummary, IDM_LIDA3_ResultsSummary
+    DailyAuctionsSpecificationsATC, DailyDispatchOfCreteElectricalSystem
+    DayAheadLoadForecast, DayAheadRESForecast, DayAheadSchedulingUnitAvailabilities, HVCUSTCONS,
+    DAS
+    '''
+
+    import re
+    force_no_refresh = [r.strip() for r in re.sub('\n','',text).split(',')]
+    exso.settings.set_refresh_requirements(force_no_refresh = force_no_refresh, mode = 'a')
+
 
 
 
