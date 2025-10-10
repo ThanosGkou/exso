@@ -5,6 +5,8 @@ In general
 - Any new exso version may introduce changes to some reports, that require a **retrospective implementation**.
 - Depending on, which version of exso you're migrating from, this wiping out and remake may not be necessary
 - For simplicity, version 0.0.0 is assumed as the previous version used.
+- General guideline: with every new exso version, it's safest rebuild the whole database (default option integrated in exso as-packaged)
+- Remember to re-set system formats (if needed) in exso (exso.settings.set_system_formats()) after each new version is installed.
 
 
 Data readiness for |version| (15min products)
@@ -30,7 +32,18 @@ Modification of to-refurbish reports (advanced/not-recommended)
 - Or, to exclude specific reports:
     :code:`exso.settings.set_refresh_requirements(force_no_refresh = List)`
 
+An intermediate, safe and easy approach if coming from exso v1.0+ (NOT from v0.0), you can force_no_refresh the following reports:
 
+IDM_CRIDA1_AggDemandSupplyCurves, IDM_CRIDA2_AggDemandSupplyCurves, IDM_CRIDA3_AggDemandSupplyCurves,
+IDM_LIDA1_AggDemandSupplyCurves, IDM_LIDA2_AggDemandSupplyCurves, IDM_LIDA3_AggDemandSupplyCurves,
+IDM_CRIDA1_MarketCoupling, IDM_CRIDA2_MarketCoupling, IDM_CRIDA3_MarketCoupling
+IDM_LIDA1_MarketCoupling, IDM_LIDA2_MarketCoupling, IDM_LIDA3_MarketCoupling
+IDM_CRIDA1_Results, IDM_CRIDA2_Results, IDM_CRIDA3_Results
+IDM_LIDA1_Results, IDM_LIDA2_Results, IDM_LIDA3_Results
+IDM_CRIDA1_ResultsSummary, IDM_CRIDA2_ResultsSummary, IDM_CRIDA3_ResultsSummary
+IDM_LIDA1_ResultsSummary, IDM_LIDA2_ResultsSummary, IDM_LIDA3_ResultsSummary
+DailyAuctionsSpecificationsATC, DailyDispatchOfCreteElectricalSystem
+DayAheadLoadForecast, DayAheadRESForecast, DayAheadSchedulingUnitAvailabilities, HVCUSTCONS
 
 
 
