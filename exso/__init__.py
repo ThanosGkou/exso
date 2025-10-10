@@ -59,7 +59,7 @@ class Settings:
         self.fp_system_formats = files_dir / 'system_formats.txt'
         rp = Report.Pool()
         self.avail_reports = list(rp.get_available(only_names=True))
-        
+
     # *******  *******   *******   *******   *******   *******   *******
 
     def set_system_formats(self, decimal_sep='.', list_sep=','):
