@@ -44,7 +44,7 @@ class Updater:
         *Default settings dictate update of all reports..
 
         Usage: - Instantiate an Updater object.
-               - call the .run() method
+               - call the .run(lake_only = Bool) method
 
         The first time of datalake/database creation for all available reports, the runtime may up to 7-8 hours depending on system-specs.
         Then, every e.g. weekly update is a matter of minutes.
@@ -149,7 +149,7 @@ class Updater:
         self.mode = 'debugging'
 
     # *******  *******   *******   *******   *******   *******   *******
-    def run(self, use_lake_version = 'latest', warnings_verbose = 0):
+    def run(self, use_lake_version = 'latest', warnings_verbose = 0, lake_only = False):
 
         fulfilled_refreshes = []
         self.warnings_verbose = warnings_verbose
@@ -165,6 +165,11 @@ class Updater:
 
         colorama.init(autoreset=True)
         print(Fore.LIGHTCYAN_EX + '\n\n--> Update started at: {} \n'.format(now))
+
+        if lake_only:
+            self.update_lake(report_names=self.report_names)
+            self._post_run(t0)
+            return
 
         for report_name in self.report_names:
 
@@ -210,7 +215,7 @@ class Updater:
 
     # *******  *******   *******   *******   *******   *******   *******
     def _post_single(self, report_name, t0):
-        elapsed = round(time.perf_counter() - t, 3)
+        elapsed = round(time.perf_counter() - t0, 3)
         now = datetime.datetime.strftime(datetime.datetime.now(), format='%Y-%m-%d %H_%M')
         self.update_summary[report_name]['Elapsed (sec)'] = elapsed
 
@@ -277,7 +282,17 @@ class Updater:
         return requirements
 
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
-    def single(self, report_name, use_lake_version, retroactive_update, keep_raw = False):
+    def update_lake(self, report_names:str|list):
+        if isinstance(report_names, str):
+            report_names = [report_names]
+
+        for rname in report_names:
+            r = Report.Report(self.rp, rname, self.root_lake, self.root_base, api_allowed=self.allow_handshake)
+            lake = DataLake.DataLake(r)
+            lake.update()
+
+    # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
+    def single(self, report_name, use_lake_version, keep_raw = False):
         self.logger.info('\n\n\n\t\tAssessing report type: {}'.format(report_name))
 
         r = Report.Report(self.rp, report_name, self.root_lake, self.root_base, api_allowed=self.allow_handshake)
@@ -297,7 +312,7 @@ class Updater:
                       ' \n\tThis report\'s data(base), just for this time, will be fully rebuilt instead of just updated.\n'
                       '\t\tThe old database of this report is stored here: {} in case you want to keep it'.format(report_name, move_old_db_to))
 
-        lake = DataLake.DataLake(r, use_lake_version=use_lake_version, retroactive_update = retroactive_update)
+        lake = DataLake.DataLake(r, use_lake_version=use_lake_version)
 
         if self.mode == 'debugging':
             start_date = self.start_date
