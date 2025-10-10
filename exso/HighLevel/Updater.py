@@ -65,11 +65,7 @@ class Updater:
                                                 groups=groups, publishers=publishers,
                                                 countries=countries, only_ongoing=only_ongoing)
 
-
-        self.refresh_requirements_file = Files.files_dir / 'refresh_requirements.txt'
-        self.fulfilled_refreshes_file = Files.files_dir / 'fulfilled_refreshes.txt'
-
-        self.refresh_requirements = self.read_refresh_requirements()
+        self.reports_to_refresh = exso.settings.get_refresh_requirements()
 
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
     def set_dirs(self, root_lake, root_base):
@@ -125,34 +121,6 @@ class Updater:
         with open(filepath, 'r') as f:
             return json.loads(f.read())
 
-    # *******  *******   *******   *******   *******   *******   *******
-    def read_refresh_requirements(self):
-
-        previously_fulfilled = self.read_textfile(self.fulfilled_refreshes_file)
-        self.initially_fulfilled = previously_fulfilled.copy()
-
-        reqs = self.read_textfile(self.refresh_requirements_file)
-
-        reqs['already_done'] = ast.literal_eval(reqs['already_done'])
-
-        all_reports = self.rp.get_available()['report_name'].values
-        requirements = {report_name: False for report_name in all_reports}
-
-        if reqs['which']:
-            requirements.update({rn:True for rn in reqs['which']})
-        elif reqs['all_except']:
-            requirements.update({rn:True for rn in all_reports})
-            requirements.update({rn:False for rn in reqs['all_except']})
-
-        requirements.update({rn:False for rn in previously_fulfilled})
-
-        self.logger.info("Refresh Requirements")
-        self.logger.info("Input given: {}".format(reqs))
-        self.logger.info("Previously fulfilled: {}".format(previously_fulfilled))
-        self.logger.info("Reports deemed to need requirement: {}".format([r for r,v in requirements.items() if v]))
-
-        return requirements
-
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
     def _set_debugging_options(self, options):
         '''
@@ -181,9 +149,11 @@ class Updater:
         self.mode = 'debugging'
 
     # *******  *******   *******   *******   *******   *******   *******
-    def run(self, use_lake_version = 'latest', warnings_verbose = 0, retroactive_update = False):
+    def run(self, use_lake_version = 'latest', warnings_verbose = 0):
 
-        self.refresh_requirements_fulfilled = []
+        fulfilled_refreshes = []
+        self.warnings_verbose = warnings_verbose
+
         self.log_split = LogSplitter(root_logfile=Files.root_log, save_at_dir=Files.latest_logs_dir)
         self.logger.info('\n\n\n\n\n')
         self.logger.info("Running Update Kernel")
@@ -193,65 +163,78 @@ class Updater:
 
         now = datetime.datetime.strftime(datetime.datetime.now(), format='%Y-%m-%d %H:%M')
 
-
         colorama.init(autoreset=True)
         print(Fore.LIGHTCYAN_EX + '\n\n--> Update started at: {} \n'.format(now))
-
 
         for report_name in self.report_names:
 
             print(Fore.LIGHTWHITE_EX + hag.make_box(report_name, style='bold-line', alignment='center', horizontal_padding=10, vertical_padding=1,))
             t = time.perf_counter()
             self.logger.info('\n' + '<{}>'.format(report_name))
+
             try:
-                self.single(report_name, use_lake_version, retroactive_update)
+                self.single(report_name, use_lake_version)
                 self.logger.info('\n\n++UpdateStatus:Success')
-                if self.refresh_requirements[report_name] == True:
-                    self.refresh_requirements_fulfilled.append(report_name)
-                    self.update_fulfilled_refreshes()
+                if report_name.lower() in [_r.lower() for _r in self.reports_to_refresh]:
+                    exso.settings.set_refresh_requirements(force_no_refresh=report_name, mode = 'a')
+                    fulfilled_refreshes.append(report_name)
+
                 print(Fore.CYAN + hag.align('\n\t' + report_name + ' --> Succeeded', alignment = 'right', width = 10))
                 self.update_summary[report_name] = {'Status':'Success'}
 
             except Exception as ex:
-                self.logger.error("\n\nReport {} failed".format(report_name))
-                self.logger.error('*'*50)
-                self.logger.error("Immediate exception:")
-                self.logger.error(ex)
-                self.logger.error('*'*50)
-                self.logger.error('Traceback:')
-
-                trace = traceback.format_exc()
-                self.logger.error(trace)
-                self.logger.error('*'*50)
-                self.logger.info('\n\n++UpdateStatus:Fail')
-
+                self._print_error(report_name = report_name, exc = ex, trace = traceback.format_exc())
                 self.update_summary[report_name] = {'Status':'Fail'}
 
-                print(Fore.CYAN + hag.align('\t' + report_name + ' --> Failed !!\n', alignment = 'right', width = 10))
-                print(hag.align(traceback.format_exc(), alignment = 'right', width = 10))
-                print('\n\nMoving on ....\n\n')
+            self._post_single(report_name, t0=t)
 
-            now = datetime.datetime.strftime(datetime.datetime.now(), format='%Y-%m-%d %H_%M')
-            self.update_summary[report_name]['Elapsed (sec)'] = round(time.perf_counter() - t,3)
+        self._post_run(t0)
 
-            self.logger.info('\n\n++PerformedAt:{}'.format(now))
-            self.logger.info('\n\n++Elapsed: {:.3f} sec'.format(time.perf_counter()-t))
-            self.logger.info('\n' + '</{}>'.format(report_name))
-            warnings = self.log_split.extract(report_name)
-            if warnings_verbose == 1 and warnings:
-                print(Fore.CYAN + "\t\twarnings: ")
-                print('\t\t\t' + hag.align(warnings, alignment = 'right', width = 1))
-            print('\n\n\n')
-            self.log_split.export(report_name)
+    # *******  *******   *******   *******   *******   *******   *******
+    def _print_error(self, report_name, exc, trace):
 
-        self.logger.info("\n\n\n\n\nTotal Time: {}".format(time.perf_counter() - t0))
+        self.logger.error("\n\nReport {} failed".format(report_name))
+        self.logger.error('*' * 50)
+        self.logger.error("Immediate exception:")
+        self.logger.error(exc)
+        self.logger.error('*' * 50)
+        self.logger.error('Traceback:')
+
+        self.logger.error(trace)
+        self.logger.error('*' * 50)
+        self.logger.info('\n\n++UpdateStatus:Fail')
+
+        print(Fore.CYAN + hag.align('\t' + report_name + ' --> Failed !!\n', alignment='right', width=10))
+        print(hag.align(trace, alignment='right', width=10))
+        print('\n\nMoving on ....\n\n')
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def _post_single(self, report_name, t0):
+        elapsed = round(time.perf_counter() - t, 3)
+        now = datetime.datetime.strftime(datetime.datetime.now(), format='%Y-%m-%d %H_%M')
+        self.update_summary[report_name]['Elapsed (sec)'] = elapsed
+
+        self.logger.info('\n\n++PerformedAt:{}'.format(now))
+        self.logger.info('\n\n++Elapsed: {:.3f} sec'.format(elapsed))
+        self.logger.info('\n' + '</{}>'.format(report_name))
+        warnings = self.log_split.extract(report_name)
+        if self.warnings_verbose == 1 and warnings:
+            print(Fore.CYAN + "\t\twarnings: ")
+            print('\t\t\t' + hag.align(warnings, alignment='right', width=1))
+        print('\n\n\n')
+        self.log_split.export(report_name)
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def _post_run(self, t0):
+
+        elapsed = time.perf_counter() - t0
+        self.logger.info("\n\n\n\n\nTotal Time: {}".format(elapsed))
         now = datetime.datetime.strftime(datetime.datetime.now(), format='%Y-%m-%d %H:%M')
         print(Fore.GREEN + '\n\n\n==> Ended at: ', now)
-        elapsed = time.perf_counter() - t0
 
         successful = [report for report, content in self.update_summary.items() if content['Status'] == 'Success']
         unsuccessful = [r for r in self.report_names if r not in successful]
-        self.update_summary['Totals'] = {'Total Time Elapsed (sec)': round(elapsed,3),
+        self.update_summary['Totals'] = {'Total Time Elapsed (sec)': round(elapsed, 3),
                                          '#Successful': len(successful),
                                          '#Failed': len(self.report_names) - len(successful),
                                          '#Total': len(self.report_names),
@@ -259,14 +242,15 @@ class Updater:
 
         colorama.init(autoreset=True)
         with open(Files._logs_dir / 'update_summary.log', 'w') as f:
-            [f.write(json.dumps({report:content}) + '\n') for report, content in self.update_summary.items()]
+            [f.write(json.dumps({report: content}) + '\n') for report, content in self.update_summary.items()]
 
-        print('\n==> Total Time Elapsed: {:.3f} sec ({:.2f} min)\n\n'.format(elapsed, elapsed/60 ))
+        print('\n==> Total Time Elapsed: {:.3f} sec ({:.2f} min)\n\n'.format(elapsed, elapsed / 60))
 
-        print(hag.make_box("Update Summary", style='bold-line', alignment='center', horizontal_padding=10, vertical_padding=1))
+        print(hag.make_box("Update Summary", style='bold-line', alignment='center', horizontal_padding=10,
+                           vertical_padding=1))
         for report, summary in self.update_summary.items():
             print(report)
-            for k,v in summary.items():
+            for k, v in summary.items():
                 print('\t{}: {}'.format(k, v))
 
         print('\n\n\n')
@@ -276,22 +260,6 @@ class Updater:
               '\n\t2. Share the project with your colleagues'
               '\n\t3. Cite the project when it contributes to your work'
               '\n\t4. Become a sponsor: https://github.com/sponsors/ThanosGkou')
-
-    # *******  *******   *******   *******   *******   *******   *******
-    def update_fulfilled_refreshes(self):
-        # if self.mode == 'debugging':
-        #     self.logger.info("Not updateing fulfilled refreshes file, as this run was in debugging mode.")
-        # else:
-
-        fulfilled = self.initially_fulfilled.copy()
-
-        fulfilled.extend(self.refresh_requirements_fulfilled)
-        with open(self.fulfilled_refreshes_file, 'w') as f:
-            f.write(json.dumps(fulfilled))
-        self.logger.info("Successfully updated fulfilled refreshes file.")
-        self.logger.info("Old values were:{}".format(self.initially_fulfilled))
-        self.logger.info("New values are: {}".format(fulfilled))
-
 
     # *******  *******   *******   *******   *******   *******   *******
     def _modify_requirements(self, requirements, lake):
@@ -305,17 +273,16 @@ class Updater:
         requirements['end_date'] = self.end_date
 
         requirements['range']= {'date': pd.date_range(requirements['start_date'], requirements['end_date'], freq='1D')}
+
         return requirements
 
-
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
-    def single(self, report_name, use_lake_version, retroactive_update, keep_raw = False, refresh_database = False):
+    def single(self, report_name, use_lake_version, retroactive_update, keep_raw = False):
         self.logger.info('\n\n\n\t\tAssessing report type: {}'.format(report_name))
 
-        # print(f'Instantiating Report')
         r = Report.Report(self.rp, report_name, self.root_lake, self.root_base, api_allowed=self.allow_handshake)
 
-        if self.refresh_requirements[report_name]:
+        if report_name.lower() in [_r.lower() for _r in self.reports_to_refresh]:
             r.database_path.with_stem('.bak').mkdir(exist_ok=True, parents=True)
             move_old_db_to = r.database_path.parent / '.bak' / r.database_path.name
             if r.database_path.exists():
@@ -330,7 +297,6 @@ class Updater:
                       ' \n\tThis report\'s data(base), just for this time, will be fully rebuilt instead of just updated.\n'
                       '\t\tThe old database of this report is stored here: {} in case you want to keep it'.format(report_name, move_old_db_to))
 
-        # print(f'Instantiating lake')
         lake = DataLake.DataLake(r, use_lake_version=use_lake_version, retroactive_update = retroactive_update)
 
         if self.mode == 'debugging':
@@ -339,7 +305,7 @@ class Updater:
         else:
             start_date = None
             end_date = None
-        # print(f'Calling lake.update with {start_date = }, {end_date = }')
+
         lake.update(start_date, end_date)
         base = DataBase.DataBase(r, db_timezone='UTC')
         requirements = base.get_update_requirements()
@@ -358,7 +324,6 @@ class Updater:
             # The dataframes belong to the newly-parsed lake, not to the pre-existing database. So: ignore_fruits = True
             # TODO: I dont really like the ignore_fruits implementation.
             base.tree = Tree(root_path=base.tree.root.path, root_dict = data, depth_mapping=base.tree.depth_mapping, ignore_fruits = True)
-            # base.tree.make_tree(from_dict=data,ignore_fruits=True)
             base.tree.make_dirs()
             base.update(data)
 
