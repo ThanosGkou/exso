@@ -43,6 +43,10 @@ General Usage
     * e.g. DAM_Results = dam_ReSultS = dam_results
 * Auto-propose similar report-names in case the inputted report name does not exist
 
+Updater: Lake-only option::
+
+        upd = exso.Updater(root_lake, root_base).run(lake_only = True)
+
 
 DataBase Tree Access
 """"""""""""""""""""""
