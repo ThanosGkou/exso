@@ -19,8 +19,8 @@ pd.set_option('frame_repr',False)
 pd.options.display.max_rows = None
 pd.options.display.max_columns= None
 
-
-
+# *******  *******   *******   *******   *******   *******   *******
+# *******  *******   *******   *******   *******   *******   *******
 __version__ = "1.0.4"
 logfile = Files.root_log #Path(tempfile.mktemp())
 logging.basicConfig(filename=logfile,
@@ -49,12 +49,18 @@ user_root_windows = pathlib.Path(os.environ['USERPROFILE'])
 fp_default_datalake = user_root_windows / 'Desktop' / 'exso_data' / 'datalake'
 fp_default_database = user_root_windows / 'Desktop' / 'exso_data' / 'database'
 
+
+# *******  *******   *******   *******   *******   *******   *******
+# *******  *******   *******   *******   *******   *******   *******
+# *******  *******   *******   *******   *******   *******   *******
 class Settings:
     def __init__(self):
         self.fp_requirements = files_dir / 'refresh_requirements.txt'
         self.fp_system_formats = files_dir / 'system_formats.txt'
         rp = Report.Pool()
         self.avail_reports = list(rp.get_available(only_names=True))
+        
+    # *******  *******   *******   *******   *******   *******   *******
 
     def set_system_formats(self, decimal_sep='.', list_sep=','):
         with open(self.system_formats_file, 'w') as f:
@@ -66,6 +72,7 @@ class Settings:
         exso._list_sep = list_sep
         exso._thousand_sep = ',' if decimal_sep == '.' else '.'
 
+    # *******  *******   *******   *******   *******   *******   *******
     def get_system_formats(self):
         with open(self.system_formats_file, 'r') as f:
             formats = json.loads(f.read())
@@ -74,6 +81,7 @@ class Settings:
         _list_sep = formats['list_sep']
         return {'decimal': _decimal_sep, 'thousand': _thousand_sep, 'list': _list_sep}
 
+    # *******  *******   *******   *******   *******   *******   *******
     def _interpret_refresh_requirements(self, force_refresh, force_no_refresh, previous = [], mode = 'a'):
 
         fr = force_refresh
@@ -110,6 +118,7 @@ class Settings:
         to_refresh = sorted(to_refresh)
         return to_refresh
 
+    # *******  *******   *******   *******   *******   *******   *******
     def get_refresh_requirements(self):
         with open(self.fp_requirements, 'r') as f:
             content = f.read()
@@ -121,6 +130,7 @@ class Settings:
 
         return to_refresh
 
+    # *******  *******   *******   *******   *******   *******   *******
     def set_refresh_requirements(self, force_refresh=None, force_no_refresh=None, mode = 'a'):
         new_command =  self._interpret_refresh_requirements(force_refresh, force_no_refresh, previous=self.get_refresh_requirements(), mode = mode)
         if mode  == 'w':
@@ -138,5 +148,7 @@ class Settings:
         print(content)
         with open(self.fp_requirements, 'w') as f:
             json.dump(content,f, indent=2)
+    # *******  *******   *******   *******   *******   *******   *******
+    # *******  *******   *******   *******   *******   *******   *******
 
 settings = Settings()
