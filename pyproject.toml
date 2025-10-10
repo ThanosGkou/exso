@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "exso"
-version = "1.0.4"
+version = "1.0.5"
 description = "An analytical framework for the Greek Power&Gas System Operation ('SO') and Market Exchange ('Ex') Data."
 authors = [
   { name="Thanos Natsikas", email="ath.natsikas@example.com" },

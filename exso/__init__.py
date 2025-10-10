@@ -21,7 +21,7 @@ pd.options.display.max_columns= None
 
 # *******  *******   *******   *******   *******   *******   *******
 # *******  *******   *******   *******   *******   *******   *******
-__version__ = "1.0.4"
+__version__ = "1.0.5"
 logfile = Files.root_log #Path(tempfile.mktemp())
 logging.basicConfig(filename=logfile,
                     level=logging.DEBUG,
