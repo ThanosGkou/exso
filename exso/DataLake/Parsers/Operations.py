@@ -146,7 +146,7 @@ class Operations:
         if arg_where_match.size:
             last_col_index = np.argwhere(mask == True)[-1][0] + 1
         else:
-            last_col_index = df.shape[1]
+            last_col_index = df.shape[1] + 1
 
         if drop_last:
             last_col_index = last_col_index - 1
