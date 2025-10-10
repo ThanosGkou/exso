@@ -1,6 +1,4 @@
 {
-  "force_refresh": [
-    "ISP1ISPResults"
-  ],
+  "force_refresh": "all",
   "force_no_refresh": []
 }
