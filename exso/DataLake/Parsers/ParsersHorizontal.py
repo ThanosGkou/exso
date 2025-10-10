@@ -135,9 +135,16 @@ class ArchetypeHorizontal(Archetype):
         if self.regex_mapping:
             df = self.apply_replacements(df, self.regex_mapping, regex =True, field = self.field)
 
+        # print()
+        # print('before truncation')
+        # print(df.head())
         if self.last_column_trigger:
             df = self.truncate_upto_last_column_trigger(df, self.last_column_trigger, self.drop_last, guide_row = 0, field = self.field)
 
+        # print()
+        # print('After truncation')
+        # print(df.head())
+        # print()
         if self.dropna_settings:
             df = self.drop_nans(df, settings = self.dropna_settings, field = self.field)
 
@@ -149,6 +156,10 @@ class ArchetypeHorizontal(Archetype):
                                            fill_value= self.empty_df_filler['fill_value'],
                                            field = self.field)
 
+        # print()
+        # print(self.field)
+        # print(df.head())
+        # input('----\n\nend of preproc')
         return df
 
     # *********************************************
