@@ -63,18 +63,18 @@ class Settings:
     # *******  *******   *******   *******   *******   *******   *******
 
     def set_system_formats(self, decimal_sep='.', list_sep=','):
-        with open(self.system_formats_file, 'w') as f:
+        with open(self.fp_system_formats, 'w') as f:
             formats = {'decimal_sep': decimal_sep,
                        'list_sep': list_sep}
             json.dump(formats, f)
 
-        exso._decimal_sep = decimal_sep
-        exso._list_sep = list_sep
-        exso._thousand_sep = ',' if decimal_sep == '.' else '.'
+        globals()['_decimal_sep'] = decimal_sep
+        globals()['_list_sep'] = list_sep
+        globals()['_thousand_sep'] = ',' if decimal_sep == '.' else '.'
 
     # *******  *******   *******   *******   *******   *******   *******
     def get_system_formats(self):
-        with open(self.system_formats_file, 'r') as f:
+        with open(self.fp_system_formats, 'r') as f:
             formats = json.loads(f.read())
         _decimal_sep = formats['decimal_sep']
         _thousand_sep = ','
@@ -145,10 +145,11 @@ class Settings:
 
         content = {'force_refresh': fr,
                    'force_no_refresh': fnr}
-        print(content)
+
         with open(self.fp_requirements, 'w') as f:
             json.dump(content,f, indent=2)
     # *******  *******   *******   *******   *******   *******   *******
     # *******  *******   *******   *******   *******   *******   *******
 
 settings = Settings()
+settings.set_system_formats()
