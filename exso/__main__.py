@@ -64,7 +64,7 @@ def main():
     arguments = p.parse_args(args)
 
     if arguments.mode == "set_system_formats": # modify permanently
-        exso._set_system_formats(decimal_sep = arguments.decimal_sep,
+        exso.settings.set_system_formats(decimal_sep = arguments.decimal_sep,
                                     list_sep = arguments.list_sep)
     else: # modify just once
         exso._decimal_sep = arguments.decimal_sep
