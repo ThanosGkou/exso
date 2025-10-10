@@ -51,7 +51,7 @@ fp_default_database = user_root_windows / 'Desktop' / 'exso_data' / 'database'
 
 class Settings:
     def __init__(self):
-        self.fp_requirements = files_dir / 'refresh_requirements2.txt'
+        self.fp_requirements = files_dir / 'refresh_requirements.txt'
         self.fp_system_formats = files_dir / 'system_formats.txt'
         rp = Report.Pool()
         self.avail_reports = list(rp.get_available(only_names=True))
@@ -65,7 +65,6 @@ class Settings:
         exso._decimal_sep = decimal_sep
         exso._list_sep = list_sep
         exso._thousand_sep = ',' if decimal_sep == '.' else '.'
-
 
     def get_system_formats(self):
         with open(self.system_formats_file, 'r') as f:
@@ -85,7 +84,6 @@ class Settings:
                     to_refresh = self.avail_reports.copy()
                 else:
                     to_refresh = [fr]
-
             else:
                 to_refresh = fr
         else:
