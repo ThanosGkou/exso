@@ -1,4 +1,8 @@
 .. _migration:
+.. include:: substitutions.rst
+
+Migration
+===========
 
 In general
 ***********
