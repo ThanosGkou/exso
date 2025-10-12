@@ -216,6 +216,15 @@ class ArchetypeHorizontal(Archetype):
             # print()
             # input('\nok?')
 
+        # print()
+        # print(f'End of split cue points ({self.field}')
+        # print()
+        # for sf, df in subfields_dfs.items():
+        #     print(f'{sf = }')
+        #     print(df.head())
+        #     print(df.shape)
+        #     print()
+        # print(f'\n\nend of split cue points: {self.field}')
         return subfields_dfs
 
     # *********************************************
@@ -228,7 +237,15 @@ class ArchetypeHorizontal(Archetype):
                 df = self.transposer(df, skip_rows_at_final = self.skip_rows_at_final, field = self.field, subfield = subfield)
 
             subfields_dfs[subfield] = df
-
+        # print()
+        # print(f'End of transposeALl ({self.field}')
+        # print()
+        # for sf, df in subfields_dfs.items():
+        #     print(f'{sf = }')
+        #     print(df.head())
+        #     print(df.shape)
+        #     print()
+        # print(f'\n\nend of transposeAell: {self.field}')
         return subfields_dfs
 
     # *********************************************
@@ -285,7 +302,15 @@ class ArchetypeHorizontal(Archetype):
 
             subfields_dfs[subfield] = df
 
-
+        # print()
+        # print(f'End ofrolling_post_proc ({self.field}')
+        # print()
+        # for sf, df in subfields_dfs.items():
+        #     print(f'{sf = }')
+        #     print(df.head())
+        #     print(df.shape)
+        #     print()
+        # print(f'\n\nend of rolling postproc: {self.field}')
         return subfields_dfs
 
     # *********************************************
@@ -755,6 +780,13 @@ class DAM_ResultsSummary(ArchetypeHorizontal):
         str_columns = [df.columns[i] for i in range(df.shape[1]) if type(df.columns[i])==str]
         df = df.drop(columns =str_columns, errors = 'ignore')
         df = super().pre_proc(df)
+        # print()
+        # print(self.field)
+        # print(df)
+        # print()
+        # print(df.shape)
+        # print('\n\nend of preproc')
+
         return df
 
 

@@ -92,14 +92,41 @@ class Pipeline(Loader, Parser, Joiner):
         if keep_raw:
             self.as_read = copy.deepcopy(self.data)
 
-
         self.get_parser()
         self.dates_per_period, self.dates_flat_series = self.datetime_constructor()
 
         self.transformAll()
         # a_subfield = list(self.data[a_date][a_field].keys())[0]
 
+        # print()
+        # print(f'End of transposeALl ({self.r.report_name}')
+        # print()
+        # for str_date, dfs in self.data.items():
+        #     print(f'{str_date = }')
+        #     for f, fdfs in dfs.items():
+        #         print(f'\t{f = }')
+        #         for sf, df in fdfs.items():
+        #             print(f'\t\t{sf = }')
+        #             print(df.head())
+        #             print(df.shape)
+        #             print()
+        #     print()
+        # print(f'\n\nend of transposeAll')
+
         self.joinAll()
+        #
+        # print()
+        # print(f'End of joinAll ({self.r.report_name}')
+        # print()
+        # for k, dfs in self.data.items():
+        #     print(f'{k = }')
+        #     for sf, df in dfs.items():
+        #         print(f'\t\t{sf = }')
+        #         print(df.head())
+        #         print(df.shape)
+        #         print()
+        #     print()
+        # input(f'\n\nend of joinAll')
 
         # df = self.data[a_field][a_subfield]
         # self.sort()

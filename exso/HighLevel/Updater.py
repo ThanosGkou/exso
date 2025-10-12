@@ -343,6 +343,13 @@ class Updater:
             else:
                 data = lake.query(dates_iterable=requirements['range']['date'], keep_raw=keep_raw)
 
+            # for field, dfs in data.items():
+            #     for sf, df in dfs.items():
+            #         print(f'{field}, {sf}')
+            #         print(df.head())
+            #         print(df.shape)
+            #         print()
+            # input('---hust before database update.')
             # I only want the   s t r u c t u r e   of data:dict, not the actual dataframes.
             # The dataframes belong to the newly-parsed lake, not to the pre-existing database. So: ignore_fruits = True
             # TODO: I dont really like the ignore_fruits implementation.

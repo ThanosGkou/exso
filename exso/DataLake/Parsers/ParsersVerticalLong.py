@@ -262,15 +262,20 @@ class ArchetypeLong(Archetype):
     def expost(self, fields_dfs):
 
         orig_dates = self.period_dates.copy()
-        orig_timedelta = orig_dates[2] - orig_dates[1]
-        dates_r2 = pd.date_range(self.period_dates[0],
-                                 self.period_dates[-1] + orig_timedelta - pd.Timedelta(self.r2),
-                                 freq=self.r2)
+        if len(orig_dates) >=2:
+            orig_timedelta = orig_dates[2] - orig_dates[1]
+            dates_r2 = pd.date_range(self.period_dates[0],
+                                     self.period_dates[-1] + orig_timedelta - pd.Timedelta(self.r2),
+                                     freq=self.r2)
+        else:
+            # e.g. DAM_GasVTP
+            dates_r2 = None
+
         for field, subfields_dfs in fields_dfs.items():
             for subfield, df in subfields_dfs.items():
                 # check if the period_dates are reaaaaly shorter than the df
 
-                if self.period_dates.size + 20 < df.shape[0]:
+                if len(self.period_dates) + 20 < df.shape[0]:
                     if isinstance(self.r2, str):
                         apply_dates = dates_r2
                     else:
@@ -749,9 +754,9 @@ class DAM_MarketCoupling(_UsualParams):
             df = pd.pivot_table(df, index=self.index_cols, columns=self.eigen_cols, values=self.payload_cols)
             df = self._clean_pivot(df)
 
-        print('\n\nInside .pre_proc')
-        print(df)
-        print()
+        # print('\n\nInside .pre_proc')
+        # print(df)
+        # print()
         return df
 
     # *******  *******   *******   *******   *******   *******   *******
