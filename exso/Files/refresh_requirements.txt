@@ -1,4 +1,4 @@
 {
-  "force_refresh": "all",
+  "force_refresh": [],
   "force_no_refresh": []
 }

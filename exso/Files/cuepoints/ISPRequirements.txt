@@ -1,3 +1,8 @@
 $ISPRequirements
-MandatoryHydro:('Mandatory Hydro', 'Commissioning')
+RESForecast:('RES Forecast', 'Total System']
+LoadForecast:('Non-Dispatchable Load Forecast', 'Total System']
+MandatoryHydro:('Mandatory Hydro', 'Total System']
+Commissioning: ('Commissioning', 'Total System']
+ReserveUp: ['Up', 'Down')
+ReserveDown: ['Down', None]
 ;

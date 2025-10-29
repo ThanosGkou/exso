@@ -56,7 +56,7 @@ class ReadingSettings:
         self.lake_version = json['lake_version']  #
         self.sheet_locators = json['sheet_locators']  #
         self.sheet_tags = json['sheet_tags']  #
-        self.header = json['header_row']
+        self.header = json['header']
         self.use_cols = json['use_cols']  #
 
         ReadingSettings.interpret(self)

@@ -825,8 +825,10 @@ class DAM_PreMarketSummary(DAM_ResultsSummary):
 ###############################################################################################
 class ISP1Requirements(ArchetypeHorizontal):
     def param_updater(self):
-        self.last_column_trigger = '23:30'
-        self.drop_last = False
+        # self.last_column_trigger = '23:30'
+        # self.drop_last = False
+        self.last_column_trigger = 'Total'
+        self.drop_last = True
 
     # *********************************************
     def transposeAll(self, subfields_dfs):
@@ -835,7 +837,14 @@ class ISP1Requirements(ArchetypeHorizontal):
             Basically, I need to keep the the df.iloc[:,1:], and then drop_at_final = 1, as usually
         '''
         for subfield, df in subfields_dfs.items():
-            df = df.iloc[:,1:].T.copy().reset_index(drop=True)
+            if subfield in ['RESForecast', 'LoadForecast', 'ReserveUp', 'ReserveDown']:
+                col_idx = 1
+            else:
+                col_idx = 0
+            drop_col = df.columns[col_idx]
+            df = df.drop(columns=drop_col)
+            df = df.T.copy().reset_index(drop = True)
+            # df = df.iloc[:,1:].T.copy().reset_index(drop=True)
             df.columns = df.iloc[max(self.skip_rows_at_final - 1, 0)].values
             df = df.iloc[self.skip_rows_at_final:].copy().reset_index(drop=True)
             subfields_dfs[subfield] = df

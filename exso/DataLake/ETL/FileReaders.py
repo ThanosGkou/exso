@@ -61,6 +61,7 @@ class Readers:
                 engine_as_passed = kwargs['engine']
                 kwargs['engine'] = None
                 df_sheets = pd.read_excel(filepath, **kwargs)
+
             except:
                 kwargs['engine'] = engine_as_passed
 

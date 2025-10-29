@@ -206,6 +206,8 @@ class MonthlyNTC(ArchetypeWide):
     '''
     renamer_ = {'TEIAS': 'TURKEY',
                 'FYROM': 'NORTH MACEDONIA'}
+    # issue in file: 20250601_20250630_MonthlyNTC_01.xlsx, column M
+    replacer_mapping = {'15.06.1026': '15.06.2026'}
     # *******  *******   *******   *******   *******   *******   *******
     @staticmethod
     def conform_date_format(date:str, tzinfo = None):
@@ -256,12 +258,12 @@ class MonthlyNTC(ArchetypeWide):
             except:
                 print()
                 print('Error in date')
-
                 print(df.loc['start'])
                 print()
                 print("original")
                 print(orig)
-                input('XXXXX')
+                print()
+                raise ValueError
 
 
             applicable_until = self.conform_date_format(df.loc['end', col], tzinfo=self.period_dates.tzinfo)
@@ -270,6 +272,11 @@ class MonthlyNTC(ArchetypeWide):
             if applicable_from == pd.Timestamp(2023, 9, 4, 0, 0, 0, tzinfo=self.period_dates.tzinfo):
                 if applicable_until.month == 10:
                     applicable_from = pd.Timestamp(2023, 10,4 ,0,0,0,tzinfo=self.period_dates.tzinfo)
+
+            ## Issue in 20250701_20250731_MonthlyNTC_01.xlsx (column R)
+            if applicable_from == pd.Timestamp('2025-07-28 00:00:00+0200', tz='CET'):
+                if applicable_until == pd.Timestamp('2026-07-31 23:00:00+0200', tz='CET'):
+                    applicable_until = pd.Timestamp('2025-07-31 23:00:00+0200', tz='CET')
 
             applicable_n_days = (applicable_until + pd.Timedelta('2h') - applicable_from).days
             applicable_profile = df.loc[3:, col].values
