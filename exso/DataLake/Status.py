@@ -30,7 +30,7 @@ class Status:
     '''
     history = []
 
-    def __init__(self, dir:str|Path, min_potential_date, max_potential_date, eligibility, time_lag_days:int, sheet_tags:list, period_covered:str):
+    def __init__(self, dir:str|Path, min_potential_date, max_potential_date, eligibility, time_lag_days:int, sheet_tags:list, period_covered:str, report_name:str):
         '''
         
         :param dir:
@@ -45,6 +45,7 @@ class Status:
         self.logger = logging.getLogger(__name__ + '.' + self.__class__.__name__)
         self.logger.info("Status Check.")
 
+        self.report_name = report_name
         self.dir = dir
         self.eligibility = eligibility
         self.time_lag_days = time_lag_days
@@ -123,6 +124,23 @@ class Status:
             self.logger.info('\n-->Comparing the files found in datalake, with the potential range of the filetype.')
 
         self.history.append(copy.deepcopy(self))
+
+        if self.report_name == 'MonthlyNTC':
+
+            # The issue: Up until 2023, when an update for month e.g. June-2022 was uploaded,
+            #   isntead of making a new version (so, 20210601_20210630_MonthlyNTC_02.xls),
+            #   they modified the date: (e.g. 20210615_20210630_MonthlyNTC_01.xls)
+
+            fdf = self.file_df.copy()
+            fdf['month'] = fdf.dates.dt.month
+            fdf['year'] = fdf.dates.dt.year
+            fdf = fdf.drop_duplicates(subset=['month', 'year'], keep='last')
+
+            fdf['day'] = 1
+            fdf['new_date'] = pd.to_datetime(fdf[['day', 'month', 'year']], dayfirst=True)
+            fdf['dates'] = fdf['new_date']
+            fdf.index = [DateTime.make_string_date(dd, sep = '') for dd in fdf['new_date']]
+            self.file_df = fdf.drop(columns=['new_date', 'month',  'year', 'day'])
     # *******  *******   *******   *******   *******   *******   *******
     def compare_to_previous(self):
 
