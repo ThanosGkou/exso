@@ -39,7 +39,8 @@ class DataLake(Update, Query):
                        'time_lag_days':self.r.time_lag_days,
                        'period_covered':self.r.period_covered,
                        'eligibility':self.r.eligibility,
-                       'sheet_tags':self.r.sheet_tags}
+                       'sheet_tags':self.r.sheet_tags,
+                       'report_name': self.r.report_name}
 
 
         self.status = Status(**args_needed)
