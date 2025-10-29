@@ -141,6 +141,7 @@ class Status:
             fdf['dates'] = fdf['new_date']
             fdf.index = [DateTime.make_string_date(dd, sep = '') for dd in fdf['new_date']]
             self.file_df = fdf.drop(columns=['new_date', 'month',  'year', 'day'])
+
     # *******  *******   *******   *******   *******   *******   *******
     def compare_to_previous(self):
 
