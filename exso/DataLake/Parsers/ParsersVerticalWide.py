@@ -206,8 +206,10 @@ class MonthlyNTC(ArchetypeWide):
     '''
     renamer_ = {'TEIAS': 'TURKEY',
                 'FYROM': 'NORTH MACEDONIA'}
+
     # issue in file: 20250601_20250630_MonthlyNTC_01.xlsx, column M
-    replacer_mapping = {'15.06.1026': '15.06.2026'}
+    replacer_mapping = {'15.06.1026': '15.06.2026',
+                        '15.06.1025': '15.06.2025'}
     # *******  *******   *******   *******   *******   *******   *******
     @staticmethod
     def conform_date_format(date:str, tzinfo = None):
@@ -232,11 +234,11 @@ class MonthlyNTC(ArchetypeWide):
         df.index = ['start', 'end' ] + df.index[2:].to_list()
         for k,v in self.renamer_.items():
             df.columns = df.columns.str.replace(k,v)
+
         # rearranged = [[re.sub(k,v, string_col) for k,v in self.renamer_.items()] for string_col in df.columns]
         # df = df.rename(columns = self.renamer_).copy()
 
         borders = self.conform_borders(df)
-
 
         new_cols = []
         for i in range(df.shape[1]):
@@ -248,51 +250,35 @@ class MonthlyNTC(ArchetypeWide):
         df.columns = new_cols
 
         outcome = pd.DataFrame(columns=borders, index=self.period_dates)
+
         if 'FYROM' in outcome.columns:
-            input('GFLAKFNLJSANFLAJKn')
+            raise ValueError("value 'FYROM' encountered, while it should have been properly handled at this point.\n"
+                             f"Date: {self.period_dates[0]}, Field: {self.field}")
+
+        # Why it doesnt fucking work with a dict?
+        df = df.replace(self.replacer_mapping, regex = True)
+        df = df.replace('15.06.1026', '15.06.2026')
+        df = df.replace('15.06.1025', '15.06.2025')
+        df = self.fix_the_mess_in_dates(df, borders)
 
         for col in df.columns:
             relevant_border = [b for b in borders if b in col][0]
-            try:
-                applicable_from = self.conform_date_format(df.loc['start', col], tzinfo = self.period_dates.tzinfo)
-            except:
-                print()
-                print('Error in date')
-                print(df.loc['start'])
-                print()
-                print("original")
-                print(orig)
-                print()
-                raise ValueError
-
-
-            applicable_until = self.conform_date_format(df.loc['end', col], tzinfo=self.period_dates.tzinfo)
-            applicable_until += pd.Timedelta('23h')
-            # applicable_n_days = (applicable_until + pd.Timedelta('2h') - applicable_from).days
-            if applicable_from == pd.Timestamp(2023, 9, 4, 0, 0, 0, tzinfo=self.period_dates.tzinfo):
-                if applicable_until.month == 10:
-                    applicable_from = pd.Timestamp(2023, 10,4 ,0,0,0,tzinfo=self.period_dates.tzinfo)
-
-            ## Issue in 20250701_20250731_MonthlyNTC_01.xlsx (column R)
-            if applicable_from == pd.Timestamp('2025-07-28 00:00:00+0200', tz='CET'):
-                if applicable_until == pd.Timestamp('2026-07-31 23:00:00+0200', tz='CET'):
-                    applicable_until = pd.Timestamp('2025-07-31 23:00:00+0200', tz='CET')
+            applicable_from = df.loc['start', col]
+            applicable_until = df.loc['end', col]
 
             applicable_n_days = (applicable_until + pd.Timedelta('2h') - applicable_from).days
             applicable_profile = df.loc[3:, col].values
 
-
-            # applicable_n_days = int(outcome.loc[applicable_from:applicable_until].shape[0] / applicable_profile.size)
-
             fill_values = np.repeat(applicable_profile,applicable_n_days)
-            s1 = fill_values.size
-            s2 = outcome.loc[applicable_from:applicable_until].shape[0]
 
-            if s2 == 0:
+            size_of_values = fill_values.size
+            size_of_index = outcome.loc[applicable_from:applicable_until].shape[0]
+
+            if size_of_index == 0:
                 # e.g. in the file specifying NTCs for Novermber 2023, values for italy are given for 01/Oct/23 until 31/Oct/23.
                 # --> fucking ignore this
                 continue
-            if s1 + 20 < s2 or s1 -20 > s2:
+            if size_of_values + 20 < size_of_index or size_of_values -20 > size_of_index:
                 print('')
                 print('The problem')
                 print(orig)
@@ -300,11 +286,12 @@ class MonthlyNTC(ArchetypeWide):
                 print(f'{applicable_from = }')
                 print(f'{applicable_until = }')
                 print(f'{applicable_n_days = }')
-                print(f'{s1 = }')
-                print(f'{s2 = }')
-
-                input('=X')
-
+                print()
+                print(f'{size_of_values = }')
+                print(f'{size_of_index = }')
+                print()
+                print(outcome)
+                raise ValueError
 
             switches = DateTime.get_dst_switches(from_year=outcome.index[0].year, to_year=outcome.index[0].year
                                                  ,timezone='CET',return_datetime=True, keep='upstream')
@@ -330,6 +317,58 @@ class MonthlyNTC(ArchetypeWide):
 
 
         return outcome
+
+    # *******  *******   *******   *******   *******   *******   *******
+    def fix_the_mess_in_dates(self, df, borders):
+        verified_period_start = self.period_dates[0]
+        tz = self.period_dates[0].tzinfo
+        dt_end_of_day = pd.Timedelta('23h')
+        # print()
+        # print(f'{verified_period_start = }')
+        print()
+        print(df.head())
+        df.loc['start'] = [self.conform_date_format(d, tzinfo = tz) for d in df.loc['start']]
+        df.loc['end'] = [self.conform_date_format(d, tzinfo=tz) + dt_end_of_day for d in df.loc['end']]
+
+        _starters = pd.to_datetime(df.loc['start'])
+        _enders = pd.to_datetime(df.loc['end'])
+
+        start_issues = df.loc['start'][(_starters.dt.month != verified_period_start.month) | (_starters.dt.year != verified_period_start.year)]
+        end_issues = df.loc['end'][(_enders.dt.month != verified_period_start.month) | (_enders.dt.year != verified_period_start.year)]
+
+        # start_issues = df.loc['start'][pd.to_datetime(df.loc['start']).dt.month != verified_period_start.month]
+        # end_issues = df.loc['end'][pd.to_datetime(df.loc['end']).dt.month != verified_period_start.month]
+
+        if not (start_issues.empty):# and end_issues.empty):
+            logger.warning(f"Start Issues encountered in {verified_period_start}")
+            logger.warning(df.head())
+            logger.warning(f'\n{start_issues}\n')
+            bad = df.loc['start', start_issues.index]
+            fixed = [pd.Timestamp(year=verified_period_start.year,
+                                  month=verified_period_start.month,
+                                  day = d.day, tzinfo=tz) for d in bad]
+            df.loc['start', start_issues.index] = fixed
+
+        if not end_issues.empty:
+            logger.warning(f"End Issues encountered in {verified_period_start}")
+            logger.warning(df.head())
+            logger.warning(f'\n{end_issues}\n')
+
+            bad = df.loc['end', end_issues.index]
+            fixed = [pd.Timestamp(year=verified_period_start.year,
+                                  month=verified_period_start.month,
+                                  day=d.day, hour = 23, tzinfo=tz) for d in bad]
+
+
+            df.loc['end', end_issues.index] = fixed
+
+        for col in df.columns:
+            start = df.loc['start', col]
+            end = df.loc['end', col]
+            if start > end:
+                df.loc['end', col] = start + dt_end_of_day
+
+        return df
 
     # *******  *******   *******   *******   *******   *******   *******
     def rolling_post_proc(self, subfields_dfs):
