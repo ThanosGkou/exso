@@ -637,29 +637,44 @@ class ISP1DayAheadRESForecast(ArchetypeHorizontal):
 
     # *******  *******   *******   *******   *******   *******   *******
     def pre_proc(self, df):
-        tipping_point = pd.Timestamp('2025-09-30 00:00:00+02:00')
-        if self.period_dates[0] <= tipping_point:
+        verbose = False
+        # Fucking stupid
+        #   ISP1 Day Ahead RES and Load forecast, tipping point = (2025-09-30, 2025-10-01] ok
+        #   ISP2 Day Ahead Load forecast, tipping point = (2025-09-30, 2025-10-01] ok
+        #   ISP2 Day Ahead RES forecast, tipping point = [2025-09-30,...] not ok
+        #   ISP3 IntraDay Load forecast, tipping point = (2025-09-30, 2025-10-01] ok
+        #   ISP3 IntraDay RES forecast, tipping point = [2025-09-30,...] not ok
+        tipping_point = pd.Timestamp('2025-10-01 00:00:00+02:00')
+        if self.report_name in  ['ISP2DayAheadRESForecast', 'ISP3IntraDayRESForecast']:
+            tipping_point = pd.Timestamp('2025-09-30 00:00:00+02:00')
+
+        if self.period_dates[0] < tipping_point:
             keep_row_idx_ = [2]
             drop_col_idx = []
         else:
             keep_row_idx_ = [0]
             drop_col_idx = [1]
 
-        # print('*'*50)
-        # print('*'*50)
-        # print()
-        # print(df.head())
+        if verbose:
+            print('*'*50)
+            print('*'*50)
+            print()
+            print(df.head())
+
         df = super().pre_proc(df)
-        # print()
-        # print(df.head())
+        if verbose:
+            print()
+            print(df.head())
         df = df.iloc[keep_row_idx_]
-        # print()
-        # print(df.head())
+        if verbose:
+            print()
+            print(df.head())
         df = df.drop(columns=df.columns[drop_col_idx])
-        # print()
-        # print(df.head())
-        # print('*'*50)
-        # print('*'*50)
+        if verbose:
+            print()
+            print(df.head())
+            print('*'*50)
+            print('*'*50)
         return df
 
 
