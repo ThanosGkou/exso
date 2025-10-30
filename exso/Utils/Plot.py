@@ -157,8 +157,8 @@ class Plot:
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     @staticmethod
-    def line_plot(df, cols = None, title = None, xlabel = None, ylabel = None, ytick_suffix = None, show = True, legend_title = None, save_path = None, secondary_y_cols = None, secondary_y_label = None, width = 1800, height = 1000, hovermode = 'x'):
-
+    def line_plot(df, cols = None, title = None, xlabel = None, ylabel = None, ytick_suffix = None, show = True, legend_title = None, save_path = None, secondary_y_cols = None, secondary_y_label = None, width = None, height = None, autosize = True, hovermode = 'x'):
+        line_weight = 3
         if isinstance(df,pd.Series):
             df = df.to_frame(name = 'Values')
         if isinstance(cols, type(None)):
@@ -215,7 +215,7 @@ class Plot:
         else:
             fig = px.line(df,color_discrete_sequence=colors[:df.shape[1]])
 
-        fig.update_traces(line = dict(width = 1))
+        fig.update_traces(line = dict(width = line_weight))
         fig.update_traces(textposition='top center', hovertemplate=None)
         fig.update_layout(hovermode=hovermode)
 
@@ -267,7 +267,7 @@ class Plot:
                                             yanchor='bottom'),
                                        ])
         fig.update_layout(
-            autosize=False,
+            autosize=autosize,
             width=width,
             height=height, )
 
