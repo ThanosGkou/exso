@@ -208,8 +208,6 @@ class MonthlyNTC(ArchetypeWide):
                 'FYROM': 'NORTH MACEDONIA'}
 
     # issue in file: 20250601_20250630_MonthlyNTC_01.xlsx, column M
-    replacer_mapping = {'15.06.1026': '15.06.2026',
-                        '15.06.1025': '15.06.2025'}
     # *******  *******   *******   *******   *******   *******   *******
     @staticmethod
     def conform_date_format(date:str, tzinfo = None):
@@ -256,9 +254,7 @@ class MonthlyNTC(ArchetypeWide):
                              f"Date: {self.period_dates[0]}, Field: {self.field}")
 
         # Why it doesnt fucking work with a dict?
-        df = df.replace(self.replacer_mapping, regex = True)
-        df = df.replace('15.06.1026', '15.06.2026')
-        df = df.replace('15.06.1025', '15.06.2025')
+
         df = self.fix_the_mess_in_dates(df, borders)
 
         for col in df.columns:
@@ -323,12 +319,22 @@ class MonthlyNTC(ArchetypeWide):
         verified_period_start = self.period_dates[0]
         tz = self.period_dates[0].tzinfo
         dt_end_of_day = pd.Timedelta('23h')
-        # print()
-        # print(f'{verified_period_start = }')
-        print()
-        print(df.head())
+
+        ###############################
+        ############################### ADHOC ISSUES
+        ###############################
+        # June 2025
+        df = df.replace('15.06.1026', '15.06.2026')
+        df = df.replace('15.06.1025', '15.06.2025')
+
+        # November 2025: ALBANIA start = 01.11.2025, end = 01.30.2025 ...
+        df = df.replace('01.30.2025', '30.11.2025')
         df.loc['start'] = [self.conform_date_format(d, tzinfo = tz) for d in df.loc['start']]
         df.loc['end'] = [self.conform_date_format(d, tzinfo=tz) + dt_end_of_day for d in df.loc['end']]
+
+        ###############################
+        ############################### END OF ADHOC ISSUES
+        ###############################
 
         _starters = pd.to_datetime(df.loc['start'])
         _enders = pd.to_datetime(df.loc['end'])
