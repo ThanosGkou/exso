@@ -126,6 +126,7 @@ class Loader:
                 self.failed_dates.append(date)
                 print(traceback.format_exc())
                 self.logger.warning("Failed to read: {}. Exception: {}".format(fp, traceback.format_exc()))
+                print(f'\nThis date will be ignored (nan values will be used): {date}')
 
         return in_memory
 
@@ -395,7 +396,29 @@ class Joiner:
             # dfs = [self.data[d][field][subfield] for d in self.file_df.index]
             # fix for blockorders. The issue was, between 10 and 30 Sep 2025, there was no 'Buy' subfield.
             dfs = [self.data[d][field][subfield] if subfield in self.data[d][field] else pd.DataFrame() for d in self.file_df.index]
-            joined_data[field][subfield] = pd.concat([*dfs], axis = 0)
+            try:
+                joined_data[field][subfield] = pd.concat([*dfs], axis = 0)
+            except:
+                for date, fdfs in self.data.items():
+                    for field, sfdfs in fdfs.items():
+                        if field not in joined_data:
+                            joined_data[field] = {}
+                        for subfield, df in sfdfs.items():
+                            if subfield not in joined_data[field]:
+                                joined_data[field][subfield] = pd.DataFrame()
+
+                            try:
+                                joined_data[field][subfield] = pd.concat([joined_data[field][subfield], df], axis = 0)
+                            except:
+                                print(f'\n\nUnexpected error while joining date: {date}')
+                                ex = traceback.format_exc()
+                                print(ex)
+                                print()
+                                print(df)
+                                print(f'Skipping this date: {date}, {field = }, {subfield = }')
+
+                                # raise ValueError(f"Failed to join data: {date}, {field}, {subfield}")
+
             pbar.set_postfix_str(s=field)
 
         tf = time.time() - t0
