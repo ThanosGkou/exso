@@ -5,7 +5,6 @@ import logging
 import os
 import re
 import time
-
 import haggis.string_util
 import numpy as np
 import pandas as pd
@@ -1021,7 +1020,7 @@ class LTPTRsNominationsSummary(ArchetypeHorizontal):
 
         for k,df in dfs.items():
             df['Sum'] = df.sum(axis = 1)
-            
+
         return dfs
 
     # *********************************************
