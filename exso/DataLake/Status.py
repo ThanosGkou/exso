@@ -198,6 +198,11 @@ class Status:
         self.logger.info('\t\tUsed filtering rule --> ' + rule)
         self.logger.info("Initially perceived number of eligible files: {}".format(len(filepaths)))
 
+
+        if 'expost_contains' in eligibility:
+            if eligibility['expost_contains']:
+                filepaths = [f for f in filepaths if eligibility['expost_contains'] in Path(f).name]
+
         return filepaths
 
     # *******  *******   *******   *******   *******   *******   *******
