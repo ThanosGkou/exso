@@ -77,7 +77,7 @@ class Readers:
                     df_sheets = pd.read_excel(filepath, **kwargs)
                 except:
                     print()
-                    raise ValueError(f"ERROR reading filepath: {filepath}, {kwargs = }")
+                    raise ValueError(f"ERROR reading file: {filepath}, {kwargs = }")
 
 
         warnings.filterwarnings("default", category=UserWarning, module=re.escape('openpyxl.styles.stylesheet'))
