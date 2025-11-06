@@ -195,7 +195,13 @@ class Operations:
 
         for sw in startswith:
             if sw:
-                drop = [c for c in cols_to_apply_to if c.startswith(sw)]
+                # sometimes, a datetime object ends up being a column... In this case, c.startswith() would fail.
+                try:
+                    drop = [c for c in cols_to_apply_to if c.startswith(sw)]
+                except:
+                    drop = []
+                    pass
+
                 df = df.drop(drop, axis='columns', errors=error_action)
 
 
