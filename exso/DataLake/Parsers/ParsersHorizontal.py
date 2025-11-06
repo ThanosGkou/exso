@@ -904,9 +904,134 @@ class ISP3Requirements(ISP1Requirements):
 ###############################################################################################
 ###############################################################################################
 class LTPTRsNominationsSummary(ArchetypeHorizontal):
+    ''' Very ill-conditioned.
+    '''
+    # *********************************************
     def param_updater(self):
         self.drop_col_settings.update({'col_names':['Sum']})
-    pass
+
+    # *********************************************
+    def pre_proc(self, df):
+        # fyrom->north macedonia, CET Hour --> Hour (CET)
+        df = self.apply_replacements(df, self.replacer_mapping)
+
+        '''this is a problem. sometimes sums are correct, some times they are nan anc create problems'''
+        rows_of_Sum = df.where(df == 'Sum').dropna(thresh = 1, axis = 0).index
+        # drop_index_Sum = df[df == 'Sum'].dropna(thresh = 1).dropna(thresh = 1, axis = 1).index
+        df = df.drop(index = rows_of_Sum)
+
+        '''2020-06-23 issue...'''
+        bad_frame = df.where(df == 'Nominations of LongTerm PTRs').dropna(thresh = 1, axis = 1)
+        df = df.drop(columns=bad_frame.columns)
+
+        return df
+
+    # *********************************************
+    def split_cue_points(self, df):
+
+        p_day = self.period_dates[0]
+        dst_switches = DateTime.get_dst_switches(from_year=p_day.year,
+                                                 to_year=p_day.year,
+                                                 timezone='CET')
+        _switches = dst_switches['dst_switch'].to_list()
+        del dst_switches
+
+        orig = df.copy()
+
+        indicator_loc = df.where(df == 'Hour (CET)').dropna(thresh=1, axis = 1)
+        start_row = indicator_loc.index[0]
+        indicator_col = indicator_loc.columns[0]
+
+        direction_col = df.where(df == "IMPORTS").dropna(thresh = 1, axis = 1).columns[0]
+        df[direction_col] = df[direction_col].ffill()
+
+        explicit_25hours_loc = df.where(df == 'Hr25').dropna(thresh = 1, axis = 1)
+        # has_explicit_25hours = df[df== 'Hr25'].dropna(thresh = 1).dropna(thresh = 1, axis=1)
+
+        df = df.iloc[start_row+1:, :].copy()
+
+        # sometimes, instead of 'Sum' it is np.nan and I dont need it.
+        drop_index = df[df[indicator_col].isna()].index
+        df = df.drop(index = drop_index)
+
+
+        payload_cols = df.drop(columns=[direction_col, indicator_col]).dropna(axis = 'columns').columns.to_list()
+        if not explicit_25hours_loc.empty:
+            '''from 2015 onwards, they always include a 'Hr25' col, even if not October daylight-switch'''
+            explicit_25h_col = explicit_25hours_loc.columns[0]
+            if (p_day.day == _switches[1].day) and (p_day.month == 10):
+                if explicit_25h_col not in payload_cols:
+                    payload_cols.append(explicit_25h_col)
+            else:
+                if explicit_25h_col in payload_cols:
+                    payload_cols.remove(explicit_25h_col)
+
+        # drop anything that is not payload column
+        drop_cols = [c for c in df.columns if c not in [direction_col, indicator_col] + payload_cols]
+        df = df.drop(columns = drop_cols)
+
+        df_before_split = df.copy()
+        dfs = {}
+        for d in ['IMPORTS', 'EXPORTS', 'NET']:
+            try:
+                df_dir = (df[df[direction_col] == d].
+                          drop(columns=direction_col).
+                          dropna(axis = 'rows', how = 'any').
+                          set_index(indicator_col).T.
+                          reset_index(drop = True).
+                          copy())
+            except:
+                raise ValueError
+
+            for c in df_dir.columns:
+                if c in [direction_col, indicator_col]:
+                    continue
+                try:
+                    df_dir[c] = df_dir[c].astype(float)
+                except:
+                    df_dir.pop(c)
+
+            if df_dir.shape[0] != self.period_dates.size:
+
+                if p_day.month == 3:
+                    '''in these cases, they have an extra columns with zero values'''
+
+                    if p_day.day == _switches[0].day:
+                        assert self.period_dates.size < df_dir.shape[0]
+                        assert df_dir.loc[2].sum() == 0
+                        df_dir = df_dir.drop(index = [2])
+
+                elif p_day.month == 10:
+                    # in these cases, they sum values of the extra hour to hour 2
+                    if p_day.day == _switches[1].day:
+                        assert self.period_dates.size > df_dir.shape[0]
+                        df_dir = pd.concat([df_dir.iloc[:2],
+                                            df_dir.iloc[[2]],
+                                            df_dir.iloc[2:]], axis = 0).reset_index(drop=True)
+
+                        df_dir.loc[[2,3],:] /= 2
+                else:
+                    raise ValueError
+
+            df_dir = self.apply_datetime_index(df_dir, self.period_dates)
+            dfs[d] = df_dir
+
+        if dfs['NET'].empty:
+            dfs['NET'] = dfs['EXPORTS'] - dfs['IMPORTS']
+
+        for k,df in dfs.items():
+            df['Sum'] = df.sum(axis = 1)
+            
+        return dfs
+
+    # *********************************************
+    def transposeAll(self, subfields_dfs):
+        return subfields_dfs
+
+    # *********************************************
+    def rolling_post_proc(self, subfields_dfs):
+        return subfields_dfs
+    # *********************************************
 
 ###############################################################################################
 ###############################################################################################
