@@ -101,7 +101,6 @@ class Status:
         self.use_lake_version = use_lake_version
 
         filepaths = self.get_lake_files()
-
         self.file_df = self.get_file_df(filepaths)
 
         if Status.history:
@@ -198,10 +197,15 @@ class Status:
         self.logger.info('\t\tUsed filtering rule --> ' + rule)
         self.logger.info("Initially perceived number of eligible files: {}".format(len(filepaths)))
 
-
         if 'expost_contains' in eligibility:
             if eligibility['expost_contains']:
-                filepaths = [f for f in filepaths if eligibility['expost_contains'] in Path(f).name]
+                what = eligibility['expost_contains']
+
+                if what == '*':
+                    warnings.warn("Not supported anymore expost_contains '*' character for regex")
+                else:
+                    filepaths = [f for f in filepaths if re.search(what, Path(f).name)]
+                    # filepaths = [f for f in filepaths if eligibility['expost_contains'] in Path(f).name]
 
         return filepaths
 
