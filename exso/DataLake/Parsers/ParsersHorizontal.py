@@ -286,10 +286,10 @@ class ArchetypeHorizontal(Archetype):
                 df.columns = [subfield]
 
             try:
-                df = df.astype(float).fillna(0)
+                df = df.astype(float).fillna(0.)
 
             except:
-                df = df.fillna(0)
+                df = df.fillna(0.)
 
             if self.drop_col_settings:
                 df = self.drop_columns_if(df,
