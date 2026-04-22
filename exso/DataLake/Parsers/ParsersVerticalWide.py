@@ -85,7 +85,7 @@ class ArchetypeWide(Archetype):
             df = self.apply_datetime_index(df, apply_dates)
 
             if self.renamer_mapping:
-                self.col_renamer(df, renamer_mapping = self.renamer_mapping, field = self.field, subfield = subfield)
+                df = self.col_renamer(df, renamer_mapping = self.renamer_mapping, field = self.field, subfield = subfield)
 
             if self.drop_col_settings:
                 df = self.drop_columns_if(df,
