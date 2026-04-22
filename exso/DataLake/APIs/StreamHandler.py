@@ -41,12 +41,10 @@ class StreamHandler:
         self.dry_run = dry_run
 
         archive_api = self.archive_bypass(publisher, report_name, dry_run)
-
         if publisher == 'henex':
             api_class, query_start, query_end, zip_year_range = self.split_henex(report_name,
                                                                            start_date=start_date,
                                                                            end_date=end_date)
-
 
             if api_class:
                 api = api_class(self.save_dir)
@@ -63,8 +61,13 @@ class StreamHandler:
             api.query(report_name, start_date=start_date, end_date=end_date,dry_run=dry_run, n_threads = 1)
 
         self.api = api
-        self.n_links = api.n_links
-        link_dates = api.link_dates
+        if isinstance(api, type(None)):
+            # archive api but not trigger full archive download...
+            self.n_links = 0
+            link_dates = []
+        else:
+            self.n_links = api.n_links
+            link_dates = api.link_dates
 
         self.logger.info("Link dates as arrived to stream-handler: {}".format(link_dates))
         try:
