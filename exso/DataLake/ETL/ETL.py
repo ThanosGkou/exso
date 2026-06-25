@@ -305,7 +305,6 @@ class Parser:
             progress_bar.set_postfix_str(s=date_lambda(str_date))
             content = self.data[str_date]
             data[str_date] = {}
-
             for sheet_tag, sheet_df in content.items():
                 sheet_subdfs = self.parser.pipe(sheet_tag, sheet_df, self.dates_per_period[str_date], r2=self.r.resolution2)  # parse_property_sheet(df_sheet, property=property)
                 data[str_date][sheet_tag] = sheet_subdfs
