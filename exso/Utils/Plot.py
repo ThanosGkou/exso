@@ -1,4 +1,5 @@
 import re
+from typing import Literal
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -60,7 +61,8 @@ class Plot:
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     @staticmethod
-    def area_plot(df, cols=None, save_path=None, title=None, ylabel=None, xlabel=None, ytick_suffix=None, legend_title=None, show=True, add_total = False, cmap = 'viridis', hovermode = 'x'):
+    def area_plot(df, cols=None, save_path=None, title=None, ylabel=None, xlabel=None, ytick_suffix=None, legend_title=None, show=True, add_total = False, cmap = 'viridis', hovermode:Literal['x', 'y', 'x unified', 'y unified', 'closest'] = 'x', vlines_every_n_hours=None):
+
 
         if isinstance(df, pd.Series):
             df = df.to_frame(name='Values')
@@ -90,13 +92,18 @@ class Plot:
         remove = df.columns[remove]
         df = df.drop(columns = remove, errors='ignore')
         cols = df.columns.to_list()
-        # if add_total:
         df['_TOTAL'] = df.sum(axis= 1)
 
         cmap_hex = Plot.get_sized_colormap_plotly_compatible(n_colors=df.shape[1], cmap_name=cmap)
         fig = px.area(df, x= df.index, y = cols, color_discrete_sequence = cmap_hex)
-        fig.add_trace(go.Scatter(x = df.index, y = df['_TOTAL'], name='TOTAL (sum)', mode = 'lines',fillcolor='black', opacity=0.7, line = dict(color = 'black')))
+        if add_total:
+            fig.add_trace(go.Scatter(x = df.index, y = df['_TOTAL'], name='TOTAL (sum)', mode = 'lines',fillcolor='black', opacity=0.7, line = dict(color = 'black')))
 
+        if vlines_every_n_hours:
+            vlines_x = pd.date_range(df.index[0], df.index[-1],
+                                     freq=f'{vlines_every_n_hours}h')
+
+            [fig.add_vline(x=i) for i in vlines_x]
 
         fig.update_yaxes(ticksuffix=ytick_suffix, showgrid=True, separatethousands=True, tickfont_size=24,
                          linecolor='black', showline=True, gridcolor='darkgray')
@@ -114,7 +121,7 @@ class Plot:
             # size = 16,)
 
         fig.update_layout(
-            title={'text': '<b>' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'},
+            title={'text': '<b>' + title, 'y': 0.99, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'},
             xaxis_title='<b>' + xlabel,
             yaxis_title='<b>' + ylabel,
             legend_title='<b>' + legend_title,
@@ -157,7 +164,7 @@ class Plot:
 
     # ********   *********   *********   *********   *********   *********   *********   *********
     @staticmethod
-    def line_plot(df, cols = None, title = None, xlabel = None, ylabel = None, ytick_suffix = None, show = True, legend_title = None, save_path = None, secondary_y_cols = None, secondary_y_label = None, width = None, height = None, autosize = True, hovermode = 'x'):
+    def line_plot(df, cols = None, title = None, xlabel = None, ylabel = None, ytick_suffix = None, show = True, legend_title = None, save_path = None, secondary_y_cols = None, secondary_y_label = None, width = None, height = None, autosize = True, hovermode = 'x', same_color_every:int = None, same_color_n_plettes:int = None, vlines_every_n_hours = None):
         line_weight = 3
         if isinstance(df,pd.Series):
             df = df.to_frame(name = 'Values')
@@ -188,7 +195,18 @@ class Plot:
                   'mediumaquamarine', 'darkorange', 'indigo', 'navy', 'royalblue', 'slategray']
         colors += colors + colors + colors + colors + colors
 
-        # fig = go.Figure()
+        if same_color_every:
+            colors = np.array(colors)
+            for i in range(same_color_every):
+                affect_ = np.arange(df.shape[1])
+                affect_ = np.where(np.mod(affect_, same_color_every) == i)
+                colors[affect_] = colors[i]
+
+        if same_color_n_plettes:
+            colors = np.array(colors)
+            for i in range(0,df.shape[1], same_color_n_plettes):
+                colors[i:i+same_color_n_plettes] = colors[i]
+
 
         if secondary_y_cols:
             counter = 0
@@ -299,8 +317,9 @@ class Plot:
 
         fig.update_yaxes(ticksuffix=ytick_suffix, showgrid=True, separatethousands=True, tickfont_size=24, linecolor = 'black', showline = True, gridcolor = 'darkgray')
         fig.update_xaxes(tickfont_size=24, linecolor='black', showline = True, gridcolor = 'darkgray')
+        fig.add_hline(y = 0)
         fig.update_layout(
-            title={'text': '<b>' + title, 'y': 0.9, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'},
+            title={'text': '<b>' + title, 'y': 0.99, 'x': 0.5, 'xanchor': 'center', 'yanchor': 'top'},
             xaxis_title='<b>' + xlabel,
             yaxis_title='<b>' + ylabel,
             legend_title='<b>' + legend_title,
@@ -311,7 +330,12 @@ class Plot:
             )
         )
         fig.write_html(save_path, config = config)
+        if vlines_every_n_hours:
 
+            vlines_x = pd.date_range(df.index[0], df.index[-1],
+                                     freq=f'{vlines_every_n_hours}h')
+
+            [fig.add_vline(x=i) for i in vlines_x]
 
         if show:
             fig.show(config=config)
