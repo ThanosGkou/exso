@@ -206,7 +206,9 @@ class MonthlyNTC(ArchetypeWide):
     '''
     renamer_ = {'TEIAS': 'TURKEY',
                 'FYROM': 'NORTH MACEDONIA',
-                'TURKIYE':'TURKEY'}
+                # they are not identical. the latter has some turkish characters
+                'TURKIYE':'TURKEY',
+                'TURKΙΥΕ': 'TURKEY',}
 
     # issue in file: 20250601_20250630_MonthlyNTC_01.xlsx, column M
     # *******  *******   *******   *******   *******   *******   *******
