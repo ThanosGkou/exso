@@ -87,8 +87,10 @@ class ReadingSettings:
                     self.header = {sh:int(h) for sh,h in header.items()}
                 except:
                     raise ValueError
+
         # self.header = 0 if not self.header else int(self.header)
         self.use_cols = self.__interpret_use_cols(self.use_cols)
+
 
     # *******  *******   *******   *******   *******   *******   *******
     def __interpret_eligibility(self, eligib_filename, config_dir):
@@ -116,8 +118,10 @@ class ReadingSettings:
         return lake_version
 
     def __interpret_use_cols(self, use_cols):
-        if use_cols:
+        if use_cols!= '':
             use_cols = eval(use_cols)
+        else:
+            use_cols = None
         return use_cols
     # *******  *******   *******   *******   *******   *******   *******
     @staticmethod
@@ -284,7 +288,6 @@ class TimeSettings:
 
     # *******  *******   *******   *******   *******   *******   *******
     def __interpret_available_until(self, report_name, publisher, lake_dir,  available_until, api_allowed=True, is_alive = True):
-
         if available_until == 'unavailable':
             raise IOError("Selected report-type ({}) is not available in ADMIE".format(report_name))
 
