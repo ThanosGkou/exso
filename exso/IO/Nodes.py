@@ -436,7 +436,9 @@ class Node(NodeAccessors, NodeConstructors):
             try:
                 df = pd.read_csv(self.path, index_col=0, header=0, encoding='utf-8', sep=exso._list_sep, decimal=exso._decimal_sep)
             except:
+                print(self.path)
                 df = pd.read_csv(self.path, index_col=0, header=0, encoding='utf-16', sep=exso._list_sep, decimal=exso._decimal_sep)
+
 
 
             try:
