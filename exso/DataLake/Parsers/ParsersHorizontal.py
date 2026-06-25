@@ -414,6 +414,7 @@ class AdhocISPResults(ISP1ISPResults):
 
         # first row is: "Non Dispatchable Load, 27/11/2022  15:30:00, 27/11/2022  16:00:00, 27/11/2022  16:30:00, ansd so on
         start_datetime = df.iloc[0].values[1]
+
         dates = self.period_dates.copy()
         if isinstance(self.r2, str):
             dates = pd.date_range(self.period_dates[0],
@@ -1055,8 +1056,21 @@ class RealTimeSCADARES(ArchetypeHorizontal):
 
         for subfield, df in subfields_dfs.items():
             df = df.iloc[:len(self.period_dates)].copy()
-            if df.shape[1] > 1:
-                df.columns = [self.field, 'Date', 'CreteHVAC']
+            if df.shape[1] ==3:
+                df.columns = [self.field, 'Date', 'CR-GR (AC)']
+            elif df.shape[1] == 5:
+                '''
+                e.g.
+                  18-06-2026 Date 18-06-2026 Date 18-06-2026
+                0       4835    1        -50    1       -232
+                1     4581.0  2.0      -50.0  2.0     -194.0
+                2     4361.0  3.0      -49.0  3.0     -172.0
+                3     4213.0  4.0      -49.0  4.0     -15
+                '''
+                df = pd.concat([df.iloc[:,:3], df.iloc[:,4:]], axis = 1)
+                df.columns = [self.field, 'Date', 'CR-GR (AC)', 'CR-GR (DC)']
+            else:
+                raise ValueError(f"Unexpected format for RealTimeSCADASystemLoad {self.period_dates[0]}")
             subfields_dfs[subfield] = df
 
         subfields_dfs = super().rolling_post_proc(subfields_dfs)
