@@ -205,7 +205,8 @@ class MonthlyNTC(ArchetypeWide):
 
     '''
     renamer_ = {'TEIAS': 'TURKEY',
-                'FYROM': 'NORTH MACEDONIA'}
+                'FYROM': 'NORTH MACEDONIA',
+                'TURKIYE':'TURKEY'}
 
     # issue in file: 20250601_20250630_MonthlyNTC_01.xlsx, column M
     # *******  *******   *******   *******   *******   *******   *******
