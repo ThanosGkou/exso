@@ -2,6 +2,8 @@ import os
 import traceback
 import warnings
 import pandas as pd
+from pandas.errors import DtypeWarning
+
 import exso
 
 
@@ -24,11 +26,27 @@ class IO:
             return pd.DataFrame()
 
         try:
-            if 'SupplyCurves' in filepath.name:
-                warnings.simplefilter('ignore')
-            df = pd.read_csv(filepath, index_col=0, header=0, encoding='utf-8', sep= exso._list_sep, decimal=exso._decimal_sep, nrows=nrows)
+            # if 'SupplyCurves' in filepath.name:
+            #     warnings.simplefilter('ignore')
+            df = pd.read_csv(filepath, index_col=0, header=0, encoding='utf-8', sep= exso._list_sep, decimal=exso._decimal_sep, nrows=nrows, engine = 'c')
+        except UnicodeDecodeError:
+            df = pd.read_csv(filepath, index_col=0, header=0, encoding='utf-16', sep= exso._list_sep, decimal=exso._decimal_sep, engine = 'c')
         except:
-            df = pd.read_csv(filepath, index_col=0, header=0, encoding='utf-16', sep= exso._list_sep, decimal=exso._decimal_sep)
+
+            try:
+                warnings.simplefilter('ignore',category=DtypeWarning)
+                df = pd.read_csv(filepath, header=0, sep = exso._list_sep, decimal = exso._decimal_sep)
+                df = df.set_index(df.columns[0])
+            except:
+                print()
+                print(f'{pd.__version__ = }')
+                print(f'{exso._list_sep = }')
+                print(f'{exso._decimal_sep = }')
+                print(f'{nrows = }')
+                print(f'\n\nMultiple errors while attempting to read {filepath = }')
+                print(traceback.format_exc())
+                raise IOError
+
         if nrows:
             return df
         if usecols:
