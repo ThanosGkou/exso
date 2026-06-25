@@ -6,6 +6,8 @@ import time
 
 import numpy as np
 import pandas as pd
+from dateutil.tz import datetime_exists
+
 from exso import Files
 from exso.ReportsInfo.Interpretation import Metadata, ReadingSettings, ParsingSettings, TimeSettings
 from exso.Utils.DateTime import DateTime
@@ -60,6 +62,7 @@ class Pool:
         self.cols_allocation = {sheet_name: df.columns.to_list() for sheet_name, df in dfs_dict.items()}
 
         self.allmighty_df = self.collapse(dfs_dict)
+        self.allmighty_df = self.convert_dtypes()
         self.logger.info("Reports Pool Dataframe: \n\n" + STR.df_to_string(self.allmighty_df))
         xl.close()
 
@@ -101,19 +104,28 @@ class Pool:
     def convert_dtypes(self):
 
         types = {col:str for col in self.allmighty_df.columns}
-        types.update({'requires_update':bool, 'is_implemented':bool, 'start_hour':int, 'time_lag_days':int,
-                      'header_row':int,
-                      'long_format':bool, 'persistent_long':bool,
-                      'available_from_date':datetime.datetime, 'available_until_date':datetime.datetime,
-                      })
+        bool_cols = ['is_useful', 'is_alive', 'is_implemented', 'long_format', 'persistent_long']
+        int_cols = ['lake_version', 'header', 'start_hour', 'time_lag_days']
+
+        datetime_cols = ['available_from', 'available_until']
+        str_cols = [c for c in self.allmighty_df.columns if c not in bool_cols + int_cols + datetime_cols]
+
+        # types.update({'requires_update':bool, 'is_implemented':bool, 'start_hour':int, 'time_lag_days':int,
+        #               'header':int,
+        #               'long_format':bool, 'persistent_long':bool,
+        #               'available_from_date':datetime.datetime, 'available_until_date':datetime.datetime,
+        #               })
 
         df = self.allmighty_df.copy()
-        int_cols = [k for k, v in types.items() if v == int]
-        bool_cols = [k for k,v in types.items() if v == bool]
-        str_cols = [k for k,v in types.items() if v == str]
-        df[int_cols]= df[int_cols].fillna(0)
+        # int_cols = [k for k, v in types.items() if v == int]
+        # bool_cols = [k for k,v in types.items() if v == bool]
+        # str_cols = [k for k,v in types.items() if v == str]
+        df[int_cols]= df[int_cols].fillna(0).astype(int)
         df[bool_cols] = df[bool_cols].astype(float).fillna(0).astype(bool)
         df[str_cols] = df[str_cols].astype(str)
+        df[str_cols] = df[str_cols].replace(np.nan,'')
+
+
         return df
 
     # *******  *******   *******   *******   *******   *******   *******
@@ -200,8 +212,8 @@ class Report(Metadata, ReadingSettings, ParsingSettings, TimeSettings):
 
         self.make_bidirectional_mapping()
         reports_info_avail_until = pd.to_datetime(self.df['available_until'].squeeze(), dayfirst=True)
-
-        if isinstance(reports_info_avail_until, type(None)):
+        if reports_info_avail_until is pd.NaT:
+        # if isinstance(reports_info_avail_until, pd.NaT):
             # this means that no end-date is specified in ReportsInfo.xlsx, so, the report is ongoing, and its most recent date is yet to be determined
             self.available_until = self._TimeSettings__interpret_available_until(self.report_name, self.publisher, self.datalake_path, self.available_until, api_allowed=api_allowed)
         else:
