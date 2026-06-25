@@ -468,7 +468,10 @@ class Updater:
                 Report.Report(rp, _which, self.root_lake, self.root_base)
 
             else:
-                raise LookupError("Could not locate any report that matches the input set: which = {}, groups = {}, publishers = {}".format(_which, _groups, _publishers))
+                show_kwargs = {arg: val for arg,val in zip(['which', 'groups', 'publishers'], [_which, _groups, _publishers])}
+                raise LookupError(f"Could not locate any report that matches the input arguments: {show_kwargs}\n"
+                                  f"Available:\n\n "
+                                  f"{implemented[['report_name', 'publisher', 'group']]}")
 
         print('\n', '*'*50, '\n')
         print(f'\nCommencing Update procedure for {len(report_names)} reports:\n')
