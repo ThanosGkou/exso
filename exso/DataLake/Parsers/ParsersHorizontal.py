@@ -1059,6 +1059,7 @@ class RealTimeSCADARES(ArchetypeHorizontal):
             if df.shape[1] ==3:
                 df.columns = [self.field, 'Date', 'CR-GR (AC)']
             elif df.shape[1] == 5:
+                # todo: these should be in ScadaLoad, not here.
                 '''
                 e.g.
                   18-06-2026 Date 18-06-2026 Date 18-06-2026
