@@ -177,6 +177,8 @@ class DateTime:
         local_dates = naive_dates.tz_localize('UTC').tz_convert(tz_)
 
         masK_downstream = np.logical_not(local_dates.hour.to_series().diff().isin([1,-23])).values
+        # numpy maked it read-only from some version onwards
+        masK_downstream = list(masK_downstream)
         masK_downstream[0] = False # first occurence is 1st of January, not dsf switch
         mask_upstream = np.roll(masK_downstream, -1)  # roll back by one, to see the prior-to-switch datetime
 
