@@ -402,8 +402,7 @@ class DAM_Results(_UsualParams):
         netdf['NetMarketSchedule'] = net_exchanges.sum(axis = 1)
 
 
-
-
+        netdf['MCP'] = subfields_dfs['Buy']['MCP'].values
         subfields_dfs['Net'] = netdf.copy()
 
 
