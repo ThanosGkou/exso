@@ -53,9 +53,11 @@ class Readers:
             df_sheets = {sheet: xl.parse(sheet_name=sheet, header=kwargs['header'][sheet], **_kwargs) for sheet in kwargs['header'].keys()}
             return df_sheets
 
+
         try:
             df_sheets = pd.read_excel(filepath, **kwargs) # at later pandas maybe this will sometimes break instead of warn
         except:
+            warnings.warn(f"\nDefault reading attempt failed for {filepath = }")
 
             try: # None reader can read xls and xlsx. openpyxl reader can only read xlsx
                 engine_as_passed = kwargs['engine']
