@@ -21,7 +21,6 @@ tzlocal
 requests
 tqdm
 bs4
-seedier
 fuzzywuzzy
 unidecode
 tzlocal
