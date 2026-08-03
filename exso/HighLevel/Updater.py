@@ -30,7 +30,7 @@ from haggis import string_util as hag
 class Updater:
     """ The main API-class of the exso project to update datasets.
         Check out the __init__.__doc__ for more information """
-    def __init__(self, root_lake:str|Path|None=None, root_base:str|Path|None=None, reports_pool:Report.Pool|None = None, which:str|list|None = None, exclude:str|list|None = None, groups:None|list|str = None, publishers: None|list|str = None, countries: None|list|str = None, only_ongoing:bool = False, allow_handshake_connection = True):
+    def __init__(self, root_lake:str|Path|None=None, root_base:str|Path|None=None, reports_pool:Report.Pool|None = None, which:str|list|None = None, rgx:str=None, exclude:str|list|None = None, groups:None|list|str = None, publishers: None|list|str = None, countries: None|list|str = None, only_ongoing:bool = False, allow_handshake_connection = True):
         """
         Constructor parameters for the Updater class:
 
@@ -63,7 +63,8 @@ class Updater:
         self.mode = None
         self.report_names = self.derive_reports(self.rp, which=which, exclude=exclude,
                                                 groups=groups, publishers=publishers,
-                                                countries=countries, only_ongoing=only_ongoing)
+                                                countries=countries, only_ongoing=only_ongoing,
+                                                rgx=rgx)
 
         self.reports_to_refresh = exso.settings.get_refresh_requirements()
 
@@ -362,7 +363,7 @@ class Updater:
         self.r = r
 
     # *******  *******   *******   *******   *******   *******   ******* >>> Logging setup
-    def derive_reports(self, rp, which:str|list|None, exclude:str|list|None, groups:str|list|None, publishers:str|list|None, countries:str|list|None, only_ongoing:bool):
+    def derive_reports(self, rp, which:str|list|None, exclude:str|list|None, groups:str|list|None, publishers:str|list|None, countries:str|list|None, only_ongoing:bool, rgx:str|None):
         # Store the variables for later debugging capabilities
         _which = which if isinstance(which, str) or isinstance(which, type(None)) else which.copy()
         _exclude = exclude if isinstance(exclude, str) or isinstance(exclude, type(None)) else exclude.copy()
@@ -450,7 +451,8 @@ class Updater:
                                  (implemented.group.isin(groups))&
                                  (implemented.publisher.isin(publishers))&
                                  (implemented.country.isin(countries)))]
-
+        if rgx:
+            intersect = intersect[intersect.report_name.str.contains(rgx,case=False,regex=True)]
         ###############################################################################################################
         if only_ongoing:
             intersect = intersect[intersect.available_until.isna() == True].copy()
