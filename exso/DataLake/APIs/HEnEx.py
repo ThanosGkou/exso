@@ -134,13 +134,18 @@ class API(Assistant):
                       'IDM_IDA1_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/3257246/{}_EL-IDA1_AggrCurves_EN_v{}.xlsx',
                       'IDM_IDA2_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/3257284/{}_EL-IDA2_AggrCurves_EN_v{}.xlsx',
                       'IDM_IDA3_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/3257519/{}_EL-IDA3_AggrCurves_EN_v{}.xlsx',
+                      'IDM_IDA1_ResultsSummary': 'https://www.enexgroup.gr/documents/20126/3257255/{}_EL-IDA1_ResultsSummary_EN_v{}.xlsx',
+                      'IDM_IDA2_ResultsSummary': 'https://www.enexgroup.gr/documents/20126/3257274/{}_EL-IDA2_ResultsSummary_EN_v{}.xlsx',
+                      'IDM_IDA3_ResultsSummary': 'https://www.enexgroup.gr/documents/20126/3257528/{}_EL-IDA3_ResultsSummary_EN_v{}.xlsx',
 
-                      'DAM_Results':'https://www.enexgroup.gr/documents/20126/200106/{}_EL-DAM_Results_EN_v{}.xlsx',
-                      'DAM_MarketCoupling':'https://www.enexgroup.gr/documents/20126/200091/{}_EL-DAM_PrelimResults_EN_v{}.xlsx',
-                      'DAM_PhysicalDeliveriesOfftakes':'https://www.enexgroup.gr/documents/20126/214481/{}_EL-DAM_POSNOMs_EN_v{}.xlsx',
-                      'DAM_AggDemandSupplyCurves':'https://www.enexgroup.gr/documents/20126/200034/{}_EL-DAM_AggrCurves_EN_v{}.xlsx',
+                      'DAM_Results': 'https://www.enexgroup.gr/documents/20126/200106/{}_EL-DAM_Results_EN_v{}.xlsx',
+                      'DAM_ResultsSummary': 'https://www.enexgroup.gr/documents/20126/366820/{}_EL-DAM_ResultsSummary_EN_v{}.xlsx',
+                      'DAM_MarketCoupling': 'https://www.enexgroup.gr/documents/20126/200091/{}_EL-DAM_PrelimResults_EN_v{}.xlsx',
+                      'DAM_PhysicalDeliveriesOfftakes': 'https://www.enexgroup.gr/documents/20126/214481/{}_EL-DAM_POSNOMs_EN_v{}.xlsx',
+                      'DAM_PreMarketSummary': 'https://www.enexgroup.gr/documents/20126/249422/{}_EL-DAM_PreMarketSummary_EN_v{}xlsx',
+                      'DAM_AggDemandSupplyCurves': 'https://www.enexgroup.gr/documents/20126/200034/{}_EL-DAM_AggrCurves_EN_v{}.xlsx',
                       'DAM_BlockOrders': 'https://www.enexgroup.gr/documents/20126/270103/{}_EL-DAM_BLKORDRs_EN_v{}.xlsx',
-                      'DAM_GasVTP':'https://www.enexgroup.gr/documents/20126/997118/{}_NGAS_DOL_EN_v{}.xlsx',
+                      'DAM_GasVTP': 'https://www.enexgroup.gr/documents/20126/997118/{}_NGAS_DOL_EN_v{}.xlsx',
                       'IDM_XBID_Results': 'https://www.enexgroup.gr/documents/20126/1550281/{}_EL-XBID_Results_EN_v{}.xlsx',
                        }
         return generators
