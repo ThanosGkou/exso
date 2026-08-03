@@ -8,6 +8,8 @@ import time
 import haggis.string_util
 import numpy as np
 import pandas as pd
+
+import exso
 from exso.DataLake.Parsers.ParsersArch import Archetype
 from exso.Utils.DateTime import DateTime
 from exso.Utils.STR import STR
@@ -125,7 +127,6 @@ class ArchetypeHorizontal(Archetype):
     # *********************************************
     @logging_sampler
     def pre_proc(self, df):
-
         df = self.baptize_indicator_column(df, indicator_col_index = self.indicator_col_index, field = self.field)
 
         if self.replacer_mapping:
@@ -223,7 +224,7 @@ class ArchetypeHorizontal(Archetype):
         #     print(df.head())
         #     print(df.shape)
         #     print()
-        # print(f'\n\nend of split cue points: {self.field}')
+        # input(f'\n\nend of split cue points: {self.field}')
         return subfields_dfs
 
     # *********************************************
@@ -237,14 +238,15 @@ class ArchetypeHorizontal(Archetype):
 
             subfields_dfs[subfield] = df
         # print()
-        # print(f'End of transposeALl ({self.field}')
+        # print(f'End of transposeALl ({self.field = })')
         # print()
         # for sf, df in subfields_dfs.items():
         #     print(f'{sf = }')
         #     print(df.head())
+        #     print(df.tail())
         #     print(df.shape)
         #     print()
-        # print(f'\n\nend of transposeAell: {self.field}')
+        # input(f'\n\nend of transposeAell: {self.field}')
         return subfields_dfs
 
     # *********************************************
@@ -819,8 +821,27 @@ class DAM_ResultsSummary(ArchetypeHorizontal):
 
     # *******  *******   *******   *******   *******   *******   *******
     def pre_proc(self, df):
-        str_columns = [df.columns[i] for i in range(df.shape[1]) if type(df.columns[i])==str]
-        df = df.drop(columns =str_columns, errors = 'ignore')
+        df = df.drop(columns = ['TOTAL'], errors='ignore')
+        _date = self.period_dates[0]
+        if _date > pd.Timestamp(year=2025,month=9,day=30,tz='CET'):
+            df = df.drop(columns=df.columns[df.iloc[0] == 'TOTAL (MWh)'], errors='ignore')
+            # very badly implemented...
+            nan_limit = 46
+            if 'IDA3' in self.report_name:
+                # nan_limit is high, but i dont care? since the dst happens near midnight, outside of the scope of idas
+                # switch = exso.Utils.DateTime.DateTime.get_dst_switches(from_year=_date.year,to_year=_date.year)
+                pass
+
+            nans = {c: df[c].isna().astype(int).sum() for c in df.columns}
+            for c in nans:
+                if nans[c] >= nan_limit:
+                    df.pop(c)
+
+
+            pass
+        else:
+            str_columns = [df.columns[i] for i in range(df.shape[1]) if type(df.columns[i])==str]
+            df = df.drop(columns =str_columns, errors = 'ignore')
         df = super().pre_proc(df)
         # print()
         # print(self.field)
@@ -830,6 +851,7 @@ class DAM_ResultsSummary(ArchetypeHorizontal):
         # print('\n\nend of preproc')
 
         return df
+
 
 
 ###############################################################################################
@@ -1071,7 +1093,7 @@ class RealTimeSCADARES(ArchetypeHorizontal):
                 df = pd.concat([df.iloc[:,:3], df.iloc[:,4:]], axis = 1)
                 df.columns = [self.field, 'Date', 'CR-GR (AC)', 'CR-GR (DC)']
             else:
-                raise ValueError(f"Unexpected format for RealTimeSCADASystemLoad {self.period_dates[0]}")
+                raise ValueError(f"Unexpected format for RealTimeSCADARES {self.period_dates[0]}")
             subfields_dfs[subfield] = df
 
         subfields_dfs = super().rolling_post_proc(subfields_dfs)
