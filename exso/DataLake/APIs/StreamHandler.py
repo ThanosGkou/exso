@@ -85,11 +85,7 @@ class StreamHandler:
         sys.stdout = sys.__stdout__
         lake_content = len(list(Path(self.save_dir).glob('*')))
 
-        exclude_from_triggers_to_download_archive = ['IDM_XBID_Results', 'DAM_GasVTP', 'IDM_IDA1_Results',
-                                                     'IDM_IDA2_Results', 'IDM_IDA3_Results', 'IDM_IDA1_AggDemandSupplyCurves',
-                                                     'IDM_IDA2_AggDemandSupplyCurves','IDM_IDA3_AggDemandSupplyCurves',
-                                                     'IDM_IDA1_MarketCoupling', 'IDM_IDA2_MarketCoupling', 'IDM_IDA3_MarketCoupling',
-                                                     'IDM_IDA1_ResultsSummary', 'IDM_IDA2_ResultsSummary', 'IDM_IDA3_ResultsSummary',
+        exclude_from_triggers_to_download_archive = ['IDM_XBID_Results', 'DAM_GasVTP',
                                                      ]
         if publisher != 'henex' or report_name in exclude_from_triggers_to_download_archive or lake_content > 0:
             return None
