@@ -139,6 +139,9 @@ class ZipHandler:
         zip_filepaths = list(scan_in_dir.rglob('*.zip'))
         if ignore:
             zip_filepaths = [zfp for zfp in zip_filepaths if zfp not in ignore]
+        
+        # henex names some folders .zip that are not zip...
+        zip_filepaths = [zfp for zfp in zip_filepaths if zfp.is_dir() is False]
         return zip_filepaths
 
     # *******  *******   *******   *******   *******   *******   *******
