@@ -1,6 +1,6 @@
 $Sell
 Sell_Trades: ('Total SELL Trades', 'Greece Mainland']
-MCP: ('Market Clearing Price', 'Greece Mainland']
+MCP: ('Market Clearing Price', 'PRODUCTION TECHNOLOGY / MTU')
 Producers: ('PRODUCTION TECHNOLOGY / MTU', 'PRODUCTION']
 Consumers: ('DEMAND / MTU', 'DEMAND']
 Sell_Orders: ('SELL TRADES Price Type /  MTU', 'SELL')
@@ -8,7 +8,7 @@ Imports: ('BORDER IMPORTS', ' IMPORTS']
 Imports_Implicit: ('BORDER IMPORTS (IMPLICIT)', ' IMPORTS (IMPLICIT)']
 $Buy
 Buy_Trades: ('Total BUY Trades', 'Greece Mainland']
-MCP: ('Market Clearing Price', 'Greece Mainland']
+MCP: ('Market Clearing Price', 'PRODUCTION TECHNOLOGY / MTU')
 Producers: ('PRODUCTION TECHNOLOGY / MTU', 'PRODUCTION']
 Consumers:  ('DEMAND / MTU', 'DEMAND']
 Buy_Orders: ('BUY TRADES Price Type /  MTU', 'BUY')
