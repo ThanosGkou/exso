@@ -1,3 +1,4 @@
 raw,conformed,comment
-Greece Mainland  (15min MCP),MCP,
-Greece Mainland (60min Index),MCP_15min,
+Greece Mainland  (15min MCP),MCP_15min,
+Greece Mainland (60min Index),MCP_60min,
+Greece Mainland,MCP_60min,
