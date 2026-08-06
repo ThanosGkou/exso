@@ -1092,8 +1092,11 @@ class RealTimeSCADARES(ArchetypeHorizontal):
                 '''
                 df = pd.concat([df.iloc[:,:3], df.iloc[:,4:]], axis = 1)
                 df.columns = [self.field, 'Date', 'CR-GR (AC)', 'CR-GR (DC)']
+            elif df.shape[1] == 1:
+                df.columns = [self.field]
             else:
-                raise ValueError(f"Unexpected format for RealTimeSCADARES {self.period_dates[0]}")
+                raise ValueError(f"Unexpected format for RealTimeSCADARES date: {self.period_dates[0]}, {df.shape = }")
+            
             subfields_dfs[subfield] = df
 
         subfields_dfs = super().rolling_post_proc(subfields_dfs)
