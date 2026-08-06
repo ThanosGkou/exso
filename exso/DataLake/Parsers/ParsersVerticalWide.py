@@ -427,9 +427,14 @@ class DailyAuctionsSpecificationsATC(ArchetypeWide):
             for fp in candidates['filepath'].values:
                 df = pd.read_excel(fp, header=0)
                 description = df.columns[0]
-
+                print()
+                print(df.head())
+                print(df.shape)
                 df.columns = df.iloc[1, :].values
                 df = df.iloc[2:, 1:].reset_index(drop=True).dropna(axis='rows', how='all')
+                if df.shape[0] == 25:
+                    # there is a 'total' row
+                    df = df.iloc[:24]
 
                 try:
                     df.index = d_datetime
