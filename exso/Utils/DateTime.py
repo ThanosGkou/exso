@@ -134,7 +134,8 @@ class DateTime:
             days_in_month = pd.to_datetime(start_date).days_in_month
             new_timedelta = '{}D'.format(days_in_month)
         elif time_entity == 'Y':
-            if start_date.is_leap_year:
+
+            if pd.Timestamp(start_date).is_leap_year:
                 days_in_year = 366
             else:
                 days_in_year = 365
