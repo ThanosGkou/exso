@@ -3,8 +3,10 @@ import datetime
 import inspect
 import logging
 import os
+import pathlib
 import re
 import time
+import warnings
 import haggis.string_util
 import numpy as np
 import pandas as pd
@@ -1108,7 +1110,167 @@ class RealTimeSCADARES(ArchetypeHorizontal):
 class RealTimeSCADASystemLoad(RealTimeSCADARES):
     pass
 
+'''
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
+class RealTimeSCADAImportsExports(ArchetypeHorizontal):
+    pass
+
+###############################################################################################
+###############################################################################################
+###############################################################################################
+class WeekAheadWaterUsageDeclaration(ArchetypeHorizontal):
+
+    def pre_proc(self, df):
+        date = self.period_dates[0]
+
+        if self.field == 'SameDay':
+            dateCheck = df.columns[0]
+            indicator_col = df.columns[0]
+            try:
+                rows = df[df[indicator_col].str.contains('Daily_decl')].index
+            except:
+                print('\n\n')
+                print(df)
+                input('--')
+
+            dates = self.period_dates[:24]
+            df[indicator_col] = df[indicator_col].str.replace('_Daily_decl', '')
+            df = df.loc[rows].set_index(indicator_col).T.drop(columns = 'Total', errors='ignore')
+            df = df.iloc[:24]
+            df.index = dates
+
+        elif self.field == 'WeekAhead':
+            df.columns = df.iloc[0].values
+            df = df.drop(index=[0])
+            indicator = df.columns[0]
+            date_col = df.columns[1]
+            weekdf = pd.DataFrame()
+            for d in df[date_col].unique():
+                daydf = df[df[date_col] == d]
+                daydf = daydf.set_index(indicator).drop(columns = ['TOTAL',date_col], errors='ignore').T
+                weekdf= pd.concat([weekdf,daydf], axis = 0)
+            try:
+                weekdf.index = self.period_dates[:weekdf.shape[0]]
+            except:
+                print(f'\nerror in {date = }, {self.period_dates[0] = }\n')
+                print(weekdf.shape)
+                print()
+                print(df)
+                print(weekdf.reset_index(drop=True))
+                input('X-X-X')
+
+        else:
+            raise ValueError
+
+        return df
+
+    def split_cue_points(self, df):
+        return {self.field: df}
+    def transposeAll(self, subfields_dfs):
+        return subfields_dfs
+    def rolling_post_proc(self, subfields_dfs):
+        return subfields_dfs
+    def expost(self, fields_dfs):
+        return fields_dfs
+
+class YearlyWaterUsageDeclaration(ArchetypeHorizontal):
+    def pre_proc(self, df, date, field):
+        df = df.dropna(axis = 'rows',thresh = 2)
+        date_col = df.columns[1]
+        # dates_present = df[date_col].dropna().to_frame(name = 'date')
+        # dates_present['i'] = range(dates_present.shape[0])
+
+        # if i_of_prev_month.empty or i_of_prev_month.empty:
+        #     print(f"EMPTY for {date = }")
+        #     print(df)
+        #     input('--')
+        #     return pd.DataFrame()
+
+        df[date_col] = pd.to_datetime(df[date_col])
+        cols = df.columns.copy()
+        cols = pd.to_datetime(cols, errors='coerce')
+        previous_months = cols[cols < pd.to_datetime(date)]
+
+        row = df[df[date_col] == date].index
+        if row.empty:
+            row = df[df[date_col]  == df[date_col].max()].index
+
+        try:
+            val = df.loc[row, previous_months].T
+        except:
+            print('\n\n')
+            print(row)
+            print(previous_months)
+            print()
+            print(df)
+            return pd.DataFrame()
+            raise ValueError
+        # val = df[df[date_col] == date][previous_months].T
+        val.index = previous_months.to_list()
+        try:
+            val.columns = [field]
+        except:
+            val = val.iloc[:,[-1]]
+            val.columns = [field]
+        val = val.iloc[3:]
+        return val
+
+    def split_cue_points(self, df):
+        return {self.field: df}
+
+    def transposeAll(self, subfields_dfs):
+        return subfields_dfs
+    def rolling_post_proc(self, subfields_dfs):
+        return subfields_dfs
+    def expost(self, fields_dfs):
+        return fields_dfs
+
+    def run(self):
+        _dir = pathlib.Path(r'C:\Users\Thanos\Desktop\Admie-Desktop\Projects\exso\MarketData\datalake\admie\YearlyWaterUsageDeclaration')
+        combo = pd.DataFrame()
+        fps = list(_dir.glob('[!~]*.xls*'))
+        fps = fps[::] + [fps[-1]]
+        for fp in fps:
+
+            strdate = fp.name.split('_')[0]
+            date = pd.Timestamp(year=int(strdate[:4]), month=int(strdate[4:6]), day=int(strdate[6:]))
+
+            dfs = pd.read_excel(fp, sheet_name=[0,1,2],header=2)
+            for i,name in enumerate(['ObligatoryHydro', 'WaterReserves', 'Inflows']):
+                dfs[name] = dfs.pop(i)
+
+            _combo = pd.DataFrame()
+            for k,df in dfs.items():
+                df = YearlyWaterUsageDeclaration.pre_proc(object,df, date, k)
+                _combo = pd.concat([_combo,df], axis = 1)
+
+            if _combo.empty:
+                continue
+
+            dup = combo[combo.index.duplicated()]
+            prev = combo.copy()
+            combo = pd.concat([combo, _combo], axis = 0)
+            newdup = combo[combo.index.duplicated()]
+            if dup.shape[0] != newdup.shape[0]:
+                print(f'entry at file {fp.name}')
+                newindex = newdup[~newdup.index.isin(dup.index)].index
+
+                print(newdup.loc[newindex])
+                print()
+                print(prev.loc[newindex])
+
+
+                input('---')
+        import plotly.express as px
+        combo.index = pd.to_datetime(combo.index)
+        combo = combo.astype(float).sort_index()
+        px.line(combo).show()
+        combo.to_csv('combo.csv')
+        print(combo)
+
+if __name__ == '__main__':
+    YearlyWaterUsageDeclaration.run(object)
+'''
 
