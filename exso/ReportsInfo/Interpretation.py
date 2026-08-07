@@ -363,7 +363,7 @@ class TimeSettings:
         database_min_datetime = pd.to_datetime(lake_min_date) + pd.Timedelta(self.start_hour)
         database_min_datetime = database_min_datetime.tz_localize(self.inherent_tz)
 
-        if self.resolution == 'M':
+        if self.resolution in ['M', '1M']:
             dt = '30D'
         else:
             dt = self.resolution
