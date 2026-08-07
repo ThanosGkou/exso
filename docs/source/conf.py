@@ -8,7 +8,7 @@ project = 'ExSO'
 copyright = '2025, T. Natsikas'
 author = 'T. Natsikas'
 
-version = "1.1.1"
+version = "1.1.2"
 release = version
 # -- General configuration
 
