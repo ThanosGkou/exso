@@ -1110,7 +1110,6 @@ class RealTimeSCADARES(ArchetypeHorizontal):
 class RealTimeSCADASystemLoad(RealTimeSCADARES):
     pass
 
-'''
 ###############################################################################################
 ###############################################################################################
 ###############################################################################################
@@ -1272,5 +1271,4 @@ class YearlyWaterUsageDeclaration(ArchetypeHorizontal):
 
 if __name__ == '__main__':
     YearlyWaterUsageDeclaration.run(object)
-'''
 
